@@ -45,9 +45,7 @@ const FORBIDDEN_CELLS = ['A12','B2','B3','B6','D3','D7','E4','E11'];
  * Uses createTemplateFromFile so the web app URL can be injected server-side.
  */
 function doGet(e) {
-  const template = HtmlService.createTemplateFromFile('EmeraldUI');
-  template.webAppUrl = ScriptApp.getService().getUrl();
-  return template.evaluate()
+  return HtmlService.createHtmlOutputFromFile('EmeraldUI')
     .setTitle('Emerald | Haven, The Awakening Doula')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
@@ -102,6 +100,30 @@ function doPost(e) {
     return ContentService
       .createTextOutput(JSON.stringify({ success: false, error: err.message }))
       .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+
+/**
+ * Called directly from the UI via google.script.run.
+ * Replaces the fetch/doPost pattern — handles auth automatically,
+ * no CORS or login-redirect issues.
+ */
+function handleApiCall(payloadStr) {
+  const data   = JSON.parse(payloadStr);
+  const action = data.action;
+
+  switch (action) {
+    case 'chat':               return handleChatRequest(data.message, data.clientName || null, data.history || []);
+    case 'getClients':         return emeraldGetClientList();
+    case 'getClientInfo':      return emeraldGetClientInfo(data.clientName);
+    case 'getEmailTemplates':  return getEmailTemplateList();
+    case 'getMemory':          return getLongTermMemory();
+    case 'getSessions':        return emerald_getUpcomingSessions(data.clientName);
+    case 'getNewsletterPreview': return emerald_getNewsletterPreview();
+    case 'executeAction':      return emeraldExecuteTool(data.tool, data.params || {});
+    case 'clearMemory':        return clearEmeraldMemory();
+    default: throw new Error('Unknown action: ' + action);
   }
 }
 

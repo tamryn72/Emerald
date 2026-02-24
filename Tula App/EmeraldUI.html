@@ -784,8 +784,7 @@ const state = {
   activeClient: null,
   conversationHistory: [],
   isLoading: false,
-  selectedClientType: null,
-  webAppUrl: '<?= webAppUrl ?>'
+  selectedClientType: null
 };
 
 const SESSION_NAMES = {
@@ -1334,15 +1333,12 @@ function sendNewsletterFromPreview() {
    API
 ═══════════════════════════════════════════════ */
 async function apiCall(payload) {
-  const response = await fetch(state.webAppUrl, {
-    method: 'POST',
-    body: JSON.stringify(payload),
-    headers: { 'Content-Type': 'application/json' }
+  return new Promise((resolve, reject) => {
+    google.script.run
+      .withSuccessHandler(resolve)
+      .withFailureHandler(err => reject(new Error(err.message || 'Server error')))
+      .handleApiCall(JSON.stringify(payload));
   });
-  if (!response.ok) throw new Error('Network error: ' + response.status);
-  const json = await response.json();
-  if (!json.success) throw new Error(json.error || 'Unknown error');
-  return json.data;
 }
 
 
