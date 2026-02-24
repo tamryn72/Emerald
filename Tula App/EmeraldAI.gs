@@ -645,12 +645,13 @@ function getToolDefinitions() {
     },
     {
       name: 'add_lead',
-      description: 'Manually add a lead to the Leads sheet.',
+      description: 'Manually add a lead to the Leads sheet. Columns: A=Name, B=Date (auto-filled), C=Email, D=Service (optional).',
       input_schema: {
         type: 'object',
         properties: {
           name: { type: 'string' },
-          email: { type: 'string' }
+          email: { type: 'string' },
+          service: { type: 'string', description: 'Service they are interested in (optional)' }
         },
         required: ['name']
       }

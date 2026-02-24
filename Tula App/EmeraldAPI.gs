@@ -392,9 +392,31 @@ function emeraldExecuteTool(toolName, toolInput) {
       case 'refresh_leads':
         return emerald_refreshLeads();
 
-      case 'add_lead':
-        addToLeads(toolInput.name, toolInput.email || '');
-        return { added: true, name: toolInput.name };
+      case 'add_lead': {
+        const leadsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Leads');
+        if (!leadsSheet) throw new Error('Leads sheet not found');
+        const leadName = toolInput.name;
+        const leadEmail = toolInput.email || '';
+        const leadService = toolInput.service || '';
+        const leadDate = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'M/d/yyyy');
+        // Duplicate email check
+        if (leadEmail) {
+          const lastRow = leadsSheet.getLastRow();
+          if (lastRow >= 4) {
+            const existing = leadsSheet.getRange(4, 3, lastRow - 3, 1).getValues().flat();
+            const norm = leadEmail.trim().toLowerCase();
+            if (existing.some(function(e) { return String(e).trim().toLowerCase() === norm; })) {
+              return { added: false, reason: 'duplicate', name: leadName };
+            }
+          }
+        }
+        const nextRow = Math.max(leadsSheet.getLastRow() + 1, 4);
+        leadsSheet.getRange(nextRow, 1).setValue(leadName);
+        leadsSheet.getRange(nextRow, 2).setValue(leadDate);
+        leadsSheet.getRange(nextRow, 3).setValue(leadEmail);
+        leadsSheet.getRange(nextRow, 4).setValue(leadService);
+        return { added: true, name: leadName };
+      }
 
       // ── Memory ──
       case 'remember_note':

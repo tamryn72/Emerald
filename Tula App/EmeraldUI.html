@@ -799,7 +799,9 @@ const SESSION_NAMES = {
    INIT
 ═══════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  loadClients();
+  loadClients().then(() => {
+    appendAIMessage('Good ' + getTimeGreeting() + ', Carlie. Select a client from the sidebar to get started, or ask me anything about your practice.');
+  });
   renderQuickActions();
 });
 
@@ -809,8 +811,6 @@ async function loadClients() {
     state.clients = data || [];
     renderClientList(state.clients);
     updateStats();
-    // Show welcome message after clients load
-    appendAIMessage('Good ' + getTimeGreeting() + ', Carlie. Select a client from the sidebar to get started, or ask me anything about your practice.');
   } catch (e) {
     document.getElementById('clientList').innerHTML =
       '<div style="padding:14px;font-size:12px;color:var(--muted)">Couldn\'t load clients. Please refresh.</div>';
