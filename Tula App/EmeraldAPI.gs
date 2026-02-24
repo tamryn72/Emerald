@@ -720,7 +720,8 @@ function emerald_getNewsletterPreview() {
   for (let i = 0; i < names.length; i++) {
     if (String(names[i]).trim() === 'Newsletter' && String(actives[i]).trim().toLowerCase() === 'yes') {
       return {
-        html: String(bodies[i] || '').trim()
+        subject: 'Awakening Doula - Newsletter',
+        body: String(bodies[i] || '').trim()
           .replace(/\{\{NAME\}\}/g, 'Preview Reader')
           .replace(/\{\{CLIENT_NAME\}\}/g, 'Preview Reader')
       };
