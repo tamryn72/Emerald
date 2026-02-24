@@ -8,7 +8,7 @@
 
 const CLAUDE_MODEL   = 'claude-opus-4-6';
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
-const MAX_TOKENS     = 1024;
+const MAX_TOKENS     = 2048;
 const MAX_TOOL_ITERATIONS = 10;
 const MAX_HISTORY_TURNS   = 20;
 
@@ -379,6 +379,22 @@ function getToolDefinitions() {
 
     /* ── Client Management ── */
     {
+      name: 'create_new_client',
+      description: 'Create a new client with a name and service type. This sets up their sheet, folder, and all default data.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', description: 'Full client name.' },
+          clientType: {
+            type: 'string',
+            enum: ['Akashic', 'Counseling', 'Soul Emergence'],
+            description: 'The type of service the client is receiving.'
+          }
+        },
+        required: ['name', 'clientType']
+      }
+    },
+    {
       name: 'mark_client_complete',
       description: 'Mark a client as complete and add them to the Past Clients list. REQUIRES confirmation.',
       input_schema: {
@@ -501,15 +517,27 @@ function getToolDefinitions() {
       }
     },
     {
-      name: 'delete_session',
-      description: 'Delete an upcoming calendar session for a client. REQUIRES confirmation.',
+      name: 'get_upcoming_sessions',
+      description: 'Get a list of upcoming calendar sessions for a client, including their event IDs. Use this before delete_session_by_event_id to let Carlie choose which session to delete.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          clientName: { type: 'string' }
+        },
+        required: ['clientName']
+      }
+    },
+    {
+      name: 'delete_session_by_event_id',
+      description: 'Delete a specific calendar session by its event ID. Use get_upcoming_sessions first to get the event ID. REQUIRES confirmation.',
       input_schema: {
         type: 'object',
         properties: {
           clientName: { type: 'string' },
+          eventId: { type: 'string', description: 'The calendar event ID from get_upcoming_sessions.' },
           confirmed: { type: 'boolean' }
         },
-        required: ['clientName', 'confirmed']
+        required: ['clientName', 'eventId', 'confirmed']
       }
     },
 
@@ -563,6 +591,11 @@ function getToolDefinitions() {
         },
         required: ['clientName', 'templateName', 'confirmed']
       }
+    },
+    {
+      name: 'preview_newsletter',
+      description: 'Preview the current newsletter content before sending. Returns the newsletter subject and body HTML.',
+      input_schema: { type: 'object', properties: {}, required: [] }
     },
     {
       name: 'send_newsletter',

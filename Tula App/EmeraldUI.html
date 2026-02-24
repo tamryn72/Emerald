@@ -25,8 +25,6 @@
       --user-bubble: #E8654A;
       --glow:        rgba(212, 167, 98, 0.20);
       --shadow:      rgba(123, 63, 42, 0.10);
-
-      /* Typography */
       --font-serif:  'Georgia', 'Times New Roman', serif;
       --font-sans:   'Google Sans', 'Helvetica Neue', Arial, sans-serif;
     }
@@ -43,11 +41,11 @@
     }
 
     /* ─────────────────────────────────────────
-       SIDEBAR — CLIENT LIST
+       SIDEBAR
     ───────────────────────────────────────── */
     .sidebar {
-      width: 260px;
-      min-width: 260px;
+      width: 250px;
+      min-width: 250px;
       background: var(--surface);
       border-right: 1px solid var(--border);
       display: flex;
@@ -57,20 +55,20 @@
       z-index: 100;
     }
     .sidebar-header {
-      padding: 20px 16px 14px;
+      padding: 18px 14px 12px;
       border-bottom: 1px solid var(--border);
     }
     .sidebar-brand {
       font-family: var(--font-serif);
-      font-size: 11px;
+      font-size: 10px;
       color: var(--muted);
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .sidebar-search {
       width: 100%;
-      padding: 8px 12px;
+      padding: 7px 12px;
       border: 1px solid var(--border);
       border-radius: 20px;
       background: var(--bg);
@@ -79,41 +77,22 @@
       outline: none;
       font-family: var(--font-sans);
     }
-    .sidebar-search:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px var(--glow);
-    }
+    .sidebar-search:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--glow); }
     .sidebar-search::placeholder { color: var(--muted); }
-    .client-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 8px 0;
-    }
+
+    .client-list { flex: 1; overflow-y: auto; padding: 6px 0; }
+
     .client-card {
-      padding: 12px 16px;
+      padding: 10px 14px;
       cursor: pointer;
       transition: background 0.15s;
       border-left: 3px solid transparent;
-      position: relative;
     }
     .client-card:hover { background: var(--bg); }
-    .client-card.active {
-      background: #FEF0E8;
-      border-left-color: var(--primary);
-    }
-    .client-card-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 3px;
-    }
-    .client-card-meta {
-      font-size: 11px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .client-card.active { background: #FEF0E8; border-left-color: var(--primary); }
+    .client-card-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .client-card-meta { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+
     .badge {
       display: inline-block;
       padding: 1px 6px;
@@ -122,23 +101,18 @@
       font-weight: 600;
       letter-spacing: 0.3px;
     }
-    .badge-akashic   { background: #EDE7F6; color: #6B3FA0; }
-    .badge-counseling{ background: #E8F5E9; color: #2E7D32; }
-    .badge-soul      { background: #FFF3E0; color: #E65100; }
-    .badge-active    { background: #E8F5E9; color: #2E7D32; }
-    .badge-complete  { background: #F5F5F5; color: #757575; }
-    .week-pill {
-      font-size: 10px;
-      color: var(--primary);
-      font-weight: 600;
-    }
-    .sidebar-footer {
-      padding: 12px 16px;
-      border-top: 1px solid var(--border);
-    }
+    .badge-akashic    { background: #EDE7F6; color: #6B3FA0; }
+    .badge-counseling { background: #E8F5E9; color: #2E7D32; }
+    .badge-soul       { background: #FFF3E0; color: #E65100; }
+    .badge-active     { background: #E8F5E9; color: #2E7D32; }
+    .badge-complete   { background: #F5F5F5; color: #757575; }
+    .week-pill        { font-size: 10px; color: var(--primary); font-weight: 600; }
+
+    .sidebar-footer { padding: 10px 14px; border-top: 1px solid var(--border); }
+    .sidebar-stats { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 8px; }
     .btn-new-client {
       width: 100%;
-      padding: 10px;
+      padding: 9px;
       background: var(--primary);
       color: white;
       border: none;
@@ -147,35 +121,21 @@
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
-      letter-spacing: 0.3px;
     }
     .btn-new-client:hover { background: var(--primary-dk); }
-    .sidebar-stats {
-      font-size: 11px;
-      color: var(--muted);
-      text-align: center;
-      margin-bottom: 10px;
-    }
 
     /* ─────────────────────────────────────────
        MAIN AREA
     ───────────────────────────────────────── */
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      height: 100dvh;
-    }
+    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100dvh; }
 
-    /* Header */
     .header {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 14px 18px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex-shrink: 0;
     }
     .header-menu-btn {
@@ -187,37 +147,27 @@
       font-size: 20px;
       line-height: 1;
       padding: 4px;
+      min-width: 32px;
+      min-height: 32px;
+      align-items: center;
+      justify-content: center;
     }
-    .header-gem {
-      font-size: 22px;
-      line-height: 1;
-    }
+    .header-gem { font-size: 20px; line-height: 1; }
     .header-titles { flex: 1; min-width: 0; }
-    .header-name {
-      font-family: var(--font-serif);
-      font-size: 18px;
-      font-weight: normal;
-      color: var(--deep);
-      letter-spacing: 0.5px;
-    }
-    .header-subtitle {
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
+    .header-name { font-family: var(--font-serif); font-size: 17px; font-weight: normal; color: var(--deep); }
+    .header-subtitle { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
     .header-client-pill {
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 5px 12px;
+      border-radius: 14px;
+      padding: 4px 10px;
       font-size: 12px;
       color: var(--deep);
       font-weight: 500;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 160px;
+      max-width: 140px;
       cursor: pointer;
       transition: border-color 0.2s;
     }
@@ -228,47 +178,43 @@
     .chat-area {
       flex: 1;
       overflow-y: auto;
-      padding: 18px 16px;
+      padding: 16px 14px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
       scroll-behavior: smooth;
     }
 
     .message-row {
       display: flex;
       gap: 8px;
-      max-width: 86%;
-      animation: fadeIn 0.25s ease;
+      max-width: 88%;
+      animation: fadeIn 0.22s ease;
     }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
 
     .message-row.ai  { align-self: flex-start; }
-    .message-row.user{ align-self: flex-end; flex-direction: row-reverse; }
+    .message-row.user { align-self: flex-end; flex-direction: row-reverse; }
 
     .msg-avatar {
-      width: 28px;
-      height: 28px;
+      width: 26px; height: 26px;
       border-radius: 50%;
       background: var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
       flex-shrink: 0;
       margin-top: 2px;
     }
-
     .msg-bubble {
-      padding: 11px 14px;
-      border-radius: 18px;
-      font-size: 14px;
+      padding: 10px 13px;
+      border-radius: 16px;
+      font-size: 13.5px;
       line-height: 1.55;
       max-width: 100%;
       white-space: pre-wrap;
       word-break: break-word;
     }
-    .message-row.ai  .msg-bubble {
+    .message-row.ai .msg-bubble {
       background: var(--ai-bubble);
       border: 1px solid var(--border);
       border-bottom-left-radius: 4px;
@@ -279,29 +225,20 @@
       color: white;
       border-bottom-right-radius: 4px;
     }
-
-    .msg-time {
-      font-size: 10px;
-      color: var(--muted);
-      margin-top: 3px;
-      padding: 0 4px;
-      align-self: flex-end;
-    }
+    .msg-time { font-size: 10px; color: var(--muted); margin-top: 2px; padding: 0 3px; align-self: flex-end; }
 
     /* Typing indicator */
     .typing-indicator {
-      display: flex;
-      gap: 4px;
-      padding: 12px 14px;
+      display: flex; gap: 4px;
+      padding: 11px 13px;
       background: var(--ai-bubble);
       border: 1px solid var(--border);
-      border-radius: 18px;
+      border-radius: 16px;
       border-bottom-left-radius: 4px;
       width: fit-content;
     }
     .typing-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px; height: 6px;
       background: var(--gold);
       border-radius: 50%;
       animation: typingPulse 1.2s infinite;
@@ -310,77 +247,59 @@
     .typing-dot:nth-child(3) { animation-delay: 0.4s; }
     @keyframes typingPulse {
       0%, 60%, 100% { opacity: 0.3; transform: scale(0.85); }
-      30% { opacity: 1; transform: scale(1); }
+      30%            { opacity: 1;   transform: scale(1); }
     }
 
-    /* Confirm card (inline) */
-    .confirm-card {
+    /* Home State */
+    .home-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 20px 16px;
+      gap: 6px;
+      text-align: center;
+    }
+    .home-gem { font-size: 42px; opacity: 0.55; line-height: 1; }
+    .home-title { font-family: var(--font-serif); font-size: 19px; color: var(--deep); opacity: 0.75; margin-top: 4px; }
+    .home-sub { font-size: 12px; color: var(--muted); line-height: 1.6; max-width: 220px; }
+    .home-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 14px;
+      max-width: 300px;
+    }
+    .home-action-btn {
+      padding: 8px 14px;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 16px;
-      margin-top: 6px;
-      max-width: 320px;
-    }
-    .confirm-card-text {
-      font-size: 13px;
-      color: var(--text);
-      margin-bottom: 12px;
-      line-height: 1.5;
-    }
-    .confirm-card-actions {
-      display: flex;
-      gap: 8px;
-    }
-    .btn-confirm {
-      flex: 1;
-      padding: 9px 12px;
-      border: none;
       border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 12px;
+      color: var(--deep);
       cursor: pointer;
-      transition: background 0.15s;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
     }
-    .btn-confirm.yes { background: var(--primary); color: white; }
-    .btn-confirm.yes:hover { background: var(--primary-dk); }
-    .btn-confirm.no  { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
-    .btn-confirm.no:hover  { border-color: var(--muted); }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--deep);
-      color: white;
-      padding: 10px 18px;
-      border-radius: 20px;
-      font-size: 13px;
-      z-index: 999;
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-    .toast.show { opacity: 1; }
+    .home-action-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+    .home-action-btn.gold { border-color: var(--gold); }
+    .home-action-btn.gold:hover { background: var(--gold); color: white; }
 
     /* Quick Actions Row */
     .quick-actions {
       background: var(--surface);
       border-top: 1px solid var(--border);
-      padding: 10px 12px;
+      padding: 8px 10px;
       overflow-x: auto;
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-shrink: 0;
       scrollbar-width: none;
     }
     .quick-actions::-webkit-scrollbar { display: none; }
     .action-chip {
       flex-shrink: 0;
-      padding: 7px 14px;
+      padding: 6px 12px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 20px;
@@ -392,144 +311,135 @@
       transition: all 0.15s;
     }
     .action-chip:hover, .action-chip.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
+      background: var(--primary); color: white; border-color: var(--primary);
+    }
+    .action-chip.gold-chip { border-color: var(--gold); }
+    .action-chip.gold-chip:hover, .action-chip.gold-chip.active {
+      background: var(--gold); color: white; border-color: var(--gold);
     }
 
     /* Input Bar */
     .input-bar {
       background: var(--surface);
       border-top: 1px solid var(--border);
-      padding: 10px 12px;
+      padding: 8px 10px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-shrink: 0;
     }
     .input-field {
       flex: 1;
-      padding: 11px 16px;
+      padding: 10px 14px;
       border: 1px solid var(--border);
-      border-radius: 22px;
+      border-radius: 20px;
       background: var(--bg);
       font-size: 14px;
       color: var(--text);
       outline: none;
       font-family: var(--font-sans);
       resize: none;
-      max-height: 120px;
+      max-height: 100px;
       overflow-y: auto;
       line-height: 1.4;
     }
-    .input-field:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px var(--glow);
-    }
+    .input-field:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--glow); }
     .input-field::placeholder { color: var(--muted); }
     .send-btn {
-      width: 42px;
-      height: 42px;
+      width: 40px; height: 40px;
       background: var(--primary);
       border: none;
       border-radius: 50%;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       transition: background 0.15s, transform 0.1s;
       flex-shrink: 0;
     }
     .send-btn:hover { background: var(--primary-dk); transform: scale(1.05); }
     .send-btn:active { transform: scale(0.95); }
-    .send-btn svg { width: 18px; height: 18px; fill: white; }
+    .send-btn svg { width: 17px; height: 17px; fill: white; }
 
     /* ─────────────────────────────────────────
-       BOTTOM SHEET — Action Panel
+       BOTTOM SHEET
     ───────────────────────────────────────── */
     .sheet-overlay {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(44, 24, 16, 0.4);
       z-index: 200;
-      opacity: 0;
-      pointer-events: none;
+      opacity: 0; pointer-events: none;
       transition: opacity 0.3s;
     }
     .sheet-overlay.open { opacity: 1; pointer-events: all; }
 
     .bottom-sheet {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      max-height: 80dvh;
+      bottom: 0; left: 0; right: 0;
+      max-height: 78dvh;
       background: var(--surface);
       border-radius: 20px 20px 0 0;
       z-index: 201;
       transform: translateY(100%);
-      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
     }
     .bottom-sheet.open { transform: translateY(0); }
+
     .sheet-handle {
-      width: 40px;
-      height: 4px;
+      width: 36px; height: 4px;
       background: var(--border);
       border-radius: 2px;
-      margin: 12px auto 0;
+      margin: 10px auto 0;
+      flex-shrink: 0;
     }
     .sheet-header {
-      padding: 14px 20px 10px;
-      font-size: 12px;
+      padding: 12px 18px 10px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--deep);
       letter-spacing: 1.2px;
       text-transform: uppercase;
       border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
     }
     .sheet-content {
       overflow-y: auto;
-      padding: 14px 16px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      padding: 14px 16px 28px;
     }
-    .sheet-btn {
-      width: 100%;
-      padding: 13px 16px;
+
+    /* Compact pill grid (flex-wrap) — replaces full-width buttons */
+    .pill-section { margin-bottom: 14px; }
+    .pill-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .pill-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .action-pill {
+      padding: 7px 14px;
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      font-size: 14px;
-      color: var(--text);
-      text-align: left;
+      border-radius: 20px;
+      font-size: 12.5px;
+      color: var(--deep);
       cursor: pointer;
+      white-space: nowrap;
       transition: all 0.15s;
       font-family: var(--font-sans);
     }
-    .sheet-btn:hover {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
+    .action-pill:hover, .action-pill:active {
+      background: var(--primary); color: white; border-color: var(--primary);
     }
-    .sheet-btn.gold {
-      border-color: var(--gold);
-      color: var(--deep);
-      font-weight: 600;
-    }
-    .sheet-btn.gold:hover { background: var(--gold); color: white; }
+    .action-pill.gold { border-color: var(--gold); font-weight: 600; }
+    .action-pill.gold:hover { background: var(--gold); color: white; }
 
-    /* Soul Emergence workbook grid */
-    .workbook-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 4px;
-    }
+    /* Workbook grid (Soul Emergence) */
+    .workbook-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
     .workbook-btn {
-      padding: 10px 8px;
+      padding: 9px 6px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -537,41 +447,168 @@
       color: var(--deep);
       text-align: center;
       cursor: pointer;
-      line-height: 1.4;
+      line-height: 1.35;
       transition: all 0.15s;
+      font-family: var(--font-sans);
     }
-    .workbook-btn:hover {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-    .workbook-btn strong { display: block; font-size: 13px; margin-bottom: 2px; }
+    .workbook-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+    .workbook-btn strong { display: block; font-size: 12px; margin-bottom: 2px; }
 
     /* ─────────────────────────────────────────
-       EMPTY STATE
+       MODALS
     ───────────────────────────────────────── */
-    .empty-state {
-      flex: 1;
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(44, 24, 16, 0.5);
+      z-index: 400;
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
-      gap: 10px;
-      color: var(--muted);
-      text-align: center;
-      padding: 24px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.28s;
     }
-    .empty-gem { font-size: 48px; opacity: 0.5; }
-    .empty-title { font-family: var(--font-serif); font-size: 20px; color: var(--deep); opacity: 0.7; }
-    .empty-subtitle { font-size: 13px; line-height: 1.6; max-width: 240px; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal-dialog {
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      max-width: 500px;
+      padding-bottom: env(safe-area-inset-bottom, 16px);
+      transform: translateY(40px);
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      max-height: 90dvh;
+      overflow-y: auto;
+    }
+    .modal-overlay.open .modal-dialog { transform: translateY(0); }
+    .modal-dialog.modal-lg { max-height: 80dvh; }
+
+    .modal-handle {
+      width: 36px; height: 4px;
+      background: var(--border); border-radius: 2px;
+      margin: 10px auto 0;
+    }
+    .modal-header {
+      display: flex; align-items: center;
+      padding: 14px 18px 10px;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+    }
+    .modal-title { font-family: var(--font-serif); font-size: 17px; color: var(--deep); flex: 1; }
+    .modal-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 18px; line-height: 1;
+      padding: 4px; border-radius: 50%;
+      transition: color 0.15s;
+    }
+    .modal-close:hover { color: var(--primary); }
+    .modal-body { padding: 18px 18px 12px; }
+    .modal-footer {
+      display: flex; gap: 10px;
+      padding: 12px 18px 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* New Client Modal Fields */
+    .field-label { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px; margin-top: 14px; }
+    .field-label:first-child { margin-top: 0; }
+    .field-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg);
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      font-family: var(--font-sans);
+    }
+    .field-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--glow); }
+    .field-input::placeholder { color: var(--muted); }
+
+    .type-options { display: flex; gap: 8px; flex-wrap: wrap; }
+    .type-btn {
+      flex: 1;
+      min-width: 90px;
+      padding: 10px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg);
+      font-size: 12.5px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      font-family: var(--font-sans);
+    }
+    .type-btn:hover { border-color: var(--gold); }
+    .type-btn.selected { background: var(--primary); color: white; border-color: var(--primary); font-weight: 600; }
+
+    /* Modal buttons */
+    .modal-btn {
+      flex: 1;
+      padding: 11px;
+      border: none;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: var(--font-sans);
+    }
+    .modal-btn.primary { background: var(--primary); color: white; }
+    .modal-btn.primary:hover { background: var(--primary-dk); }
+    .modal-btn.secondary { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+    .modal-btn.secondary:hover { border-color: var(--muted); }
+    .modal-btn.gold-btn { background: var(--gold); color: white; }
+    .modal-btn.gold-btn:hover { background: var(--gold-dk); }
+
+    /* Newsletter Preview */
+    .newsletter-preview-frame {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      background: white;
+      max-height: 52dvh;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #333;
+    }
+    .newsletter-subject {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .newsletter-subject-val { font-size: 14px; color: var(--deep); margin-bottom: 14px; font-weight: 600; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 90px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--deep);
+      color: white;
+      padding: 9px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      z-index: 999;
+      opacity: 0;
+      transition: opacity 0.28s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
 
     /* ─────────────────────────────────────────
        MOBILE RESPONSIVE
     ───────────────────────────────────────── */
     @media (max-width: 680px) {
       .sidebar {
-        position: fixed;
-        top: 0; left: 0; bottom: 0;
+        position: fixed; top: 0; left: 0; bottom: 0;
         transform: translateX(-100%);
         box-shadow: 4px 0 24px var(--shadow);
       }
@@ -580,636 +617,769 @@
       .main { width: 100%; }
     }
 
-    /* Scrollbar */
+    /* Scrollbars */
     .chat-area::-webkit-scrollbar,
-    .client-list::-webkit-scrollbar { width: 4px; }
+    .client-list::-webkit-scrollbar,
+    .sheet-content::-webkit-scrollbar { width: 3px; }
     .chat-area::-webkit-scrollbar-track,
-    .client-list::-webkit-scrollbar-track { background: transparent; }
+    .client-list::-webkit-scrollbar-track,
+    .sheet-content::-webkit-scrollbar-track { background: transparent; }
     .chat-area::-webkit-scrollbar-thumb,
-    .client-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .client-list::-webkit-scrollbar-thumb,
+    .sheet-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-    /* Loading skeleton */
+    /* Skeleton */
     .skeleton {
       background: linear-gradient(90deg, var(--border) 25%, var(--bg) 50%, var(--border) 75%);
       background-size: 200% 100%;
       animation: shimmer 1.4s infinite;
-      border-radius: 6px;
-      height: 14px;
+      border-radius: 6px; height: 13px;
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
   </style>
 </head>
 <body>
 
-  <!-- ─── CLIENT SIDEBAR ─── -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-brand">Haven · The Awakening Doula</div>
-      <input class="sidebar-search" id="clientSearch" type="text" placeholder="Search clients..." oninput="filterClients()">
+<!-- ─── CLIENT SIDEBAR ─── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-brand">Haven · The Awakening Doula</div>
+    <input class="sidebar-search" id="clientSearch" type="text" placeholder="Search clients..." oninput="filterClients()">
+  </div>
+  <div class="client-list" id="clientList">
+    <div style="padding:10px 14px;display:flex;flex-direction:column;gap:7px">
+      <div class="skeleton" style="width:70%"></div>
+      <div class="skeleton" style="width:50%;height:10px"></div>
     </div>
-    <div class="client-list" id="clientList">
-      <!-- Skeleton placeholders -->
-      <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px">
-        <div class="skeleton" style="width:70%"></div>
-        <div class="skeleton" style="width:50%;height:10px"></div>
-      </div>
-      <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px">
-        <div class="skeleton" style="width:80%"></div>
-        <div class="skeleton" style="width:60%;height:10px"></div>
-      </div>
+    <div style="padding:10px 14px;display:flex;flex-direction:column;gap:7px">
+      <div class="skeleton" style="width:80%"></div>
+      <div class="skeleton" style="width:60%;height:10px"></div>
     </div>
-    <div class="sidebar-footer">
-      <div class="sidebar-stats" id="clientStats">Loading...</div>
-      <button class="btn-new-client" onclick="openNewClientModal()">+ New Client</button>
+    <div style="padding:10px 14px;display:flex;flex-direction:column;gap:7px">
+      <div class="skeleton" style="width:65%"></div>
+      <div class="skeleton" style="width:45%;height:10px"></div>
     </div>
-  </aside>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sidebar-stats" id="clientStats">Loading...</div>
+    <button class="btn-new-client" onclick="openNewClientModal()">+ New Client</button>
+  </div>
+</aside>
 
-  <!-- ─── MAIN AREA ─── -->
-  <div class="main">
-    <!-- Header -->
-    <header class="header">
-      <button class="header-menu-btn" id="menuBtn" onclick="toggleSidebar()" aria-label="Open clients">
-        ☰
-      </button>
-      <div class="header-gem">💎</div>
-      <div class="header-titles">
-        <div class="header-name">Emerald</div>
-        <div class="header-subtitle">Haven · The Awakening Doula</div>
-      </div>
-      <div class="header-client-pill no-client" id="activeClientPill" onclick="toggleSidebar()">
-        Select a client
-      </div>
-    </header>
+<!-- ─── MAIN AREA ─── -->
+<div class="main">
+  <header class="header">
+    <button class="header-menu-btn" id="menuBtn" onclick="toggleSidebar()" aria-label="Clients">☰</button>
+    <div class="header-gem">💎</div>
+    <div class="header-titles">
+      <div class="header-name">Emerald</div>
+      <div class="header-subtitle">Haven · The Awakening Doula</div>
+    </div>
+    <div class="header-client-pill no-client" id="activeClientPill" onclick="toggleSidebar()">
+      Select a client
+    </div>
+  </header>
 
-    <!-- Chat Area -->
-    <div class="chat-area" id="chatArea">
-      <div class="empty-state" id="emptyState">
-        <div class="empty-gem">💎</div>
-        <div class="empty-title">Welcome, Carlie</div>
-        <div class="empty-subtitle">Select a client from the sidebar to get started, or ask me anything.</div>
+  <div class="chat-area" id="chatArea">
+    <!-- Home state — shown until first message -->
+    <div class="home-state" id="homeState">
+      <div class="home-gem">💎</div>
+      <div class="home-title">Welcome, Carlie</div>
+      <div class="home-sub">Select a client from the sidebar to get started, or ask me anything.</div>
+      <div class="home-actions">
+        <button class="home-action-btn gold" onclick="homeAction('preview_newsletter')">Preview Newsletter</button>
+        <button class="home-action-btn" onclick="openSheet('home-newsletter')">Send Newsletter</button>
+        <button class="home-action-btn" onclick="openSheet('home-past-clients')">Past Client Offer</button>
+        <button class="home-action-btn" onclick="openSheet('home-leads')">Manage Leads</button>
+        <button class="home-action-btn" onclick="homeAction('refresh_dashboard')">Refresh Dashboard</button>
       </div>
     </div>
+  </div>
 
-    <!-- Quick Actions Row -->
-    <div class="quick-actions" id="quickActions">
+  <!-- Quick Action Chips — adapts by state -->
+  <div class="quick-actions" id="quickActions">
+    <!-- Rendered by JS based on client selected or not -->
+  </div>
+
+  <div class="input-bar">
+    <textarea
+      class="input-field"
+      id="chatInput"
+      placeholder="Ask Emerald anything..."
+      rows="1"
+      onkeydown="handleInputKeydown(event)"
+      oninput="autoResize(this)"
+    ></textarea>
+    <button class="send-btn" onclick="sendMessage()" aria-label="Send">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ─── BOTTOM SHEET ─── -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+<div class="bottom-sheet" id="bottomSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header" id="sheetTitle">Actions</div>
+  <div class="sheet-content" id="sheetContent"></div>
+</div>
+
+<!-- ─── NEW CLIENT MODAL ─── -->
+<div class="modal-overlay" id="newClientModal" onclick="closeNewClientModal(event)">
+  <div class="modal-dialog" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">New Client</div>
+      <button class="modal-close" onclick="closeNewClientModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-label">Client Name</div>
+      <input class="field-input" id="newClientName" type="text" placeholder="Full name" autocomplete="off" onkeydown="if(event.key==='Enter') submitNewClient()">
+
+      <div class="field-label" style="margin-top:16px">Service Type</div>
+      <div class="type-options">
+        <button class="type-btn" data-type="Akashic" onclick="selectClientType(this)">Akashic</button>
+        <button class="type-btn" data-type="Counseling" onclick="selectClientType(this)">Counseling</button>
+        <button class="type-btn" data-type="Soul Emergence" onclick="selectClientType(this)">Soul Emergence</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeNewClientModal()">Cancel</button>
+      <button class="modal-btn primary" onclick="submitNewClient()">Create Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── NEWSLETTER PREVIEW MODAL ─── -->
+<div class="modal-overlay" id="newsletterModal" onclick="closeNewsletterModal(event)">
+  <div class="modal-dialog modal-lg" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Newsletter Preview</div>
+      <button class="modal-close" onclick="closeNewsletterModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="newsletterSubjectLabel" class="newsletter-subject">Subject</div>
+      <div id="newsletterSubjectVal" class="newsletter-subject-val">Loading...</div>
+      <div class="newsletter-preview-frame" id="newsletterBody">
+        <div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">Loading preview...</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeNewsletterModal()">Close</button>
+      <button class="modal-btn gold-btn" onclick="sendNewsletterFromPreview()">Send to All Leads</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TOAST ─── -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+const state = {
+  clients: [],
+  activeClient: null,
+  conversationHistory: [],
+  isLoading: false,
+  selectedClientType: null,
+  webAppUrl: '<?= webAppUrl ?>'
+};
+
+const SESSION_NAMES = {
+  1:'The Threshold', 2:'Akashic Records Reading', 3:'Integration & Intention',
+  4:'Akashic Clearing', 5:'Befriending Your Nervous System', 6:'Parts Work Integration',
+  7:'Timeline Therapy & Reprocessing', 8:'Clearing Old Programming', 9:'Honoring What Was',
+  10:'Releasing Expectations & Ritual Goodbye', 11:'Final Akashic Clearing', 12:'Emergence & Integration'
+};
+
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  loadClients();
+  renderQuickActions();
+});
+
+async function loadClients() {
+  try {
+    const data = await apiCall({ action: 'getClients' });
+    state.clients = data || [];
+    renderClientList(state.clients);
+    updateStats();
+    // Show welcome message after clients load
+    appendAIMessage('Good ' + getTimeGreeting() + ', Carlie. Select a client from the sidebar to get started, or ask me anything about your practice.');
+  } catch (e) {
+    document.getElementById('clientList').innerHTML =
+      '<div style="padding:14px;font-size:12px;color:var(--muted)">Couldn\'t load clients. Please refresh.</div>';
+    appendAIMessage('I had trouble loading your client list. Please refresh the page.');
+  }
+}
+
+function getTimeGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'morning';
+  if (h < 17) return 'afternoon';
+  return 'evening';
+}
+
+
+/* ═══════════════════════════════════════════════
+   CLIENT LIST
+═══════════════════════════════════════════════ */
+function renderClientList(clients) {
+  const list = document.getElementById('clientList');
+  if (!clients || !clients.length) {
+    list.innerHTML = '<div style="padding:14px;font-size:13px;color:var(--muted);text-align:center">No clients yet.<br>Create your first client below.</div>';
+    return;
+  }
+  list.innerHTML = clients.map(c => clientCardHTML(c)).join('');
+}
+
+function clientCardHTML(c) {
+  const t = (c.clientType || '').toLowerCase();
+  const typeClass = t.includes('akashic') ? 'badge-akashic' : t.includes('counsel') ? 'badge-counseling' : 'badge-soul';
+  const typeLabel = t.includes('akashic') ? 'Akashic' : t.includes('counsel') ? 'Counseling' : 'Soul';
+  const statusClass = c.status === 'Active' ? 'badge-active' : 'badge-complete';
+  const weekText = c.currentWeek ? `<span class="week-pill">Wk ${c.currentWeek}</span>` : '';
+  const isActive = state.activeClient && state.activeClient.name === c.name;
+
+  return `<div class="client-card ${isActive ? 'active' : ''}" onclick="selectClientByName('${escAttr(c.name)}')">
+    <div class="client-card-name">${escHtml(c.name)}</div>
+    <div class="client-card-meta">
+      <span class="badge ${typeClass}">${typeLabel}</span>
+      <span class="badge ${statusClass}">${c.status}</span>
+      ${weekText}
+    </div>
+  </div>`;
+}
+
+function filterClients() {
+  const q = document.getElementById('clientSearch').value.toLowerCase();
+  renderClientList(state.clients.filter(c => c.name.toLowerCase().includes(q)));
+}
+
+function updateStats() {
+  const active = state.clients.filter(c => c.status === 'Active').length;
+  const complete = state.clients.filter(c => c.status !== 'Active').length;
+  document.getElementById('clientStats').textContent = active + ' active · ' + complete + ' complete';
+}
+
+function selectClientByName(name) {
+  const client = state.clients.find(c => c.name === name);
+  if (client) selectClient(client);
+}
+
+function selectClient(client) {
+  state.activeClient = client;
+
+  // Update header pill
+  const pill = document.getElementById('activeClientPill');
+  pill.textContent = client.name;
+  pill.classList.remove('no-client');
+
+  renderClientList(state.clients);
+  renderQuickActions();
+  if (window.innerWidth <= 680) closeSidebar();
+
+  const t = (client.clientType || '').toLowerCase();
+  const typeLabel = t.includes('soul') ? `Soul Emergence (Week ${client.currentWeek || 1} of 12)`
+                  : (client.clientType || client.serviceType || 'client');
+  appendAIMessage(`Switched to ${client.name} — ${typeLabel}.\n\nWhat would you like to do?`);
+}
+
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR TOGGLE
+═══════════════════════════════════════════════ */
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+function closeSidebar()  { document.getElementById('sidebar').classList.remove('open'); }
+
+
+/* ═══════════════════════════════════════════════
+   QUICK ACTIONS — adapts by state
+═══════════════════════════════════════════════ */
+function renderQuickActions() {
+  const el = document.getElementById('quickActions');
+  if (state.activeClient) {
+    el.innerHTML = `
       <div class="action-chip" onclick="openSheet('documents')">Documents</div>
       <div class="action-chip" onclick="openSheet('onboarding')">Onboarding</div>
       <div class="action-chip" onclick="openSheet('scheduling')">Schedule</div>
       <div class="action-chip" onclick="openSheet('financial')">Financial</div>
       <div class="action-chip" onclick="openSheet('emails')">Emails</div>
-      <div class="action-chip" onclick="openSheet('utilities')">Utilities</div>
-    </div>
-
-    <!-- Input Bar -->
-    <div class="input-bar">
-      <textarea
-        class="input-field"
-        id="chatInput"
-        placeholder="Ask Emerald anything..."
-        rows="1"
-        onkeydown="handleInputKeydown(event)"
-        oninput="autoResize(this)"
-      ></textarea>
-      <button class="send-btn" onclick="sendMessage()" aria-label="Send">
-        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- ─── SHEET OVERLAY ─── -->
-  <div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
-
-  <!-- ─── BOTTOM SHEET ─── -->
-  <div class="bottom-sheet" id="bottomSheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-header" id="sheetTitle">Actions</div>
-    <div class="sheet-content" id="sheetContent"></div>
-  </div>
-
-  <!-- ─── TOAST ─── -->
-  <div class="toast" id="toast"></div>
-
-  <script>
-    /* ═══════════════════════════════════════════════
-       STATE
-    ═══════════════════════════════════════════════ */
-    const state = {
-      clients: [],
-      activeClient: null,
-      conversationHistory: [],
-      isLoading: false,
-      webAppUrl: '' // Set automatically — same script
-    };
-
-    const SESSION_NAMES = {
-      1:'The Threshold', 2:'Akashic Records Reading', 3:'Integration & Intention',
-      4:'Akashic Clearing', 5:'Befriending Your Nervous System', 6:'Parts Work Integration',
-      7:'Timeline Therapy & Reprocessing', 8:'Clearing Old Programming', 9:'Honoring What Was',
-      10:'Releasing Expectations & Ritual Goodbye', 11:'Final Akashic Clearing', 12:'Emergence & Integration'
-    };
+      <div class="action-chip" onclick="openSheet('utilities')">More</div>
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="action-chip gold-chip" onclick="homeAction('preview_newsletter')">Newsletter Preview</div>
+      <div class="action-chip" onclick="openSheet('home-newsletter')">Send Newsletter</div>
+      <div class="action-chip" onclick="openSheet('home-past-clients')">Past Client Offer</div>
+      <div class="action-chip" onclick="openSheet('home-leads')">Leads</div>
+      <div class="action-chip" onclick="homeAction('refresh_dashboard')">Dashboard</div>
+    `;
+  }
+}
 
 
-    /* ═══════════════════════════════════════════════
-       INIT
-    ═══════════════════════════════════════════════ */
-    document.addEventListener('DOMContentLoaded', () => {
-      // Get the web app URL from the page URL
-      state.webAppUrl = window.location.href.split('?')[0];
-      loadClients();
-      restoreSession();
+/* ═══════════════════════════════════════════════
+   CHAT
+═══════════════════════════════════════════════ */
+function handleInputKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+async function sendMessage(overrideText) {
+  const input = document.getElementById('chatInput');
+  const text = overrideText || input.value.trim();
+  if (!text || state.isLoading) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+
+  // Remove home state if present
+  const homeEl = document.getElementById('homeState');
+  if (homeEl) homeEl.remove();
+
+  appendUserMessage(text);
+  showTyping();
+  state.isLoading = true;
+
+  try {
+    const result = await apiCall({
+      action: 'chat',
+      message: text,
+      clientName: state.activeClient ? state.activeClient.name : null,
+      history: state.conversationHistory.slice(-20)
     });
 
-    async function loadClients() {
-      try {
-        const data = await apiCall({ action: 'getClients' });
-        state.clients = data || [];
-        renderClientList(state.clients);
-        updateStats();
-      } catch (e) {
-        document.getElementById('clientList').innerHTML =
-          '<div style="padding:16px;font-size:12px;color:var(--muted)">Couldn\'t load clients. Please refresh.</div>';
+    hideTyping();
+
+    if (result && result.reply) {
+      appendAIMessage(result.reply);
+      state.conversationHistory.push(
+        { role: 'user', content: text },
+        { role: 'assistant', content: result.reply }
+      );
+      if (result.actions && result.actions.length > 0) {
+        loadClients(); // Refresh sidebar if data changed
       }
+    } else {
+      appendAIMessage('Something went wrong. Please try again.');
     }
+  } catch (err) {
+    hideTyping();
+    appendAIMessage('I had trouble connecting. Please check your connection and try again.');
+    console.error(err);
+  }
 
-    async function restoreSession() {
-      try {
-        const mem = await apiCall({ action: 'getMemory' });
-        if (mem && mem.lastClient) {
-          const client = state.clients.find(c => c.name === mem.lastClient);
-          if (client) selectClient(client, false);
-        }
-      } catch (_) {}
+  state.isLoading = false;
+}
 
-      // Welcome message
-      if (!state.activeClient) {
-        appendAIMessage('Good ' + getTimeGreeting() + ', Carlie. Select a client from the sidebar to get started, or ask me anything about your practice.');
-      }
+function appendUserMessage(text) {
+  const row = document.createElement('div');
+  row.className = 'message-row user';
+  row.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+      <div class="msg-bubble">${escHtml(text)}</div>
+      <div class="msg-time">${formatTime(new Date())}</div>
+    </div>`;
+  getChatArea().appendChild(row);
+  scrollToBottom();
+}
+
+function appendAIMessage(text) {
+  const row = document.createElement('div');
+  row.className = 'message-row ai';
+  row.innerHTML = `
+    <div class="msg-avatar">💎</div>
+    <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+      <div class="msg-bubble">${renderMarkdown(text)}</div>
+      <div class="msg-time">${formatTime(new Date())}</div>
+    </div>`;
+  getChatArea().appendChild(row);
+  scrollToBottom();
+}
+
+let typingRow = null;
+function showTyping() {
+  typingRow = document.createElement('div');
+  typingRow.className = 'message-row ai';
+  typingRow.innerHTML = `
+    <div class="msg-avatar">💎</div>
+    <div class="typing-indicator">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>`;
+  getChatArea().appendChild(typingRow);
+  scrollToBottom();
+}
+function hideTyping() { if (typingRow) { typingRow.remove(); typingRow = null; } }
+
+function getChatArea() { return document.getElementById('chatArea'); }
+function scrollToBottom() {
+  const a = document.getElementById('chatArea');
+  setTimeout(() => { a.scrollTop = a.scrollHeight; }, 50);
+}
+
+
+/* ═══════════════════════════════════════════════
+   BOTTOM SHEET
+═══════════════════════════════════════════════ */
+const SECTIONS = {
+  /* ── Client sections ── */
+  documents: {
+    title: 'Documents',
+    build: buildDocumentsSection
+  },
+  onboarding: {
+    title: 'Onboarding',
+    build: () => pillSection('', [
+      { label: 'Send Onboarding Email', action: () => trigger('send_onboarding_email') },
+      { label: 'Check Intake Status',   action: () => trigger('check_intake_status') },
+      { label: 'Create Intake Doc',     action: () => trigger('create_intake_doc') }
+    ])
+  },
+  scheduling: {
+    title: 'Scheduling',
+    build: () => pillSection('', [
+      { label: 'Add Next Session to Calendar', action: () => trigger('add_session') },
+      { label: 'Delete a Session',             action: () => trigger('delete_session') }
+    ])
+  },
+  financial: {
+    title: 'Financial',
+    build: () => pillSection('', [
+      { label: 'Record Payment', action: () => trigger('record_payment') },
+      { label: 'Send Receipt',   action: () => trigger('send_receipt') },
+      { label: 'Open Budget',    action: () => trigger('get_budget_url') }
+    ])
+  },
+  emails: {
+    title: 'Emails & Marketing',
+    build: () => pillSection('', [
+      { label: 'Preview Newsletter',           action: () => { closeSheet(); openNewsletterPreview(); }, gold: true },
+      { label: 'Send Newsletter to All Leads', action: () => trigger('send_newsletter') },
+      { label: 'Past Client Offer — All',      action: () => trigger('send_past_client_offer_all') },
+      { label: 'Past Client Offer — One',      action: () => trigger('send_past_client_offer_one') }
+    ])
+  },
+  utilities: {
+    title: 'Utilities',
+    build: () => pillSection('', [
+      { label: 'Open Client Folder', action: () => trigger('get_client_folder_url') },
+      { label: 'Refresh Dashboard',  action: () => trigger('refresh_dashboard') },
+      { label: 'Refresh Leads',      action: () => trigger('refresh_leads') },
+      { label: 'Mark Client Complete', action: () => trigger('mark_client_complete') }
+    ])
+  },
+  /* ── Home (no client) sections ── */
+  'home-newsletter': {
+    title: 'Newsletter',
+    build: () => pillSection('', [
+      { label: 'Preview Newsletter',           action: () => { closeSheet(); openNewsletterPreview(); }, gold: true },
+      { label: 'Send Newsletter to All Leads', action: () => homeAction('send_newsletter') }
+    ])
+  },
+  'home-past-clients': {
+    title: 'Past Client Offer',
+    build: () => pillSection('', [
+      { label: 'Send Offer to All Past Clients', action: () => homeAction('send_past_client_offer_all') },
+      { label: 'Send Offer to One Email',        action: () => homeAction('send_past_client_offer_one') }
+    ])
+  },
+  'home-leads': {
+    title: 'Leads',
+    build: () => pillSection('', [
+      { label: 'Add a Lead',       action: () => homeAction('add_lead') },
+      { label: 'Refresh Leads',    action: () => homeAction('refresh_leads') },
+      { label: 'Refresh Dashboard',action: () => homeAction('refresh_dashboard') }
+    ])
+  }
+};
+
+function openSheet(key) {
+  const section = SECTIONS[key];
+  if (!section) return;
+
+  document.getElementById('sheetTitle').textContent = section.title;
+  const content = document.getElementById('sheetContent');
+  content.innerHTML = '';
+  section.build(content);
+
+  document.getElementById('sheetOverlay').classList.add('open');
+  document.getElementById('bottomSheet').classList.add('open');
+
+  document.querySelectorAll('.action-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.action-chip').forEach(c => {
+    if (c.textContent.trim().toLowerCase() === section.title.split(' ')[0].toLowerCase()) {
+      c.classList.add('active');
     }
+  });
+}
 
-    function getTimeGreeting() {
-      const h = new Date().getHours();
-      if (h < 12) return 'morning';
-      if (h < 17) return 'afternoon';
-      return 'evening';
+function closeSheet() {
+  document.getElementById('sheetOverlay').classList.remove('open');
+  document.getElementById('bottomSheet').classList.remove('open');
+  document.querySelectorAll('.action-chip').forEach(c => c.classList.remove('active'));
+}
+
+/* Helper: builds a flex-wrap pill grid, appends to sheetContent */
+function pillSection(label, items) {
+  const content = document.getElementById('sheetContent');
+  const wrapper = document.createElement('div');
+  wrapper.className = 'pill-section';
+  if (label) {
+    const lbl = document.createElement('div');
+    lbl.className = 'pill-section-label';
+    lbl.textContent = label;
+    wrapper.appendChild(lbl);
+  }
+  const grid = document.createElement('div');
+  grid.className = 'pill-grid';
+  items.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'action-pill' + (item.gold ? ' gold' : '');
+    btn.textContent = item.label;
+    btn.onclick = () => { item.action(); };
+    grid.appendChild(btn);
+  });
+  wrapper.appendChild(grid);
+  content.appendChild(wrapper);
+}
+
+/* Documents — dynamic by client type */
+function buildDocumentsSection(content) {
+  const type = (state.activeClient && state.activeClient.clientType || '').toLowerCase();
+
+  if (type.includes('akashic')) {
+    pillSection('Generate', [
+      'Session Notes','Integration Guide','Breathwork Notes','Akashic Notes','Client Summary'
+    ].map(d => ({ label: d, action: () => { trigger('generate_document', d); } })));
+
+    pillSection('Literature Packets', [
+      'Intro Packet','Packet 2','Packet 3'
+    ].map(p => ({ label: p, action: () => { trigger('generate_client_packet', p); } })));
+
+  } else if (type.includes('counsel')) {
+    pillSection('Generate', [
+      'Counseling Notes','Client Homework','Client Summary'
+    ].map(d => ({ label: d, action: () => { trigger('generate_document', d); } })));
+
+  } else if (type.includes('soul') || type.includes('emergence')) {
+    pillSection('Documents', [
+      { label: 'Create Private Journal',     action: () => trigger('create_journal') },
+      { label: 'Open Journal',               action: () => trigger('get_journal_url') },
+      { label: 'Soul Emergence Summary',     action: () => trigger('generate_document', 'Soul Emergence Summary') },
+      { label: 'Client Summary',             action: () => trigger('generate_document', 'Client Summary') }
+    ]);
+
+    // Workbook grid
+    const wSection = document.createElement('div');
+    wSection.className = 'pill-section';
+    wSection.innerHTML = '<div class="pill-section-label">Send Weekly Workbook</div>';
+    const grid = document.createElement('div');
+    grid.className = 'workbook-grid';
+    for (let w = 1; w <= 12; w++) {
+      const btn = document.createElement('button');
+      btn.className = 'workbook-btn';
+      btn.innerHTML = `<strong>Wk ${w}</strong>${SESSION_NAMES[w]}`;
+      btn.onclick = () => { trigger('send_workbook', w); };
+      grid.appendChild(btn);
     }
-
-
-    /* ═══════════════════════════════════════════════
-       CLIENT LIST
-    ═══════════════════════════════════════════════ */
-    function renderClientList(clients) {
-      const list = document.getElementById('clientList');
-      if (!clients.length) {
-        list.innerHTML = '<div style="padding:16px;font-size:13px;color:var(--muted);text-align:center">No clients yet.<br>Create your first client below.</div>';
-        return;
-      }
-      list.innerHTML = clients.map(c => clientCardHTML(c)).join('');
-    }
-
-    function clientCardHTML(c) {
-      const typeClass = c.clientType && c.clientType.toLowerCase().includes('akashic') ? 'badge-akashic'
-                      : c.clientType && c.clientType.toLowerCase().includes('counsel') ? 'badge-counseling'
-                      : 'badge-soul';
-      const typeLabel = c.clientType && c.clientType.toLowerCase().includes('akashic') ? 'Akashic'
-                      : c.clientType && c.clientType.toLowerCase().includes('counsel') ? 'Counseling'
-                      : 'Soul Emergence';
-      const statusClass = c.status === 'Active' ? 'badge-active' : 'badge-complete';
-      const weekText = c.currentWeek ? `<span class="week-pill">· Wk ${c.currentWeek}</span>` : '';
-      const isActive = state.activeClient && state.activeClient.name === c.name;
-
-      return `<div class="client-card ${isActive ? 'active' : ''}" onclick="selectClientByName('${escHtml(c.name)}')">
-        <div class="client-card-name">${escHtml(c.name)}</div>
-        <div class="client-card-meta">
-          <span class="badge ${typeClass}">${typeLabel}</span>
-          <span class="badge ${statusClass}">${c.status}</span>
-          ${weekText}
-        </div>
-      </div>`;
-    }
-
-    function filterClients() {
-      const q = document.getElementById('clientSearch').value.toLowerCase();
-      const filtered = state.clients.filter(c => c.name.toLowerCase().includes(q));
-      renderClientList(filtered);
-    }
-
-    function updateStats() {
-      const active = state.clients.filter(c => c.status === 'Active').length;
-      const complete = state.clients.filter(c => c.status !== 'Active').length;
-      document.getElementById('clientStats').textContent =
-        active + ' active · ' + complete + ' complete';
-    }
-
-    function selectClientByName(name) {
-      const client = state.clients.find(c => c.name === name);
-      if (client) selectClient(client);
-    }
-
-    async function selectClient(client, sendGreeting = true) {
-      state.activeClient = client;
-
-      // Update UI
-      document.getElementById('activeClientPill').textContent = client.name;
-      document.getElementById('activeClientPill').classList.remove('no-client');
-      renderClientList(state.clients); // re-render to update active state
-      document.getElementById('emptyState') && (document.getElementById('emptyState').remove());
-
-      // Close sidebar on mobile
-      if (window.innerWidth <= 680) closeSidebar();
-
-      if (sendGreeting) {
-        const typeLabel = client.clientType && client.clientType.toLowerCase().includes('soul')
-          ? `Soul Emergence (Week ${client.currentWeek || 1} of 12)`
-          : (client.clientType || client.serviceType || 'client');
-        appendAIMessage(
-          `Switched to ${client.name} — ${typeLabel}.\n\nWhat would you like to do?`
-        );
-      }
-    }
-
-
-    /* ═══════════════════════════════════════════════
-       SIDEBAR TOGGLE (mobile)
-    ═══════════════════════════════════════════════ */
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
-    }
-    function closeSidebar() {
-      document.getElementById('sidebar').classList.remove('open');
-    }
-
-
-    /* ═══════════════════════════════════════════════
-       CHAT
-    ═══════════════════════════════════════════════ */
-    function handleInputKeydown(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    }
-
-    function autoResize(el) {
-      el.style.height = 'auto';
-      el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-    }
-
-    async function sendMessage() {
-      const input = document.getElementById('chatInput');
-      const text = input.value.trim();
-      if (!text || state.isLoading) return;
-
-      input.value = '';
-      input.style.height = 'auto';
-
-      appendUserMessage(text);
-      showTyping();
-
-      state.isLoading = true;
-
-      try {
-        const result = await apiCall({
-          action: 'chat',
-          message: text,
-          clientName: state.activeClient ? state.activeClient.name : null,
-          history: state.conversationHistory.slice(-20)
-        });
-
-        hideTyping();
-
-        if (result && result.reply) {
-          appendAIMessage(result.reply);
-          state.conversationHistory.push(
-            { role: 'user', content: text },
-            { role: 'assistant', content: result.reply }
-          );
-
-          // Refresh client data if actions were taken
-          if (result.actions && result.actions.length > 0) {
-            loadClients();
-          }
-        } else {
-          appendAIMessage('Something went wrong. Please try again.');
-        }
-
-      } catch (err) {
-        hideTyping();
-        appendAIMessage('I had trouble connecting. Please check your connection and try again.');
-        console.error(err);
-      }
-
-      state.isLoading = false;
-    }
-
-    function appendUserMessage(text) {
-      const time = formatTime(new Date());
-      const row = document.createElement('div');
-      row.className = 'message-row user';
-      row.innerHTML = `
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
-          <div class="msg-bubble">${escHtml(text)}</div>
-          <div class="msg-time">${time}</div>
-        </div>`;
-      getChatArea().appendChild(row);
-      scrollToBottom();
-    }
-
-    function appendAIMessage(text) {
-      const time = formatTime(new Date());
-      const row = document.createElement('div');
-      row.className = 'message-row ai';
-      row.innerHTML = `
-        <div class="msg-avatar">💎</div>
-        <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
-          <div class="msg-bubble">${renderMarkdown(text)}</div>
-          <div class="msg-time">${time}</div>
-        </div>`;
-      getChatArea().appendChild(row);
-      scrollToBottom();
-    }
-
-    let typingRow = null;
-    function showTyping() {
-      typingRow = document.createElement('div');
-      typingRow.className = 'message-row ai';
-      typingRow.innerHTML = `
-        <div class="msg-avatar">💎</div>
-        <div class="typing-indicator">
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-        </div>`;
-      getChatArea().appendChild(typingRow);
-      scrollToBottom();
-    }
-    function hideTyping() {
-      if (typingRow) { typingRow.remove(); typingRow = null; }
-    }
-
-    function getChatArea() {
-      const area = document.getElementById('chatArea');
-      const empty = document.getElementById('emptyState');
-      if (empty) empty.remove();
-      return area;
-    }
-
-    function scrollToBottom() {
-      const area = document.getElementById('chatArea');
-      setTimeout(() => area.scrollTop = area.scrollHeight, 50);
-    }
-
-
-    /* ═══════════════════════════════════════════════
-       BOTTOM SHEET — ACTION PANELS
-    ═══════════════════════════════════════════════ */
-    const ACTION_SECTIONS = {
-      documents: {
-        title: 'Documents',
-        buildFn: buildDocumentsSection
-      },
-      onboarding: {
-        title: 'Onboarding',
-        buildFn: buildOnboardingSection
-      },
-      scheduling: {
-        title: 'Scheduling',
-        buildFn: buildSchedulingSection
-      },
-      financial: {
-        title: 'Financial',
-        buildFn: buildFinancialSection
-      },
-      emails: {
-        title: 'Emails & Marketing',
-        buildFn: buildEmailsSection
-      },
-      utilities: {
-        title: 'Utilities',
-        buildFn: buildUtilitiesSection
-      }
-    };
-
-    function openSheet(sectionKey) {
-      const section = ACTION_SECTIONS[sectionKey];
-      if (!section) return;
-
-      document.getElementById('sheetTitle').textContent = section.title;
-      document.getElementById('sheetContent').innerHTML = section.buildFn();
-
-      document.getElementById('sheetOverlay').classList.add('open');
-      document.getElementById('bottomSheet').classList.add('open');
-
-      // Mark chip active
-      document.querySelectorAll('.action-chip').forEach(c => c.classList.remove('active'));
-      document.querySelectorAll('.action-chip').forEach(c => {
-        if (c.textContent.toLowerCase().includes(section.title.split(' ')[0].toLowerCase())) {
-          c.classList.add('active');
-        }
-      });
-    }
-
-    function closeSheet() {
-      document.getElementById('sheetOverlay').classList.remove('open');
-      document.getElementById('bottomSheet').classList.remove('open');
-      document.querySelectorAll('.action-chip').forEach(c => c.classList.remove('active'));
-    }
-
-    /* Button helpers */
-    function sheetBtn(label, onclick, className) {
-      const cls = className ? 'sheet-btn ' + className : 'sheet-btn';
-      return `<button class="${cls}" onclick="${onclick};closeSheet()">${label}</button>`;
-    }
-
-    /* Documents section — dynamic by client type */
-    function buildDocumentsSection() {
-      const type = state.activeClient ? (state.activeClient.clientType || '').toLowerCase() : '';
-      let html = '';
-
-      if (type.includes('akashic')) {
-        ['Session Notes','Integration Guide','Breathwork Notes','Akashic Notes','Client Summary'].forEach(d => {
-          html += sheetBtn(d, `triggerAction('generate_document','${d}')`);
-        });
-        html += '<div style="margin-top:8px">';
-        ['Intro Packet','Packet 2','Packet 3'].forEach(p => {
-          html += sheetBtn(p, `triggerAction('generate_client_packet','${p}')`);
-        });
-        html += '</div>';
-
-      } else if (type.includes('counsel')) {
-        ['Counseling Notes','Client Homework','Client Summary'].forEach(d => {
-          html += sheetBtn(d, `triggerAction('generate_document','${d}')`);
-        });
-
-      } else if (type.includes('soul') || type.includes('emergence')) {
-        html += sheetBtn('Create Private Journal', "triggerAction('create_journal',null)");
-        html += sheetBtn('Open Journal', "triggerAction('get_journal_url',null)");
-        html += sheetBtn('Soul Emergence Summary', "triggerAction('generate_document','Soul Emergence Summary')");
-        html += sheetBtn('Client Summary', "triggerAction('generate_document','Client Summary')");
-
-        html += '<div style="font-size:11px;font-weight:700;color:var(--deep);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)">Send Weekly Workbook</div>';
-        html += '<div class="workbook-grid">';
-        for (let w = 1; w <= 12; w++) {
-          html += `<button class="workbook-btn" onclick="triggerAction('send_workbook',${w});closeSheet()">
-            <strong>Wk ${w}</strong>${SESSION_NAMES[w]}
-          </button>`;
-        }
-        html += '</div>';
-
-      } else {
-        html = '<div style="padding:16px;font-size:13px;color:var(--muted);text-align:center">Select a client to see their documents.</div>';
-      }
-
-      return html;
-    }
-
-    function buildOnboardingSection() {
-      return sheetBtn('Send Onboarding Email', "triggerAction('send_onboarding_email',null)")
-           + sheetBtn('Check Intake Status', "triggerAction('check_intake_status',null)")
-           + sheetBtn('Create Intake Doc', "triggerAction('create_intake_doc',null)");
-    }
-
-    function buildSchedulingSection() {
-      return sheetBtn('Add Next Session to Calendar', "triggerAction('add_session',null)")
-           + sheetBtn('Delete a Session', "triggerAction('delete_session',null)");
-    }
-
-    function buildFinancialSection() {
-      return sheetBtn('Record Client Payment', "triggerAction('record_payment',null)")
-           + sheetBtn('Send Receipt', "triggerAction('send_receipt',null)")
-           + sheetBtn('Open Budget', "triggerAction('get_budget_url',null)");
-    }
-
-    function buildEmailsSection() {
-      return sheetBtn('Preview Newsletter', "triggerAction('preview_newsletter',null)", 'gold')
-           + sheetBtn('Send Newsletter to All Leads', "triggerAction('send_newsletter',null)")
-           + sheetBtn('Send Offer to All Past Clients', "triggerAction('send_past_client_offer_all',null)")
-           + sheetBtn('Send Offer to One Email', "triggerAction('send_past_client_offer_one',null)");
-    }
-
-    function buildUtilitiesSection() {
-      return sheetBtn('Open Client Folder', "triggerAction('get_client_folder_url',null)")
-           + sheetBtn('Refresh Dashboard', "triggerAction('refresh_dashboard',null)")
-           + sheetBtn('Refresh Leads', "triggerAction('refresh_leads',null)");
-    }
-
-
-    /* ═══════════════════════════════════════════════
-       ACTION TRIGGER
-       Translates button taps → chat messages → AI
-    ═══════════════════════════════════════════════ */
-    function triggerAction(toolName, param) {
-      if (!state.activeClient) {
-        showToast('Select a client first');
-        return;
-      }
-
-      const clientName = state.activeClient.name;
-
-      const actionMessages = {
-        'generate_document':          `Generate ${param} for ${clientName}`,
-        'generate_client_packet':     `Generate ${param} for ${clientName}`,
-        'send_workbook':              `Send Week ${param} workbook to ${clientName}`,
-        'create_journal':             `Create private journal for ${clientName}`,
-        'get_journal_url':            `Open ${clientName}'s journal`,
-        'send_onboarding_email':      `Send onboarding email to ${clientName}`,
-        'check_intake_status':        `Check intake status for ${clientName}`,
-        'create_intake_doc':          `Create intake document for ${clientName}`,
-        'add_session':                `Add next session to calendar for ${clientName}`,
-        'delete_session':             `Delete a calendar session for ${clientName}`,
-        'record_payment':             `Record payment for ${clientName}`,
-        'send_receipt':               `Send receipt to ${clientName}`,
-        'get_budget_url':             `Open budget`,
-        'preview_newsletter':         `Preview the newsletter`,
-        'send_newsletter':            `Send newsletter to all leads`,
-        'send_past_client_offer_all': `Send past client offer to all past clients`,
-        'send_past_client_offer_one': `Send past client offer to one email`,
-        'get_client_folder_url':      `Open ${clientName}'s folder`,
-        'refresh_dashboard':          `Refresh the dashboard`,
-        'refresh_leads':              `Refresh leads`
-      };
-
-      const message = actionMessages[toolName] || `Run action: ${toolName}`;
-
-      // Inject into chat input and send
-      const input = document.getElementById('chatInput');
-      input.value = message;
-      sendMessage();
-    }
-
-
-    /* ═══════════════════════════════════════════════
-       NEW CLIENT MODAL
-    ═══════════════════════════════════════════════ */
-    function openNewClientModal() {
-      const name = prompt('New client name:');
-      if (!name || !name.trim()) return;
-
-      const typeInput = prompt('Client type:\n1 = Akashic\n2 = Counseling\n3 = Soul Emergence');
-      const typeMap = { '1': 'Akashic', '2': 'Counseling', '3': 'Soul Emergence' };
-      const type = typeMap[typeInput];
-      if (!type) { alert('Invalid type. Please enter 1, 2, or 3.'); return; }
-
-      const message = `Create a new ${type} client named ${name.trim()}`;
-      const input = document.getElementById('chatInput');
-      input.value = message;
-      closeSidebar();
-      sendMessage();
-    }
-
-
-    /* ═══════════════════════════════════════════════
-       API
-    ═══════════════════════════════════════════════ */
-    async function apiCall(payload) {
-      const response = await fetch(state.webAppUrl, {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (!response.ok) {
-        throw new Error('Network error: ' + response.status);
-      }
-
-      const json = await response.json();
-      if (!json.success) {
-        throw new Error(json.error || 'Unknown error');
-      }
-
-      return json.data;
-    }
-
-
-    /* ═══════════════════════════════════════════════
-       UTILITIES
-    ═══════════════════════════════════════════════ */
-    function showToast(message, duration = 2500) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), duration);
-    }
-
-    function formatTime(date) {
-      return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    }
-
-    function escHtml(str) {
-      return String(str || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-
-    /* Very lightweight markdown → HTML for AI responses */
-    function renderMarkdown(text) {
-      return escHtml(text)
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/`(.*?)`/g, '<code style="background:var(--border);padding:1px 4px;border-radius:3px;font-size:12px">$1</code>')
-        .replace(/\n/g, '<br>');
-    }
-  </script>
+    wSection.appendChild(grid);
+    document.getElementById('sheetContent').appendChild(wSection);
+
+  } else {
+    document.getElementById('sheetContent').innerHTML =
+      '<div style="padding:14px;font-size:13px;color:var(--muted);text-align:center">Select a client to see their documents.</div>';
+  }
+}
+
+
+/* ═══════════════════════════════════════════════
+   ACTION TRIGGER
+   Buttons → chat message → AI handles it
+═══════════════════════════════════════════════ */
+function trigger(toolName, param) {
+  closeSheet();
+
+  if (!state.activeClient) {
+    showToast('Select a client first');
+    return;
+  }
+
+  const name = state.activeClient.name;
+  const msgs = {
+    'generate_document':          `Generate ${param} for ${name}`,
+    'generate_client_packet':     `Generate ${param} for ${name}`,
+    'send_workbook':              `Send Week ${param} workbook to ${name}`,
+    'create_journal':             `Create private journal for ${name}`,
+    'get_journal_url':            `Open ${name}'s journal`,
+    'send_onboarding_email':      `Send onboarding email to ${name}`,
+    'check_intake_status':        `Check intake status for ${name}`,
+    'create_intake_doc':          `Create intake document for ${name}`,
+    'add_session':                `Add next session to calendar for ${name}`,
+    'delete_session':             `List upcoming sessions for ${name} so I can choose one to delete`,
+    'record_payment':             `Record payment for ${name}`,
+    'send_receipt':               `Send receipt to ${name}`,
+    'get_budget_url':             `Open the budget`,
+    'preview_newsletter':         `Preview the newsletter`,
+    'send_newsletter':            `Send the newsletter to all leads`,
+    'send_past_client_offer_all': `Send past client offer to all past clients`,
+    'send_past_client_offer_one': `Send past client offer to one specific email`,
+    'get_client_folder_url':      `Open ${name}'s Google Drive folder`,
+    'refresh_dashboard':          `Refresh the dashboard`,
+    'refresh_leads':              `Refresh the leads list`,
+    'mark_client_complete':       `Mark ${name} as complete`
+  };
+
+  sendMessage(msgs[toolName] || `Run: ${toolName}`);
+}
+
+/* Home actions — no client required */
+function homeAction(toolName) {
+  closeSheet();
+  if (toolName === 'preview_newsletter') { openNewsletterPreview(); return; }
+
+  const msgs = {
+    'refresh_dashboard':          `Refresh the dashboard`,
+    'refresh_leads':              `Refresh the leads list`,
+    'send_newsletter':            `Send the newsletter to all leads`,
+    'send_past_client_offer_all': `Send past client offer to all past clients`,
+    'send_past_client_offer_one': `Send past client offer to one specific email`,
+    'add_lead':                   `Add a lead`
+  };
+  sendMessage(msgs[toolName] || `Run: ${toolName}`);
+}
+
+
+/* ═══════════════════════════════════════════════
+   NEW CLIENT MODAL
+═══════════════════════════════════════════════ */
+function openNewClientModal() {
+  state.selectedClientType = null;
+  document.getElementById('newClientName').value = '';
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('newClientModal').classList.add('open');
+  setTimeout(() => document.getElementById('newClientName').focus(), 350);
+}
+
+function closeNewClientModal(e) {
+  if (e && e.target !== document.getElementById('newClientModal')) return;
+  document.getElementById('newClientModal').classList.remove('open');
+}
+
+function selectClientType(btn) {
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.selectedClientType = btn.dataset.type;
+}
+
+function submitNewClient() {
+  const name = document.getElementById('newClientName').value.trim();
+  if (!name) { showToast('Please enter a client name'); return; }
+  if (!state.selectedClientType) { showToast('Please select a service type'); return; }
+
+  document.getElementById('newClientModal').classList.remove('open');
+  if (window.innerWidth <= 680) closeSidebar();
+
+  sendMessage(`Create a new ${state.selectedClientType} client named ${name}`);
+}
+
+
+/* ═══════════════════════════════════════════════
+   NEWSLETTER PREVIEW MODAL
+═══════════════════════════════════════════════ */
+async function openNewsletterPreview() {
+  document.getElementById('newsletterSubjectVal').textContent = 'Loading...';
+  document.getElementById('newsletterBody').innerHTML =
+    '<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">Loading preview...</div>';
+  document.getElementById('newsletterModal').classList.add('open');
+
+  try {
+    const data = await apiCall({ action: 'getNewsletterPreview' });
+    document.getElementById('newsletterSubjectVal').textContent = data.subject || '(No subject)';
+    document.getElementById('newsletterBody').innerHTML = data.body || '<em>No content found.</em>';
+  } catch (e) {
+    document.getElementById('newsletterSubjectVal').textContent = 'Error loading preview';
+    document.getElementById('newsletterBody').innerHTML = '<div style="color:var(--muted);font-size:13px">Could not load newsletter. Please try again.</div>';
+  }
+}
+
+function closeNewsletterModal(e) {
+  if (e && e.target !== document.getElementById('newsletterModal')) return;
+  document.getElementById('newsletterModal').classList.remove('open');
+}
+
+function sendNewsletterFromPreview() {
+  document.getElementById('newsletterModal').classList.remove('open');
+  sendMessage('Send the newsletter to all leads');
+}
+
+
+/* ═══════════════════════════════════════════════
+   API
+═══════════════════════════════════════════════ */
+async function apiCall(payload) {
+  const response = await fetch(state.webAppUrl, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: { 'Content-Type': 'application/json' }
+  });
+  if (!response.ok) throw new Error('Network error: ' + response.status);
+  const json = await response.json();
+  if (!json.success) throw new Error(json.error || 'Unknown error');
+  return json.data;
+}
+
+
+/* ═══════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════ */
+function showToast(msg, ms = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), ms);
+}
+
+function formatTime(d) {
+  return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+}
+
+function escHtml(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function escAttr(s) {
+  return String(s || '').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+}
+
+/* Light markdown → HTML for AI messages */
+function renderMarkdown(text) {
+  return escHtml(text)
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`(.*?)`/g, '<code style="background:var(--border);padding:1px 5px;border-radius:3px;font-size:12px;font-family:monospace">$1</code>')
+    .replace(/\n/g, '<br>');
+}
+</script>
 </body>
 </html>
