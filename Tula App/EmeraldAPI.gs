@@ -718,7 +718,7 @@ function emerald_getNewsletterPreview() {
   const actives = sheet.getRange('C2:C').getValues().flat();
 
   for (let i = 0; i < names.length; i++) {
-    if (String(names[i]).trim() === 'Newsletter' && String(actives[i]).trim().toLowerCase() === 'yes') {
+    if (String(names[i]).trim().toLowerCase() === 'newsletter' && String(actives[i]).trim().toLowerCase() === 'yes') {
       return {
         subject: 'Awakening Doula - Newsletter',
         body: String(bodies[i] || '').trim()
@@ -741,7 +741,7 @@ function emerald_sendNewsletterAll() {
 
   let htmlBody = null;
   for (let i = 0; i < names.length; i++) {
-    if (String(names[i]).trim() === 'Newsletter' && String(actives[i]).trim().toLowerCase() === 'yes') {
+    if (String(names[i]).trim().toLowerCase() === 'newsletter' && String(actives[i]).trim().toLowerCase() === 'yes') {
       htmlBody = String(bodies[i] || '').trim(); break;
     }
   }

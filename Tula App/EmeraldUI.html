@@ -1310,11 +1310,16 @@ async function openNewsletterPreview() {
 
   try {
     const data = await apiCall({ action: 'getNewsletterPreview' });
-    document.getElementById('newsletterSubjectVal').textContent = data.subject || '(No subject)';
-    document.getElementById('newsletterBody').innerHTML = data.body || '<em>No content found.</em>';
+    if (data && data.error) {
+      document.getElementById('newsletterSubjectVal').textContent = 'Not found';
+      document.getElementById('newsletterBody').innerHTML = `<div style="color:var(--muted);font-size:13px">${data.error}</div>`;
+    } else {
+      document.getElementById('newsletterSubjectVal').textContent = (data && data.subject) || '(No subject)';
+      document.getElementById('newsletterBody').innerHTML = (data && data.body) || '<em>No content found.</em>';
+    }
   } catch (e) {
-    document.getElementById('newsletterSubjectVal').textContent = 'Error loading preview';
-    document.getElementById('newsletterBody').innerHTML = '<div style="color:var(--muted);font-size:13px">Could not load newsletter. Please try again.</div>';
+    document.getElementById('newsletterSubjectVal').textContent = 'Error';
+    document.getElementById('newsletterBody').innerHTML = `<div style="color:var(--muted);font-size:13px">${e.message || 'Could not load newsletter.'}</div>`;
   }
 }
 
