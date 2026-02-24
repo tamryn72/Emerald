@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #fdf2e9;
+      }
+      .sidebar-container {
+        font-family: "Google Sans", Arial, sans-serif;
+        padding: 18px;
+        color: #433a34;
+        background: #fdf2e9;
+      }
+      .sidebar-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 2px;
+        color: #c05030;
+        letter-spacing: 0.8px;
+      }
+      .sidebar-subtitle {
+        font-size: 11px;
+        color: #8a7b6e;
+        margin-bottom: 22px;
+        font-style: italic;
+        letter-spacing: 0.2px;
+      }
+      .section {
+        margin-bottom: 24px;
+      }
+      .section-label {
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        border-left: 4px solid #7fb069;
+        padding-left: 10px;
+        color: #5a7d6c;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .action-btn {
+        width: 100%;
+        padding: 10px 12px;
+        margin: 5px 0;
+        background: #d97a5e;
+        color: #fff9f5;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        text-align: left;
+        transition: background 0.2s, transform 0.1s;
+        box-shadow: 0 2px 4px rgba(180, 90, 60, 0.1);
+      }
+      .action-btn:hover {
+        background: #c46a4e;
+        transform: translateY(-1px);
+      }
+      .action-btn.gold {
+        background: #d4a373;
+        color: #fff;
+        font-weight: 600;
+      }
+      .action-btn.gold:hover {
+        background: #c29262;
+      }
+      .action-btn.cream {
+        background: #ffffff;
+        color: #8a7b6e;
+        border: 1px solid #e9dcc9;
+      }
+      .action-btn.cream:hover {
+        background: #fdf2e9;
+        border-color: #d4a373;
+      }
+      .workbook-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .workbook-btn {
+        padding: 8px 6px;
+        background: #fff9f5;
+        color: #9b6b5d;
+        border: 1px solid #f2e0d5;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 11px;
+        text-align: center;
+        transition: all 0.2s;
+        line-height: 1.4;
+      }
+      .workbook-btn:hover {
+        background: #d97a5e;
+        color: #ffffff;
+        border-color: #c46a4e;
+      }
+      .loading {
+        font-size: 12px;
+        color: #8a7b6e;
+        font-style: italic;
+        padding: 6px 0;
+      }
+      .divider {
+        border: none;
+        border-top: 1px solid #f2e0d5;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="sidebar-container">
+      <div class="sidebar-title">Doula Tools</div>
+      <div class="sidebar-subtitle">Awakening Doula · Carlie Wyton, MA</div>
+
+      <!-- DOCUMENTS (Dynamic based on client type) -->
+      <div class="section" id="documents-section">
+        <div class="section-label">Documents</div>
+        <div class="loading">Loading...</div>
+      </div>
+
+      <!-- CLIENT LITERATURE -->
+      <div class="section">
+        <div class="section-label">Client Literature</div>
+        <button class="action-btn" onclick="generatePacket('Intro Packet')">Intro Packet</button>
+        <button class="action-btn" onclick="generatePacket('Packet 2')">Packet 2 (TBD)</button>
+        <button class="action-btn" onclick="generatePacket('Packet 3')">Packet 3 (TBD)</button>
+      </div>
+
+      <!-- ONBOARDING -->
+      <div class="section">
+        <div class="section-label">Onboarding</div>
+        <button class="action-btn" onclick="sendOnboarding()">Send Onboarding</button>
+        <button class="action-btn" onclick="checkIntake()">Check Intake Status</button>
+        <button class="action-btn" onclick="createIntake()">Create Intake Doc</button>
+      </div>
+
+      <!-- SCHEDULING -->
+      <div class="section">
+        <div class="section-label">Scheduling</div>
+        <button class="action-btn" onclick="addSession()">Add Next Session</button>
+        <button class="action-btn" onclick="deleteSess()">Delete Session</button>
+      </div>
+
+      <!-- FINANCIAL -->
+      <div class="section">
+        <div class="section-label">Financial</div>
+        <button class="action-btn" onclick="recordPayment()">Record Client Payment</button>
+        <button class="action-btn" onclick="sendReceipt()">Send Receipt</button>
+        <button class="action-btn" onclick="openBudget()">Open Budget</button>
+      </div>
+
+      <!-- DYNAMIC EMAIL TEMPLATES -->
+      <div class="section" id="email-section">
+        <div class="section-label">Sales Emails</div>
+        <div class="loading">Loading templates...</div>
+      </div>
+
+      <!-- PAST CLIENTS -->
+      <div class="section">
+        <div class="section-label">Newsletter Offer</div>
+        <button class="action-btn gold" onclick="sendPastOfferAll()">Send Offer to All Past Clients</button>
+        <button class="action-btn cream" onclick="sendPastOfferOne()">Send Offer to One Email</button>
+      </div>
+
+      <!-- UTILITIES -->
+      <div class="section">
+        <div class="section-label">Utilities</div>
+        <button class="action-btn" onclick="openClientFolder()">Open Client Folder</button>
+        <button class="action-btn" onclick="refreshDashboard()">Refresh Dashboard</button>
+      </div>
+    </div>
+
+    <script>
+      const SESSION_NAMES = {
+        1: "The Threshold",
+        2: "Akashic Records Reading",
+        3: "Integration & Intention",
+        4: "Akashic Clearing",
+        5: "Befriending Your Nervous System",
+        6: "Parts Work Integration",
+        7: "Timeline Therapy & Reprocessing",
+        8: "Clearing Old Programming",
+        9: "Honoring What Was",
+        10: "Releasing Expectations & Ritual Goodbye",
+        11: "Final Akashic Clearing",
+        12: "Emergence & Integration"
+      };
+
+      function successToast(msg) {
+        google.script.host.toast(msg, "✓ Done", 3);
+      }
+
+      function errorToast(err) {
+        google.script.host.toast(err.message || err, "Error", 5);
+      }
+
+      function loadDocumentButtons(clientType) {
+        const section = document.getElementById("documents-section");
+        section.innerHTML = '<div class="section-label">Documents</div>';
+
+        if (clientType === "Akashic") {
+          ['Session Notes', 'Integration Guide', 'Breathwork Notes', 'Akashic Notes', 'Client Summary'].forEach(docType => {
+            section.appendChild(makeBtn(docType, () => generateDoc(docType)));
+          });
+
+        } else if (clientType === "Counseling") {
+          ['Counseling Notes', 'Client Homework', 'Client Summary'].forEach(docType => {
+            section.appendChild(makeBtn(docType, () => generateDoc(docType)));
+          });
+
+        } else if (clientType === "Soul Emergence") {
+          section.appendChild(makeBtn("Create Private Journal", createJournal));
+          section.appendChild(makeBtn("Open Journal", openJournal));
+          section.appendChild(makeBtn("Soul Emergence Summary", () => generateDoc("Soul Emergence Summary")));
+          section.appendChild(makeBtn("Client Summary", () => generateDoc("Client Summary")));
+
+          const wLabel = document.createElement("div");
+          wLabel.style.cssText = "font-size:11px;font-weight:700;color:#5a7d6c;text-transform:uppercase;letter-spacing:1px;margin:10px 0 8px 0;border-left:4px solid #7fb069;padding-left:10px;";
+          wLabel.innerText = "Send Weekly Workbook";
+          section.appendChild(wLabel);
+
+          const grid = document.createElement("div");
+          grid.className = "workbook-grid";
+
+          for (let w = 1; w <= 12; w++) {
+            const btn = document.createElement("button");
+            btn.className = "workbook-btn";
+            btn.innerHTML = "<strong>Wk " + w + "</strong><br>" + SESSION_NAMES[w];
+            btn.title = "Send Week " + w + ": " + SESSION_NAMES[w] + " workbook";
+            const week = w;
+            btn.onclick = function() { sendWorkbook(week); };
+            grid.appendChild(btn);
+          }
+
+          section.appendChild(grid);
+
+        } else {
+          section.innerHTML += '<div class="loading">Open a client sheet to load options.</div>';
+        }
+      }
+
+      function makeBtn(label, clickFn, className) {
+        const btn = document.createElement("button");
+        btn.className = "action-btn" + (className ? " " + className : "");
+        btn.innerText = label;
+        btn.onclick = clickFn;
+        return btn;
+      }
+
+      function generateDoc(type) {
+        google.script.run
+          .withSuccessHandler(function() { successToast(type + " created"); })
+          .withFailureHandler(errorToast)
+          .backend_generateDoulaDoc(type);
+      }
+
+      function sendWorkbook(weekNumber) {
+        var sessionName = SESSION_NAMES[weekNumber];
+        google.script.run
+          .withSuccessHandler(function() { successToast("Week " + weekNumber + ": " + sessionName + " workbook sent"); })
+          .withFailureHandler(errorToast)
+          .backend_sendWorkbook(weekNumber);
+      }
+
+      function createJournal() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Private journal created"); })
+          .withFailureHandler(errorToast)
+          .backend_createJournal();
+      }
+
+      function openJournal() {
+        google.script.run
+          .withSuccessHandler(function(url) {
+            window.open(url, "_blank");
+            successToast("Journal opened");
+          })
+          .withFailureHandler(errorToast)
+          .backend_openJournal();
+      }
+
+      function generatePacket(type) {
+        google.script.run
+          .withSuccessHandler(function() { successToast(type + " created"); })
+          .withFailureHandler(errorToast)
+          .backend_generateClientPacket(type);
+      }
+
+      function sendOnboarding() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Onboarding email sent"); })
+          .withFailureHandler(errorToast)
+          .sendOnboardingEmail();
+      }
+
+      function checkIntake() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Intake status checked"); })
+          .withFailureHandler(errorToast)
+          .checkIntakeStatus();
+      }
+
+      function createIntake() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Intake document created"); })
+          .withFailureHandler(errorToast)
+          .createIntakeDoc();
+      }
+
+      function addSession() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Session added to calendar"); })
+          .withFailureHandler(errorToast)
+          .addNextSession();
+      }
+
+      function deleteSess() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Session deleted"); })
+          .withFailureHandler(errorToast)
+          .deleteSession();
+      }
+
+      function recordPayment() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Payment recorded"); })
+          .withFailureHandler(errorToast)
+          .recordClientPayment();
+      }
+
+      function sendReceipt() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Receipt sent"); })
+          .withFailureHandler(errorToast)
+          .sendReceipt();
+      }
+
+      function openBudget() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Budget opened"); })
+          .withFailureHandler(errorToast)
+          .backend_openBudgetSheet();
+      }
+
+      function sendEmail(templateName) {
+        google.script.run
+          .withSuccessHandler(function() { successToast(templateName + " draft created in Gmail"); })
+          .withFailureHandler(errorToast)
+          .backend_sendSalesEmailTemplate(templateName);
+      }
+
+      function openClientFolder() {
+        google.script.run
+          .withSuccessHandler(function(url) {
+            window.open(url, "_blank");
+            successToast("Folder opened");
+          })
+          .withFailureHandler(errorToast)
+          .backend_openClientFolder();
+      }
+
+      function refreshDashboard() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Dashboard refreshed"); })
+          .withFailureHandler(errorToast)
+          .refreshDoulaDashboard();
+      }
+
+      function sendPastOfferAll() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Past client offer sent"); })
+          .withFailureHandler(errorToast)
+          .backend_sendPastClientOfferAll();
+      }
+
+      function sendPastOfferOne() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Offer sent"); })
+          .withFailureHandler(errorToast)
+          .backend_sendPastClientOfferOne();
+      }
+
+      function loadEmailTemplates(templateNames) {
+        var section = document.getElementById("email-section");
+        section.innerHTML = '<div class="section-label">Sales Emails</div>';
+
+        section.appendChild(makeBtn("Preview Newsletter", previewNewsletter, "cream"));
+        section.appendChild(makeBtn("Send Newsletter to All Leads", sendNewsletter, "gold"));
+
+        if (!templateNames || templateNames.length === 0) {
+          section.innerHTML += '<div class="loading">No active templates found</div>';
+          return;
+        }
+
+        templateNames.forEach(function(name) {
+          section.appendChild(makeBtn(name, function() { sendEmail(name); }));
+        });
+      }
+
+      function sendNewsletter() {
+        google.script.run
+          .withSuccessHandler(function() { successToast("Newsletter sent to all leads"); })
+          .withFailureHandler(errorToast)
+          .backend_sendNewsletterToAll();
+      }
+
+      function previewNewsletter() {
+        google.script.run
+          .withFailureHandler(errorToast)
+          .backend_previewNewsletter();
+      }
+
+      /* INITIALIZE */
+      google.script.run
+        .withSuccessHandler(loadDocumentButtons)
+        .withFailureHandler(function() {
+          document.getElementById("documents-section").innerHTML =
+            '<div class="section-label">Documents</div><div class="loading">Open a client sheet to load options.</div>';
+        })
+        .getClientTypeForSidebar();
+
+      google.script.run
+        .withSuccessHandler(loadEmailTemplates)
+        .withFailureHandler(function() {
+          document.getElementById("email-section").innerHTML =
+            '<div class="section-label">Sales Emails</div><div class="loading">Error loading templates</div>';
+        })
+        .getEmailTemplateList();
+    </script>
+  </body>
+</html>
