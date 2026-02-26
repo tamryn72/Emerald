@@ -20,7 +20,7 @@ const TEMPLATE_CLIENT_HOMEWORK = "YOUR_HOMEWORK_TEMPLATE_ID_HERE";
 
 // Soul Emergence Workbook Templates (one per week)
 const WORKBOOK_TEMPLATES = {
-  1:  "YOUR_WEEK_1_WORKBOOK_TEMPLATE_ID",   // The Threshold
+  1:  "1xJtINLKRfoMKYKfkVL8bxpiT7CDpyC7dndAe3hDSTvg",   // The Threshold
   2:  "YOUR_WEEK_2_WORKBOOK_TEMPLATE_ID",   // Akashic Records Reading
   3:  "YOUR_WEEK_3_WORKBOOK_TEMPLATE_ID",   // Integration & Intention
   4:  "YOUR_WEEK_4_WORKBOOK_TEMPLATE_ID",   // Akashic Clearing
