@@ -1,7 +1,7 @@
 # TIMELINE.md — Emerald Development Plan
 
 > Phased roadmap for building Emerald from planning to production.
-> Model: `claude-opus-4-6` | Stack: GAS Web App + Vanilla JS + Anthropic API
+> Model: `claude-sonnet-4-6` | Stack: GAS Web App + Vanilla JS + Anthropic API
 
 ---
 
@@ -183,7 +183,7 @@ function emeraldExecuteTool(toolName, toolInput) {
 
 ## Phase 3: Claude AI Integration
 
-**Goal:** Wire up `claude-opus-4-6` with tool use, memory, and context injection.
+**Goal:** Wire up `claude-sonnet-4-6` with tool use, memory, and context injection.
 
 ### Tasks
 
@@ -193,7 +193,7 @@ function emeraldExecuteTool(toolName, toolInput) {
 ```
 - Retrieve ANTHROPIC_API_KEY from ScriptProperties
 - Build request payload:
-    model: 'claude-opus-4-6'
+    model: 'claude-sonnet-4-6'
     max_tokens: 1024
     system: systemPrompt (with context injected)
     messages: messages array
@@ -535,7 +535,7 @@ Every action below must be tested end-to-end:
 |------|----------|--------|
 | 2026-02-24 | GAS Web App deployment (not Cloud Run) | Simpler, no hosting cost, stays in Google ecosystem |
 | 2026-02-24 | Vanilla JS (not React/Next.js) | GAS serves HTML; no build step needed; matches complexity |
-| 2026-02-24 | claude-opus-4-6 | Most capable model for nuanced multi-tool reasoning |
+| 2026-02-24 | claude-sonnet-4-6 | Most capable model for nuanced multi-tool reasoning |
 | 2026-02-24 | ScriptProperties for memory | Built-in to GAS, no external DB needed, secure |
 | 2026-02-24 | No changes to existing .gs files | Preserve existing system, automations, sidebar |
 | 2026-02-24 | Sunset color palette | Matches Haven brand — warm, empowering, elegant |

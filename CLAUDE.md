@@ -1,7 +1,7 @@
 # CLAUDE.md — Emerald AI
 
 > **Project:** Emerald — AI Assistant for Haven, The Awakening Doula
-> **Model:** `claude-opus-4-6` (Anthropic, February 2026)
+> **Model:** `claude-sonnet-4-6` (Anthropic, February 2026)
 > **Practitioner:** Carlie Wyton, MA
 > **Brand voice:** Haven, The Awakening Doula
 
@@ -84,7 +84,7 @@ Emerald follows the Wanderlust/Gilligan pattern: a Next.js-style component-drive
 | Styling | Custom CSS — sunset design system (no framework needed at this scale) |
 | Backend | Google Apps Script (Web App — `doGet` / `doPost`) |
 | Data | Google Sheets (existing — read-only structure) |
-| AI | Anthropic Claude claude-opus-4-6 via REST API |
+| AI | Anthropic Claude claude-sonnet-4-6 via REST API |
 | Storage | GAS ScriptProperties (API key, memory, session state) |
 | Deployment | Google Apps Script Web App URL (no external hosting) |
 | Auth | Single-user; GAS runs as practitioner's Google account |
@@ -382,13 +382,13 @@ Add the Web App URL to your phone's home screen for app-like experience.
 ## Model Specification
 
 ```
-Model:    claude-opus-4-6
+Model:    claude-sonnet-4-6
 Provider: Anthropic
 API:      https://api.anthropic.com/v1/messages
 Version:  Current as of February 2026
 ```
 
-Use `claude-opus-4-6` for all AI inference. This is the most capable Claude model available as of February 2026 and is appropriate for the nuanced, multi-tool reasoning required by Emerald's doula practice workflows.
+Use `claude-sonnet-4-6` for all AI inference. This is the most capable Claude model available as of February 2026 and is appropriate for the nuanced, multi-tool reasoning required by Emerald's doula practice workflows.
 
 ---
 

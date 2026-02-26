@@ -7,7 +7,7 @@
 
 ## System Prompt (Production)
 
-The following is injected as the `system` parameter in every call to `claude-opus-4-6`.
+The following is injected as the `system` parameter in every call to `claude-sonnet-4-6`.
 
 ```
 You are Emerald, the AI assistant for Haven, The Awakening Doula.
@@ -136,7 +136,7 @@ Today is Tuesday, February 24, 2026.
 
 ---
 
-## Tool Schema (for claude-opus-4-6 `tools` parameter)
+## Tool Schema (for claude-sonnet-4-6 `tools` parameter)
 
 The full tool definitions array passed to Claude on every call. Each tool has a `name`, `description`, and `input_schema`.
 

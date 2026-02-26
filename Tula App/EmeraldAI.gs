@@ -2,11 +2,11 @@
  EMERALD AI — Haven, The Awakening Doula
  Claude AI integration, tool definitions, and memory system.
 
- Model: claude-opus-4-6 (Anthropic, February 2026)
+ Model: claude-sonnet-4-6 (Anthropic, February 2026)
  API key: stored in Script Properties → ANTHROPIC_API_KEY
 ****************************************************************************************/
 
-const CLAUDE_MODEL   = 'claude-opus-4-6';
+const CLAUDE_MODEL   = 'claude-sonnet-4-6';
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 const MAX_TOKENS     = 2048;
 const MAX_TOOL_ITERATIONS = 10;
@@ -341,7 +341,7 @@ function _newSession() {
 
 /* ═══════════════════════════════════════════════════════════════
    TOOL DEFINITIONS
-   Full schema for claude-opus-4-6 tool_use
+   Full schema for claude-sonnet-4-6 tool_use
 ═══════════════════════════════════════════════════════════════ */
 
 function getToolDefinitions() {

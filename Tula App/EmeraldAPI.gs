@@ -2,7 +2,7 @@
  * EmeraldAPI.gs — Emerald Web App Entry Point & Data Bridge
  * Haven, The Awakening Doula
  *
- * Model: claude-opus-4-6 (Anthropic, February 2026)
+ * Model: claude-sonnet-4-6 (Anthropic, February 2026)
  *
  * SAFE — additive only. Does NOT touch:
  *   onOpen(), onFormSubmit(), onOptInFormSubmit(), onInquiryFormSubmit()
