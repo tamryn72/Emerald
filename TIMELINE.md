@@ -203,7 +203,7 @@ Built into `EmeraldAI.gs`:
 
 ---
 
-## Bug Fixes Applied (2026-02-26)
+## Bug Fixes Applied (2026-02-26) — Emerald Layer
 
 | Fix | File | Issue |
 |-----|------|-------|
@@ -213,3 +213,51 @@ Built into `EmeraldAI.gs`:
 | Fixed agentic loop exit condition | EmeraldAI.gs | `end_turn` OR check discarded tool_use blocks; now only exits when no tools |
 | Model constant corrected | EmeraldAI.gs | Changed from `claude-opus-4-6` to `claude-sonnet-4-6` |
 | add_lead column layout | EmeraldAPI.gs | Columns: A=Name, B=Date, C=Email, D=Service |
+
+---
+
+## Critical Bug Fix Session (2026-02-26) — Human Spreadsheet Layer
+
+> Priority pivot: All fixes below target the **human-facing spreadsheet system** (sidebar + backend functions).
+> The existing `SPREADSHEET APPS SCRIPT.gs` and `SPREADSHEET SIDEBAR CODE.html` were modified to fix production-blocking bugs.
+
+### Root Causes Identified & Fixed
+
+| # | Bug | Root Cause | Fix | File |
+|---|-----|-----------|-----|------|
+| 1 | **Scheduling sets December 1899 dates** | `normalizeTime()` received Date objects from `getValue()` but only handled strings. `String(Date)` → "Sat Dec 30 1899 14:00:00..." | Added `instanceof Date` check; extract `.getHours()`/`.getMinutes()` directly | SPREADSHEET APPS SCRIPT.gs |
+| 2 | **Intake status false positives** | `checkIntakeStatus()` compared client email against ALL form fields, not just the email field | Added `ir.getItem().getTitle().toLowerCase().includes('email')` filter | SPREADSHEET APPS SCRIPT.gs + EmeraldAPI.gs |
+| 3 | **Delete sessions finds nothing** | Events were created with corrupted dates (from bug #1), so they existed in the wrong time range | Fixed by resolving bug #1 (normalizeTime) | SPREADSHEET APPS SCRIPT.gs |
+| 4 | **Sidebar buttons give no feedback** | `google.script.host.toast()` does not exist in GAS sidebars — every callback silently failed | Built DOM-based toast notification system (CSS + JS) | SPREADSHEET SIDEBAR CODE.html |
+| 5 | **New client overwrites B8 formula** | `newClientSetup()` set B8 to `0`, overwriting the template formula | Removed `setValue(0)` line; B8 left to template formula | SPREADSHEET APPS SCRIPT.gs + EmeraldAPI.gs |
+| 6 | **Leads column B shows "Direct" not date** | `addToLeads()` put string "Direct" in column B instead of today's date | Rewrote to always set `new Date()` in column B | SPREADSHEET APPS SCRIPT.gs |
+| 7 | **Duplicate leads** | `addToLeads()` only checked email for duplicates; calls without email always added new rows | Added name+email matching with 3 match paths (email match, name+fill email, name match) | SPREADSHEET APPS SCRIPT.gs |
+| 8 | **Refresh leads doesn't update date** | Existing lead rows matched but returned early without touching date column | Added `setValue(new Date())` to every match path | SPREADSHEET APPS SCRIPT.gs |
+| 9 | **Email template list empty** | `getEmailTemplateList()` used `=== "Yes"` (case-sensitive) while sheet had variations | Changed to `String(row[2]).trim().toLowerCase() === "yes"` | SPREADSHEET APPS SCRIPT.gs |
+| 10 | **Week 1 workbook template missing** | Placeholder ID was overwritten when code was updated | Restored real template ID: `1xJtINLKRfoMKYKfkVL8bxpiT7CDpyC7dndAe3hDSTvg` | SPREADSHEET APPS SCRIPT.gs |
+
+### Files Modified
+
+| File | Lines Changed | What Changed |
+|------|--------------|-------------|
+| `SPREADSHEET APPS SCRIPT.gs` | ~120 lines | normalizeTime(), newClientSetup(), checkIntakeStatus(), createIntakeDoc(), addToLeads(), addToLeadsWithSource(), getEmailTemplateList(), WORKBOOK_TEMPLATES[1] |
+| `SPREADSHEET SIDEBAR CODE.html` | ~30 lines | Added toast CSS, toast DOM element, replaced broken `google.script.host.toast()` with DOM-based `showSidebarToast()` |
+| `EmeraldAPI.gs` | ~15 lines | B8 overwrite removed from `emerald_createNewClient()`, email-only filtering in `emerald_checkIntakeStatus()` and `emerald_createIntakeDoc()` |
+
+### Known Remaining Issues
+
+| Issue | Status | Notes |
+|-------|--------|-------|
+| Workbook template IDs weeks 2–12 | **Needs user input** | Still placeholder IDs; user must provide real Google Doc URLs |
+| `CLIENT_LIT_TEMPLATES` (Intro Packet, Packet 2, Packet 3) | **Needs user input** | Placeholder IDs with `YOUR_` prefix |
+| `TEMPLATE_CLIENT_HOMEWORK` | **Needs user input** | Placeholder ID |
+| `TEMPLATE_SOUL_EMERGENCE_SUMMARY` | **Needs user input** | Placeholder ID |
+| B5 shows email instead of phone | **Template issue** | Not a code bug — user's client templates may have a formula in B5 referencing B4 |
+
+### Decision Log Update
+
+| Date | Decision | Reason |
+|------|----------|--------|
+| 2026-02-26 | Modified existing SPREADSHEET APPS SCRIPT.gs | Critical production bugs in human-facing system required fixes; "never modify" rule superseded by user directive |
+| 2026-02-26 | Modified existing SPREADSHEET SIDEBAR CODE.html | Toast notifications were completely broken; `google.script.host.toast()` doesn't exist in GAS sidebars |
+| 2026-02-26 | Human spreadsheet layer prioritized over Emerald AI | User actively using sidebar daily; AI layer can wait until human tools work perfectly |

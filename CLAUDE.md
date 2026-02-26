@@ -65,7 +65,7 @@ Emerald follows the Wanderlust/Gilligan pattern: a Next.js-style component-drive
                     └─────────────┬───────────────────────┘
                     ┌─────────────▼───────────────────────┐
                     │  SPREADSHEET APPS SCRIPT.gs         │
-                    │  (existing — never modified)        │
+                    │  (existing — bug fixes 2026-02-26)  │
                     │   backend_generateDoulaDoc()        │
                     │   backend_sendWorkbook()            │
                     │   addNextSession()                  │
@@ -100,14 +100,14 @@ Emerald/
 ├── CONTEXT.md             ← Claude system prompt + persona
 ├── TIMELINE.md            ← Phased development plan
 └── Tula App/
-    ├── SPREADSHEET APPS SCRIPT.gs    ← EXISTING — do not modify
-    ├── SPREADSHEET SIDEBAR CODE.html ← EXISTING — do not modify
+    ├── SPREADSHEET APPS SCRIPT.gs    ← EXISTING — modified 2026-02-26 (bug fixes)
+    ├── SPREADSHEET SIDEBAR CODE.html ← EXISTING — modified 2026-02-26 (toast fix)
     ├── EmeraldAPI.gs                 ← NEW: Web App entry + data bridge
     ├── EmeraldAI.gs                  ← NEW: Claude integration + tools
     └── EmeraldUI.html                ← NEW: Mobile-first chat UI
 ```
 
-> **Golden Rule:** Never modify `SPREADSHEET APPS SCRIPT.gs` or `SPREADSHEET SIDEBAR CODE.html`. All new code is additive only.
+> **Golden Rule (updated 2026-02-26):** Prefer not to modify `SPREADSHEET APPS SCRIPT.gs` or `SPREADSHEET SIDEBAR CODE.html` unless fixing production bugs in the human-facing system. Bug fixes were applied on 2026-02-26 — see TIMELINE.md for full details.
 
 ---
 
@@ -397,15 +397,28 @@ Testing:    End-to-end testing in progress
 - All action buttons wired in the UI
 - Session memory (24h rolling) and long-term memory (persistent)
 - Safe write/clear with cell validation
+- **Sidebar toast notifications** — DOM-based feedback on every button press (fixed 2026-02-26)
+- **Calendar scheduling** — normalizeTime() handles Date objects correctly (fixed 2026-02-26)
+- **Intake status** — email-only field matching, no false positives (fixed 2026-02-26)
+- **New client setup** — B8 formula preserved (fixed 2026-02-26)
+- **Leads deduplication** — matches by name+email, updates date on refresh (fixed 2026-02-26)
+- **Email templates** — case-insensitive "Yes" matching (fixed 2026-02-26)
+- **Week 1 workbook** — real template ID restored (fixed 2026-02-26)
 
 ### What Still Needs Testing
 - Each tool end-to-end with real client data (all 3 types)
 - Email sending flows (onboarding, newsletter, past client offer)
-- Calendar scheduling (add + delete)
+- Calendar scheduling (add + delete) — code fixed, needs live verification
 - Document generation (all 8 types + 3 packets)
-- Soul Emergence workbooks (weeks 1–12)
+- Soul Emergence workbooks (weeks 2–12 need real template IDs)
 - Memory persistence across sessions
 - iPhone Safari experience
+
+### Placeholder Template IDs Still Needed
+- `WORKBOOK_TEMPLATES` weeks 2–12 (Week 1 restored)
+- `CLIENT_LIT_TEMPLATES` — Intro Packet, Packet 2, Packet 3
+- `TEMPLATE_CLIENT_HOMEWORK`
+- `TEMPLATE_SOUL_EMERGENCE_SUMMARY`
 
 ---
 
@@ -444,3 +457,20 @@ They do NOT:
 - Modify existing function signatures
 - Change any spreadsheet structure
 - Conflict with the existing sidebar (both can coexist)
+
+### Existing File Modifications (2026-02-26)
+
+The following changes were made to existing files to fix production bugs in the human-facing system:
+
+**SPREADSHEET APPS SCRIPT.gs:**
+- `normalizeTime()` — handles Date objects from `getValue()` (was causing December 1899 dates)
+- `newClientSetup()` — removed B8 `setValue(0)` (was overwriting template formula)
+- `checkIntakeStatus()` / `createIntakeDoc()` — email-only field matching (was matching all form fields)
+- `addToLeads()` — complete rewrite for deduplication and date column
+- `addToLeadsWithSource()` — simplified to call `addToLeads()`
+- `getEmailTemplateList()` — case-insensitive "Yes" check
+- `WORKBOOK_TEMPLATES[1]` — restored real template ID
+
+**SPREADSHEET SIDEBAR CODE.html:**
+- Added toast notification CSS and DOM element
+- Replaced broken `google.script.host.toast()` with DOM-based `showSidebarToast()`
