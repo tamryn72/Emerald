@@ -383,7 +383,7 @@ Add the Web App URL to your phone's home screen for app-like experience.
 
 ```
 Status:     LIVE — First deploy 2026-02-26
-Web App:    https://script.google.com/macros/s/AKfycbwdMweOLJfAKzVBCP68x0_rp8GXN0FuKk2MJw70Mzn8QEUz_Ggb-jo-GgrhPP5LfuA4/exec
+Web App:    https://script.google.com/macros/s/AKfycbyNd6z0Cxg3NI20VhLDv2wS5FemXjpRJ07SoGh1PqN8b-70GNuXttN0jroHtRzFC_sm/exec
 Model:      claude-sonnet-4-6
 API Key:    Set in Script Properties
 Testing:    End-to-end testing in progress
