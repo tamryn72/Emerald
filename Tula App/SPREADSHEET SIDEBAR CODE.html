@@ -76,6 +76,29 @@
         background: #fdf2e9;
         border-color: #d4a373;
       }
+      .sidebar-toast {
+        display: none;
+        position: fixed;
+        bottom: 12px;
+        left: 12px;
+        right: 12px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        transition: opacity 0.3s ease;
+        text-align: center;
+      }
+      .sidebar-toast.success {
+        background: #5a7d6c;
+        color: #fff;
+      }
+      .sidebar-toast.error {
+        background: #c05030;
+        color: #fff;
+      }
       .workbook-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -175,6 +198,7 @@
         <button class="action-btn" onclick="refreshDashboard()">Refresh Dashboard</button>
       </div>
     </div>
+    <div id="sidebar-toast" class="sidebar-toast"></div>
 
     <script>
       const SESSION_NAMES = {
@@ -193,11 +217,24 @@
       };
 
       function successToast(msg) {
-        google.script.host.toast(msg, "✓ Done", 3);
+        showSidebarToast(msg, 'success');
       }
 
       function errorToast(err) {
-        google.script.host.toast(err.message || err, "Error", 5);
+        showSidebarToast(err.message || String(err), 'error');
+      }
+
+      function showSidebarToast(msg, type) {
+        var toast = document.getElementById('sidebar-toast');
+        toast.textContent = (type === 'error' ? '⚠ ' : '✓ ') + msg;
+        toast.className = 'sidebar-toast ' + type;
+        toast.style.display = 'block';
+        toast.style.opacity = '1';
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(function() {
+          toast.style.opacity = '0';
+          setTimeout(function() { toast.style.display = 'none'; }, 300);
+        }, type === 'error' ? 5000 : 3000);
       }
 
       function loadDocumentButtons(clientType) {

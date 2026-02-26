@@ -498,7 +498,7 @@ function emerald_createNewClient(name, type) {
   newSheet.getRange('B2').setValue(name);
   newSheet.getRange('B3').setValue('Active');
   newSheet.getRange('A12').setValue(clientFolder.getId());
-  newSheet.getRange('B8').setValue(0);
+  // B8 left alone — template has a formula there
   newSheet.getRange('B9').setValue(0);
   newSheet.getRange('E11').setValue('No');
 
@@ -542,7 +542,9 @@ function emerald_checkIntakeStatus(clientName) {
   let found  = false;
   form.getResponses().some(r =>
     r.getItemResponses().some(ir => {
-      if (String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
+      // Only match on the email field, not every field in the form
+      if (ir.getItem().getTitle().toLowerCase().includes('email') &&
+          String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
         found = true; return true;
       }
     })
@@ -569,7 +571,9 @@ function emerald_createIntakeDoc(clientName) {
   let matched = null;
   form.getResponses().some(r =>
     r.getItemResponses().some(ir => {
-      if (String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
+      // Only match on the email field, not every field in the form
+      if (ir.getItem().getTitle().toLowerCase().includes('email') &&
+          String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
         matched = r; return true;
       }
     })

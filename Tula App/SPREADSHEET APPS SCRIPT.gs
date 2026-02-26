@@ -159,7 +159,7 @@ function newClientSetup() {
   newSheet.getRange("B2").setValue(clientName);
   newSheet.getRange("B3").setValue("Active");
   newSheet.getRange("A12").setValue(clientFolder.getId());
-  newSheet.getRange("B8").setValue(0);
+  // B8 left alone — template has a formula there
   newSheet.getRange("B9").setValue(0);
   newSheet.getRange("E11").setValue("No");
 
@@ -974,7 +974,9 @@ function checkIntakeStatus() {
 
   responses.some(r =>
     r.getItemResponses().some(ir => {
-      if (String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
+      // Only match on the email field, not every field in the form
+      if (ir.getItem().getTitle().toLowerCase().includes('email') &&
+          String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
         found = true;
         return true;
       }
@@ -1013,7 +1015,9 @@ function createIntakeDoc() {
 
   responses.some(r =>
     r.getItemResponses().some(ir => {
-      if (String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
+      // Only match on the email field, not every field in the form
+      if (ir.getItem().getTitle().toLowerCase().includes('email') &&
+          String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
         matched = r;
         return true;
       }
@@ -1106,27 +1110,43 @@ function createIntakeDoc() {
  SCHEDULING
 ****************************************************************************************/
 function normalizeTime(input) {
-  const str = String(input).trim().toLowerCase();
-
-  if (str.includes(':')) {
-    const [hours, minutes] = str.split(':').map(Number);
-    return { hours, minutes: minutes || 0 };
+  // Handle Date objects (Google Sheets returns Date for time-formatted cells)
+  if (input instanceof Date && !isNaN(input.getTime())) {
+    return { hours: input.getHours(), minutes: input.getMinutes() };
   }
 
-  const num = parseInt(str.replace(/\D/g, ''));
+  const str = String(input).trim().toLowerCase();
+  const isPM = str.includes('pm');
+  const isAM = str.includes('am');
+  const clean = str.replace(/[ap]m/g, '').replace(/\s+/g, '').trim();
+
+  if (clean.includes(':')) {
+    let [h, m] = clean.split(':').map(s => parseInt(s));
+    m = m || 0;
+    if (isPM && h < 12) h += 12;
+    if (isAM && h === 12) h = 0;
+    return { hours: h, minutes: m };
+  }
+
+  const num = parseInt(clean.replace(/\D/g, ''));
 
   if (num < 100) {
-    const hours = num > 12 ? num : (num < 7 ? num + 12 : num);
+    let hours = num;
+    if (isPM && hours < 12) hours += 12;
+    else if (isAM && hours === 12) hours = 0;
+    else if (!isPM && !isAM && hours < 7) hours += 12;
     return { hours, minutes: 0 };
   }
 
-  const hoursStr = str.length === 3 ? str.substring(0, 1) : str.substring(0, 2);
-  const minutesStr = str.length === 3 ? str.substring(1) : str.substring(2);
+  const hoursStr = clean.length === 3 ? clean.substring(0, 1) : clean.substring(0, 2);
+  const minutesStr = clean.length === 3 ? clean.substring(1) : clean.substring(2);
 
   let hours = parseInt(hoursStr);
   const minutes = parseInt(minutesStr);
 
-  if (hours < 7) hours += 12;
+  if (isPM && hours < 12) hours += 12;
+  else if (isAM && hours === 12) hours = 0;
+  else if (!isPM && !isAM && hours < 7) hours += 12;
 
   return { hours, minutes };
 }
