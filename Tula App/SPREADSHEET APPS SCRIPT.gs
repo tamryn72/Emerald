@@ -198,17 +198,24 @@ function addToLeads(name, email) {
       const rowName = String(data[i][0]).trim().toLowerCase();
       const rowEmail = String(data[i][2]).trim().toLowerCase();
 
-      // Exact email match — already exists, skip
-      if (normalizedEmail && rowEmail === normalizedEmail) return;
+      // Exact email match — update date, skip
+      if (normalizedEmail && rowEmail === normalizedEmail) {
+        leadsSheet.getRange(4 + i, 2).setValue(new Date());
+        return;
+      }
 
-      // Same name, row has no email — fill in the email
+      // Same name, row has no email — fill in the email + update date
       if (rowName === normalizedName && !rowEmail && normalizedEmail) {
+        leadsSheet.getRange(4 + i, 2).setValue(new Date());
         leadsSheet.getRange(4 + i, 3).setValue(email);
         return;
       }
 
-      // Same name, already has same or different email — skip duplicate
-      if (rowName === normalizedName) return;
+      // Same name, already has email — update date, skip duplicate
+      if (rowName === normalizedName) {
+        leadsSheet.getRange(4 + i, 2).setValue(new Date());
+        return;
+      }
     }
   }
 
