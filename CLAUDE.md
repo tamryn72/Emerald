@@ -84,7 +84,7 @@ Emerald follows the Wanderlust/Gilligan pattern: a Next.js-style component-drive
 | Styling | Custom CSS — sunset design system (no framework needed at this scale) |
 | Backend | Google Apps Script (Web App — `doGet` / `doPost`) |
 | Data | Google Sheets (existing — read-only structure) |
-| AI | Anthropic Claude claude-sonnet-4-6 via REST API |
+| AI | Anthropic Claude claude-opus-4-6 via REST API |
 | Storage | GAS ScriptProperties (API key, memory, session state) |
 | Deployment | Google Apps Script Web App URL (no external hosting) |
 | Auth | Single-user; GAS runs as practitioner's Google account |

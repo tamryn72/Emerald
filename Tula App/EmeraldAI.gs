@@ -1,6 +1,6 @@
 /****************************************************************************************
  EMERALD AI — Haven, The Awakening Doula
- Claude claude-sonnet-4-6 integration, tool definitions, and memory system.
+ Claude AI integration, tool definitions, and memory system.
 
  Model: claude-opus-4-6 (Anthropic, February 2026)
  API key: stored in Script Properties → ANTHROPIC_API_KEY

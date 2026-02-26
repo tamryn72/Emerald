@@ -293,6 +293,9 @@ function emeraldExecuteTool(toolName, toolInput) {
       case 'clear_cell':          return emeraldSafeClear(clientName, toolInput.cell);
 
       // ── Client Management ──
+      case 'create_new_client':
+        return emerald_createNewClient(toolInput.name, toolInput.clientType);
+
       case 'mark_client_complete': {
         if (!toolInput.confirmed) return { error: 'Confirmation required.' };
         return emerald_markClientComplete(clientName);
@@ -369,6 +372,9 @@ function emeraldExecuteTool(toolName, toolInput) {
         if (!toolInput.confirmed) return { error: 'Confirmation required.' };
         backend_sendSalesEmailTemplate(toolInput.templateName);
         return { drafted: true, template: toolInput.templateName, client: clientName };
+
+      case 'preview_newsletter':
+        return emerald_getNewsletterPreview();
 
       case 'send_newsletter':
         if (!toolInput.confirmed) return { error: 'Confirmation required.' };
