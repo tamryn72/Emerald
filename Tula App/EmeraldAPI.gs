@@ -484,6 +484,20 @@ function emerald_createNewClient(name, type) {
   const newSheet = ss.getSheets().find(s => s.getSheetId() === tempCopy.getSheetId());
 
   newSheet.setName(name);
+
+  // Move new sheet to end (Web App-safe — no setActiveSheet needed)
+  try {
+    var ssId = ss.getId();
+    var sheetId = newSheet.getSheetId();
+    var totalSheets = ss.getSheets().length;
+    Sheets.Spreadsheets.batchUpdate({ requests: [{ updateSheetProperties: {
+      properties: { sheetId: sheetId, index: totalSheets - 1 },
+      fields: 'index'
+    }}]}, ssId);
+  } catch (e) {
+    // Non-critical — sheet still created, just not repositioned
+  }
+
   newSheet.getRange('B2').setValue(name);
   newSheet.getRange('B3').setValue('Active');
   newSheet.getRange('A12').setValue(clientFolder.getId());
