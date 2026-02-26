@@ -484,7 +484,6 @@ function emerald_createNewClient(name, type) {
   const newSheet = ss.getSheets().find(s => s.getSheetId() === tempCopy.getSheetId());
 
   newSheet.setName(name);
-  ss.moveActiveSheet(ss.getSheets().length);
   newSheet.getRange('B2').setValue(name);
   newSheet.getRange('B3').setValue('Active');
   newSheet.getRange('A12').setValue(clientFolder.getId());
