@@ -182,7 +182,7 @@ function addToLeads(name, email) {
     leadsSheet.getRange("A1:C3").setValues([
       ["LEADS", "", ""],
       ["", "", ""],
-      ["Name", "Source", "Email"]
+      ["Name", "Date", "Email"]
     ]);
     leadsSheet.getRange("A1").setFontSize(16).setFontWeight("bold");
     leadsSheet.getRange("A3:C3").setFontWeight("bold").setBackground("#1a1a2e").setFontColor("#f5f0e8");
@@ -214,7 +214,7 @@ function addToLeadsWithSource(name, email, source) {
     leadsSheet.getRange("A1:C3").setValues([
       ["LEADS", "", ""],
       ["", "", ""],
-      ["Name", "Source", "Email"]
+      ["Name", "Date", "Email"]
     ]);
     leadsSheet.getRange("A1").setFontSize(16).setFontWeight("bold");
     leadsSheet.getRange("A3:C3").setFontWeight("bold").setBackground("#1a1a2e").setFontColor("#f5f0e8");
@@ -233,7 +233,7 @@ function addToLeadsWithSource(name, email, source) {
 
   const nextRow = Math.max(leadsSheet.getLastRow() + 1, 4);
   leadsSheet.getRange(nextRow, 1).setValue(name);
-  leadsSheet.getRange(nextRow, 2).setValue(source);
+  leadsSheet.getRange(nextRow, 2).setValue(new Date());
   leadsSheet.getRange(nextRow, 3).setValue(email);
 }
 
@@ -1344,7 +1344,7 @@ function getEmailTemplateList() {
   if (!sheet) return [];
 
   const data = sheet.getRange("A2:C").getValues();
-  return data.filter(row => row[2] === "Yes" && row[0]).map(row => row[0]);
+  return data.filter(row => String(row[2]).trim().toLowerCase() === "yes" && row[0]).map(row => row[0]);
 }
 
 function backend_sendSalesEmailTemplate(templateName) {
