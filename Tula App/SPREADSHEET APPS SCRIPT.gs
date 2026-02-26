@@ -201,7 +201,7 @@ function addToLeads(name, email) {
 
   const nextRow = Math.max(leadsSheet.getLastRow() + 1, 4);
   leadsSheet.getRange(nextRow, 1).setValue(name);
-  leadsSheet.getRange(nextRow, 2).setValue("Direct");
+  leadsSheet.getRange(nextRow, 2).setValue(new Date());
   leadsSheet.getRange(nextRow, 3).setValue(email);
 }
 
