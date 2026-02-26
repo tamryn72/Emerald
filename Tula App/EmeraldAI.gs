@@ -71,8 +71,8 @@ function runAgenticLoop(messages, tools, systemPrompt) {
     // Check if Claude wants to use tools
     const toolUseBlocks = response.content.filter(b => b.type === 'tool_use');
 
-    if (toolUseBlocks.length === 0 || response.stop_reason === 'end_turn') {
-      // Extract final text reply
+    if (toolUseBlocks.length === 0) {
+      // No tools — extract final text reply
       const textBlock = response.content.find(b => b.type === 'text');
       return {
         reply: textBlock ? textBlock.text : '(No response)',

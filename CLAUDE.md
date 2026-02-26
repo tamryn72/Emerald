@@ -379,6 +379,36 @@ Add the Web App URL to your phone's home screen for app-like experience.
 
 ---
 
+## Deployment Status
+
+```
+Status:     LIVE — First deploy 2026-02-26
+Web App:    https://script.google.com/macros/s/AKfycbwdMweOLJfAKzVBCP68x0_rp8GXN0FuKk2MJw70Mzn8QEUz_Ggb-jo-GgrhPP5LfuA4/exec
+Model:      claude-sonnet-4-6
+API Key:    Set in Script Properties
+Testing:    End-to-end testing in progress
+```
+
+### What's Working
+- Web App loads and renders the full UI (sidebar, chat, action panels)
+- Client list loads from spreadsheet
+- Chat sends messages to Claude and receives responses
+- All 31 AI tools defined and routed
+- All action buttons wired in the UI
+- Session memory (24h rolling) and long-term memory (persistent)
+- Safe write/clear with cell validation
+
+### What Still Needs Testing
+- Each tool end-to-end with real client data (all 3 types)
+- Email sending flows (onboarding, newsletter, past client offer)
+- Calendar scheduling (add + delete)
+- Document generation (all 8 types + 3 packets)
+- Soul Emergence workbooks (weeks 1–12)
+- Memory persistence across sessions
+- iPhone Safari experience
+
+---
+
 ## Model Specification
 
 ```

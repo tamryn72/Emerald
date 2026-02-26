@@ -110,20 +110,24 @@ function doPost(e) {
  * no CORS or login-redirect issues.
  */
 function handleApiCall(payloadStr) {
-  const data   = JSON.parse(payloadStr);
-  const action = data.action;
+  try {
+    const data   = JSON.parse(payloadStr);
+    const action = data.action;
 
-  switch (action) {
-    case 'chat':               return handleChatRequest(data.message, data.clientName || null, data.history || []);
-    case 'getClients':         return emeraldGetClientList();
-    case 'getClientInfo':      return emeraldGetClientInfo(data.clientName);
-    case 'getEmailTemplates':  return getEmailTemplateList();
-    case 'getMemory':          return getLongTermMemory();
-    case 'getSessions':        return emerald_getUpcomingSessions(data.clientName);
-    case 'getNewsletterPreview': return emerald_getNewsletterPreview();
-    case 'executeAction':      return emeraldExecuteTool(data.tool, data.params || {});
-    case 'clearMemory':        return clearEmeraldMemory();
-    default: throw new Error('Unknown action: ' + action);
+    switch (action) {
+      case 'chat':               return handleChatRequest(data.message, data.clientName || null, data.history || []);
+      case 'getClients':         return emeraldGetClientList();
+      case 'getClientInfo':      return emeraldGetClientInfo(data.clientName);
+      case 'getEmailTemplates':  return getEmailTemplateList();
+      case 'getMemory':          return getLongTermMemory();
+      case 'getSessions':        return emerald_getUpcomingSessions(data.clientName);
+      case 'getNewsletterPreview': return emerald_getNewsletterPreview();
+      case 'executeAction':      return emeraldExecuteTool(data.tool, data.params || {});
+      case 'clearMemory':        return clearEmeraldMemory();
+      default:                   return { error: 'Unknown action: ' + action };
+    }
+  } catch (err) {
+    return { error: err.message };
   }
 }
 
