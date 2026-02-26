@@ -188,14 +188,27 @@ function addToLeads(name, email) {
     leadsSheet.getRange("A3:C3").setFontWeight("bold").setBackground("#1a1a2e").setFontColor("#f5f0e8");
   }
 
-  if (email) {
-    const lastRow = leadsSheet.getLastRow();
-    if (lastRow >= 4) {
-      const existingEmails = leadsSheet.getRange(4, 3, lastRow - 3, 1).getValues().flat();
-      const normalizedEmail = String(email).trim().toLowerCase();
-      if (existingEmails.some(e => String(e).trim().toLowerCase() === normalizedEmail)) {
+  const lastRow = leadsSheet.getLastRow();
+  if (lastRow >= 4) {
+    const data = leadsSheet.getRange(4, 1, lastRow - 3, 3).getValues();
+    const normalizedName = String(name).trim().toLowerCase();
+    const normalizedEmail = email ? String(email).trim().toLowerCase() : '';
+
+    for (let i = 0; i < data.length; i++) {
+      const rowName = String(data[i][0]).trim().toLowerCase();
+      const rowEmail = String(data[i][2]).trim().toLowerCase();
+
+      // Exact email match — already exists, skip
+      if (normalizedEmail && rowEmail === normalizedEmail) return;
+
+      // Same name, row has no email — fill in the email
+      if (rowName === normalizedName && !rowEmail && normalizedEmail) {
+        leadsSheet.getRange(4 + i, 3).setValue(email);
         return;
       }
+
+      // Same name, already has same or different email — skip duplicate
+      if (rowName === normalizedName) return;
     }
   }
 
@@ -206,35 +219,8 @@ function addToLeads(name, email) {
 }
 
 function addToLeadsWithSource(name, email, source) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let leadsSheet = ss.getSheetByName("Leads");
-
-  if (!leadsSheet) {
-    leadsSheet = ss.insertSheet("Leads");
-    leadsSheet.getRange("A1:C3").setValues([
-      ["LEADS", "", ""],
-      ["", "", ""],
-      ["Name", "Date", "Email"]
-    ]);
-    leadsSheet.getRange("A1").setFontSize(16).setFontWeight("bold");
-    leadsSheet.getRange("A3:C3").setFontWeight("bold").setBackground("#1a1a2e").setFontColor("#f5f0e8");
-  }
-
-  if (email) {
-    const lastRow = leadsSheet.getLastRow();
-    if (lastRow >= 4) {
-      const existingEmails = leadsSheet.getRange(4, 3, lastRow - 3, 1).getValues().flat();
-      const normalizedEmail = String(email).trim().toLowerCase();
-      if (existingEmails.some(e => String(e).trim().toLowerCase() === normalizedEmail)) {
-        return;
-      }
-    }
-  }
-
-  const nextRow = Math.max(leadsSheet.getLastRow() + 1, 4);
-  leadsSheet.getRange(nextRow, 1).setValue(name);
-  leadsSheet.getRange(nextRow, 2).setValue(new Date());
-  leadsSheet.getRange(nextRow, 3).setValue(email);
+  // Uses addToLeads — column B is always date now
+  addToLeads(name, email);
 }
 
 function refreshLeads() {
