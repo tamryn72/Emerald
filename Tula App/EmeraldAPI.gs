@@ -485,15 +485,12 @@ function emerald_createNewClient(name, type) {
 
   newSheet.setName(name);
 
-  // Move new sheet to end (Web App-safe — no setActiveSheet needed)
+  // Move new client tab to position 3 (after Dashboard, Leads, Instructions)
   try {
-    var ssId = ss.getId();
-    var sheetId = newSheet.getSheetId();
-    var totalSheets = ss.getSheets().length;
     Sheets.Spreadsheets.batchUpdate({ requests: [{ updateSheetProperties: {
-      properties: { sheetId: sheetId, index: totalSheets - 1 },
+      properties: { sheetId: newSheet.getSheetId(), index: 3 },
       fields: 'index'
-    }}]}, ssId);
+    }}]}, ss.getId());
   } catch (e) {
     // Non-critical — sheet still created, just not repositioned
   }
