@@ -384,6 +384,10 @@ function emeraldExecuteTool(toolName, toolInput) {
         if (!toolInput.confirmed) return { error: 'Confirmation required.' };
         return emerald_sendNewsletterAll();
 
+      case 'send_newsletter_offer':
+        if (!toolInput.confirmed) return { error: 'Confirmation required.' };
+        return emerald_sendNewsletterOfferAll();
+
       case 'send_past_client_offer':
         if (!toolInput.confirmed) return { error: 'Confirmation required.' };
         if (toolInput.sendToAll) return emerald_sendPastClientOfferAll();
@@ -811,6 +815,43 @@ function emerald_sendNewsletterAll() {
     sent++;
   });
   return { sent: true, count: sent, message: 'Newsletter sent to ' + sent + ' contacts.' };
+}
+
+function emerald_sendNewsletterOfferAll() {
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('Email_Templates');
+  if (!sheet) return { error: 'Email_Templates sheet not found.' };
+
+  const names   = sheet.getRange('A2:A').getValues().flat();
+  const bodies  = sheet.getRange('B2:B').getValues().flat();
+  const actives = sheet.getRange('C2:C').getValues().flat();
+
+  let htmlBody = null;
+  for (let i = 0; i < names.length; i++) {
+    if (String(names[i]).trim().toLowerCase() === 'newsletter offer' && String(actives[i]).trim().toLowerCase() === 'yes') {
+      htmlBody = String(bodies[i] || '').trim(); break;
+    }
+  }
+  if (!htmlBody) return { error: 'No active "Newsletter Offer" template found in Email_Templates.' };
+
+  const leadsSheet = ss.getSheetByName('Leads');
+  if (!leadsSheet) return { error: 'Leads sheet not found.' };
+  const lastRow = leadsSheet.getLastRow();
+  if (lastRow < 4) return { error: 'No leads found.' };
+
+  const leads = leadsSheet.getRange(4, 1, lastRow - 3, 3).getValues()
+    .map(r => [String(r[0] || '').trim(), String(r[2] || '').trim()])
+    .filter(r => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r[1]));
+
+  if (!leads.length) return { error: 'No valid email addresses in Leads.' };
+
+  let sent = 0;
+  leads.forEach(([name, email]) => {
+    const filled = htmlBody.replace(/\{\{NAME\}\}/g, name).replace(/\{\{CLIENT_NAME\}\}/g, name);
+    GmailApp.sendEmail(email, 'Haven, The Awakening Doula - Newsletter Offer', '', { htmlBody: filled });
+    sent++;
+  });
+  return { sent: true, count: sent, message: 'Newsletter offer sent to ' + sent + ' leads.' };
 }
 
 function emerald_sendPastClientOfferAll() {

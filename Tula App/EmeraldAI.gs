@@ -609,6 +609,17 @@ function getToolDefinitions() {
       }
     },
     {
+      name: 'send_newsletter_offer',
+      description: 'Send the Newsletter Offer email template to all leads. This is an offer OF the newsletter, not the newsletter itself. REQUIRES explicit confirmation.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          confirmed: { type: 'boolean', description: 'Must be true.' }
+        },
+        required: ['confirmed']
+      }
+    },
+    {
       name: 'send_past_client_offer',
       description: 'Send the Past Client Offer email to past clients. REQUIRES confirmation.',
       input_schema: {

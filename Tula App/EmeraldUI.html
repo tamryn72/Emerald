@@ -1071,6 +1071,7 @@ const SECTIONS = {
     build: () => pillSection('', [
       { label: 'Preview Newsletter',           action: () => { closeSheet(); openNewsletterPreview(); }, gold: true },
       { label: 'Send Newsletter to All Leads', action: () => trigger('send_newsletter') },
+      { label: 'Send Newsletter Offer to Leads', action: () => trigger('send_newsletter_offer') },
       { label: 'Past Client Offer — All',      action: () => trigger('send_past_client_offer_all') },
       { label: 'Past Client Offer — One',      action: () => trigger('send_past_client_offer_one') }
     ])
@@ -1089,7 +1090,8 @@ const SECTIONS = {
     title: 'Newsletter',
     build: () => pillSection('', [
       { label: 'Preview Newsletter',           action: () => { closeSheet(); openNewsletterPreview(); }, gold: true },
-      { label: 'Send Newsletter to All Leads', action: () => homeAction('send_newsletter') }
+      { label: 'Send Newsletter to All Leads', action: () => homeAction('send_newsletter') },
+      { label: 'Send Newsletter Offer to Leads', action: () => homeAction('send_newsletter_offer') }
     ])
   },
   'home-past-clients': {
@@ -1237,6 +1239,7 @@ function trigger(toolName, param) {
     'get_budget_url':             `Open the budget`,
     'preview_newsletter':         `Preview the newsletter`,
     'send_newsletter':            `Send the newsletter to all leads`,
+    'send_newsletter_offer':      `Send the newsletter offer to all leads`,
     'send_past_client_offer_all': `Send past client offer to all past clients`,
     'send_past_client_offer_one': `Send past client offer to one specific email`,
     'get_client_folder_url':      `Open ${name}'s Google Drive folder`,
@@ -1257,6 +1260,7 @@ function homeAction(toolName) {
     'refresh_dashboard':          `Refresh the dashboard`,
     'refresh_leads':              `Refresh the leads list`,
     'send_newsletter':            `Send the newsletter to all leads`,
+    'send_newsletter_offer':      `Send the newsletter offer to all leads`,
     'send_past_client_offer_all': `Send past client offer to all past clients`,
     'send_past_client_offer_one': `Send past client offer to one specific email`,
     'add_lead':                   `Add a lead`
