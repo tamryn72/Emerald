@@ -83,8 +83,8 @@
 - Intro Packet, Packet 2, Packet 3
 
 ### 12. Other Doc Templates
-- Client Homework
-- Soul Emergence Summary
+- Client Homework — waiting on template ID
+- Soul Emergence Summary — **GOT IT:** `1dRpRvXb14reodgFRn1E688lhWZ5wrUwbACaeBqLOs1k`
 
 ---
 
