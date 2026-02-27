@@ -12,6 +12,18 @@
 - **Add** to Home > Offer section (alongside "Send Offer to All Past Clients" and "Send Offer to One Email")
 - Backend function already done — just moving the button
 
+### 1b. Fix Newsletter Preview on Mobile
+- Works on desktop, shows "no content available" on mobile
+- Investigate `openNewsletterPreview()` rendering — likely needs mobile-friendly modal or inline display
+- Test on iPhone Safari
+
+### 1c. Add Microphone (Voice Input)
+- Mic icon next to send button in the input bar
+- Uses browser Web Speech API (Speech-to-Text) — no cost, runs client-side
+- Tap to talk → fills text input → she can edit or send
+- Works on iPhone Safari
+- Needs graceful fallback if browser doesn't support it
+
 ---
 
 ## Phase 2: Newsletter Offer Tracking (Ready to Build)
