@@ -610,7 +610,29 @@ function getToolDefinitions() {
     },
     {
       name: 'send_newsletter_offer',
-      description: 'Send the Newsletter Offer email template to all leads. This is an offer OF the newsletter, not the newsletter itself. REQUIRES explicit confirmation.',
+      description: 'Send the Newsletter Offer email template to all leads who have NOT already received it. Only sends to new/unsent leads. REQUIRES explicit confirmation.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          confirmed: { type: 'boolean', description: 'Must be true.' }
+        },
+        required: ['confirmed']
+      }
+    },
+    {
+      name: 'check_newsletter_offer_status',
+      description: 'Check which leads have or have not been sent the newsletter offer. Can check a specific lead by name/email, or return a summary of all.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          leadName: { type: 'string', description: 'Optional: specific lead name to check. Omit for full summary.' }
+        },
+        required: []
+      }
+    },
+    {
+      name: 'reset_newsletter_offer',
+      description: 'Clear all newsletter offer tracking so the offer can be re-sent to everyone. Use when Carlie writes a new offer and wants to send it fresh. REQUIRES explicit confirmation.',
       input_schema: {
         type: 'object',
         properties: {

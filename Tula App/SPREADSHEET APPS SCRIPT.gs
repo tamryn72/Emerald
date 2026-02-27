@@ -51,7 +51,7 @@ const SESSION_NAMES = {
 };
 
 // Soul Emergence Summary Template
-const TEMPLATE_SOUL_EMERGENCE_SUMMARY = "YOUR_SOUL_EMERGENCE_SUMMARY_TEMPLATE_ID_HERE";
+const TEMPLATE_SOUL_EMERGENCE_SUMMARY = "1dRpRvXb14reodgFRn1E688lhWZ5wrUwbACaeBqLOs1k";
 
 const JOURNAL_TEMPLATE_ID = '1oG0hnn9OEwP_uupStwUm9LybIGupeCZe2263_8X11XQ';
 const JOURNAL_DOC_CELL = 'E4';
@@ -828,22 +828,20 @@ function getAkashicFields(sh) {
 }
 
 function getCounselingFields(sh) {
-  const counselingNotesRange = sh.getRange("A13:A23").getValues();
+  const counselingNotesRange = sh.getRange("A13:A22").getValues();
   const counselingNotes = counselingNotesRange.map(row => row[0]).filter(String).join("\n");
 
   return {
     "{{COUNSELING_NOTES}}": counselingNotes,
-    "{{THEMES}}": sh.getRange("B14").getValue(),
-    "{{PATTERNS}}": sh.getRange("B15").getValue(),
-    "{{BLOCKS}}": sh.getRange("B16").getValue(),
-    "{{CONNECTIONS}}": sh.getRange("B17").getValue(),
-    "{{CONCERNS}}": sh.getRange("B18").getValue(),
-    "{{NOTICE}}": sh.getRange("B19").getValue(),
-    "{{PROGRESS}}": sh.getRange("B20").getValue(),
-    "{{PLANNING}}": sh.getRange("B21").getValue(),
-    "{{HOMEWORK}}": sh.getRange("B22").getValue(),
-    "{{FOLLOW_UP}}": sh.getRange("B23").getValue(),
-    "{{CLIENT_HOMEWORK}}": sh.getRange("B22").getValue()
+    "{{FOCUS_THEMES}}": sh.getRange("B14").getValue(),
+    "{{INSIGHT_DOWNLOADS}}": sh.getRange("B15").getValue(),
+    "{{EMOTIONAL_LANDSCAPE}}": sh.getRange("B16").getValue(),
+    "{{SPIRITUAL_LANDSCAPE}}": sh.getRange("B17").getValue(),
+    "{{COGNITIVE_RELATIONAL}}": sh.getRange("B18").getValue(),
+    "{{BEHAVIOURAL_PATTERNS}}": sh.getRange("B19").getValue(),
+    "{{PRACTICES_ASSIGNED}}": sh.getRange("B20").getValue(),
+    "{{PATHWAY_NOTES}}": sh.getRange("B21").getValue(),
+    "{{COMPLETION_NOTES}}": sh.getRange("B22").getValue()
   };
 }
 

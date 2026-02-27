@@ -174,16 +174,15 @@ Every client sheet follows this layout:
 #### Counseling Client Fields (safe write)
 | Cell | Field |
 |------|-------|
-| B14 | Themes |
-| B15 | Patterns |
-| B16 | Blocks |
-| B17 | Connections |
-| B18 | Concerns |
-| B19 | Notice |
-| B20 | Progress |
-| B21 | Planning |
-| B22 | Homework |
-| B23 | Follow Up |
+| B14 | Primary Concern / Focus |
+| B15 | Client Narrative |
+| B16 | Emotional Landscape |
+| B17 | Spiritual Landscape |
+| B18 | Cognitive + Relational Patterns |
+| B19 | Behavioural Patterns |
+| B20 | Interventions Used |
+| B21 | Therapeutic Notes for Continuity |
+| B22 | Plan for Next Session |
 
 #### Soul Emergence Fields (safe write)
 | Rows | Field |

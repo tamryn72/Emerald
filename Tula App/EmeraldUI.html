@@ -359,6 +359,26 @@
     .send-btn:active { transform: scale(0.95); }
     .send-btn svg { width: 17px; height: 17px; fill: white; }
 
+    .mic-btn {
+      width: 40px; height: 40px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, transform 0.1s, border-color 0.15s;
+      flex-shrink: 0;
+    }
+    .mic-btn:hover { border-color: var(--gold); }
+    .mic-btn:active { transform: scale(0.95); }
+    .mic-btn svg { width: 17px; height: 17px; fill: var(--muted); }
+    .mic-btn.listening { background: var(--primary); border-color: var(--primary); animation: mic-pulse 1.2s ease infinite; }
+    .mic-btn.listening svg { fill: white; }
+    @keyframes mic-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(232, 101, 74, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(232, 101, 74, 0); }
+    }
+
     /* ─────────────────────────────────────────
        BOTTOM SHEET
     ───────────────────────────────────────── */
@@ -570,10 +590,14 @@
       padding: 14px;
       background: white;
       max-height: 52dvh;
+      max-height: 52vh; /* fallback for older mobile browsers */
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       font-size: 13px;
       line-height: 1.6;
       color: #333;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
     .newsletter-subject {
       font-size: 12px;
@@ -689,7 +713,7 @@
       <div class="home-actions">
         <button class="home-action-btn gold" onclick="homeAction('preview_newsletter')">Preview Newsletter</button>
         <button class="home-action-btn" onclick="openSheet('home-newsletter')">Send Newsletter</button>
-        <button class="home-action-btn" onclick="openSheet('home-past-clients')">Past Client Offer</button>
+        <button class="home-action-btn" onclick="openSheet('home-past-clients')">Offers</button>
         <button class="home-action-btn" onclick="openSheet('home-leads')">Manage Leads</button>
         <button class="home-action-btn" onclick="homeAction('refresh_dashboard')">Refresh Dashboard</button>
       </div>
@@ -710,6 +734,9 @@
       onkeydown="handleInputKeydown(event)"
       oninput="autoResize(this)"
     ></textarea>
+    <button class="mic-btn" id="micBtn" onclick="toggleMic()" aria-label="Voice input" style="display:none">
+      <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+    </button>
     <button class="send-btn" onclick="sendMessage()" aria-label="Send">
       <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
     </button>
@@ -803,6 +830,7 @@ document.addEventListener('DOMContentLoaded', () => {
     appendAIMessage('Good ' + getTimeGreeting() + ', Carlie. Select a client from the sidebar to get started, or ask me anything about your practice.');
   });
   renderQuickActions();
+  initVoiceInput();
 });
 
 async function loadClients() {
@@ -916,7 +944,7 @@ function renderQuickActions() {
     el.innerHTML = `
       <div class="action-chip gold-chip" onclick="homeAction('preview_newsletter')">Newsletter Preview</div>
       <div class="action-chip" onclick="openSheet('home-newsletter')">Send Newsletter</div>
-      <div class="action-chip" onclick="openSheet('home-past-clients')">Past Client Offer</div>
+      <div class="action-chip" onclick="openSheet('home-past-clients')">Offers</div>
       <div class="action-chip" onclick="openSheet('home-leads')">Leads</div>
       <div class="action-chip" onclick="homeAction('refresh_dashboard')">Dashboard</div>
     `;
@@ -1071,7 +1099,6 @@ const SECTIONS = {
     build: () => pillSection('', [
       { label: 'Preview Newsletter',           action: () => { closeSheet(); openNewsletterPreview(); }, gold: true },
       { label: 'Send Newsletter to All Leads', action: () => trigger('send_newsletter') },
-      { label: 'Send Newsletter Offer to Leads', action: () => trigger('send_newsletter_offer') },
       { label: 'Past Client Offer — All',      action: () => trigger('send_past_client_offer_all') },
       { label: 'Past Client Offer — One',      action: () => trigger('send_past_client_offer_one') }
     ])
@@ -1090,15 +1117,15 @@ const SECTIONS = {
     title: 'Newsletter',
     build: () => pillSection('', [
       { label: 'Preview Newsletter',           action: () => { closeSheet(); openNewsletterPreview(); }, gold: true },
-      { label: 'Send Newsletter to All Leads', action: () => homeAction('send_newsletter') },
-      { label: 'Send Newsletter Offer to Leads', action: () => homeAction('send_newsletter_offer') }
+      { label: 'Send Newsletter to All Leads', action: () => homeAction('send_newsletter') }
     ])
   },
   'home-past-clients': {
-    title: 'Past Client Offer',
+    title: 'Offers',
     build: () => pillSection('', [
-      { label: 'Send Offer to All Past Clients', action: () => homeAction('send_past_client_offer_all') },
-      { label: 'Send Offer to One Email',        action: () => homeAction('send_past_client_offer_one') }
+      { label: 'Send Newsletter Offer to Leads',   action: () => homeAction('send_newsletter_offer') },
+      { label: 'Send Offer to All Past Clients',    action: () => homeAction('send_past_client_offer_all') },
+      { label: 'Send Offer to One Email',            action: () => homeAction('send_past_client_offer_one') }
     ])
   },
   'home-leads': {
@@ -1313,13 +1340,30 @@ async function openNewsletterPreview() {
   document.getElementById('newsletterModal').classList.add('open');
 
   try {
-    const data = await apiCall({ action: 'getNewsletterPreview' });
+    /* Try google.script.run first, fall back to fetch/doPost for mobile */
+    let data;
+    try {
+      data = await apiCall({ action: 'getNewsletterPreview' });
+    } catch (runErr) {
+      /* Fallback: direct POST to web app URL for mobile Safari */
+      const resp = await fetch(window.location.href, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getNewsletterPreview' })
+      });
+      const json = await resp.json();
+      data = json.data || json;
+    }
+
     if (data && data.error) {
       document.getElementById('newsletterSubjectVal').textContent = 'Not found';
       document.getElementById('newsletterBody').innerHTML = `<div style="color:var(--muted);font-size:13px">${data.error}</div>`;
+    } else if (data && (data.subject || data.body)) {
+      document.getElementById('newsletterSubjectVal').textContent = data.subject || '(No subject)';
+      document.getElementById('newsletterBody').innerHTML = data.body || '<em>No content found.</em>';
     } else {
-      document.getElementById('newsletterSubjectVal').textContent = (data && data.subject) || '(No subject)';
-      document.getElementById('newsletterBody').innerHTML = (data && data.body) || '<em>No content found.</em>';
+      document.getElementById('newsletterSubjectVal').textContent = 'Preview unavailable';
+      document.getElementById('newsletterBody').innerHTML = '<div style="color:var(--muted);font-size:13px">Could not load newsletter content. Try again or check Email_Templates sheet.</div>';
     }
   } catch (e) {
     document.getElementById('newsletterSubjectVal').textContent = 'Error';
@@ -1335,6 +1379,70 @@ function closeNewsletterModal(e) {
 function sendNewsletterFromPreview() {
   document.getElementById('newsletterModal').classList.remove('open');
   sendMessage('Send the newsletter to all leads');
+}
+
+
+/* ═══════════════════════════════════════════════
+   VOICE INPUT (Microphone)
+═══════════════════════════════════════════════ */
+let recognition = null;
+let isListening = false;
+
+function initVoiceInput() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) return; /* Browser doesn't support it — mic stays hidden */
+
+  recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = true;
+  recognition.continuous = false;
+
+  recognition.onresult = (e) => {
+    const input = document.getElementById('chatInput');
+    let transcript = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      transcript += e.results[i][0].transcript;
+    }
+    /* Append to existing text (in case she typed something first) */
+    const before = input.value.replace(/\s*🎙️.*$/, '');
+    if (e.results[e.results.length - 1].isFinal) {
+      input.value = (before ? before + ' ' : '') + transcript;
+    } else {
+      input.value = (before ? before + ' ' : '') + transcript + ' 🎙️';
+    }
+    autoResize(input);
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    document.getElementById('micBtn').classList.remove('listening');
+    /* Clean up any trailing mic indicator */
+    const input = document.getElementById('chatInput');
+    input.value = input.value.replace(/\s*🎙️.*$/, '');
+    autoResize(input);
+  };
+
+  recognition.onerror = (e) => {
+    isListening = false;
+    document.getElementById('micBtn').classList.remove('listening');
+    if (e.error !== 'no-speech' && e.error !== 'aborted') {
+      showToast('Voice input unavailable');
+    }
+  };
+
+  /* Show the mic button */
+  document.getElementById('micBtn').style.display = 'flex';
+}
+
+function toggleMic() {
+  if (!recognition) return;
+  if (isListening) {
+    recognition.stop();
+  } else {
+    isListening = true;
+    document.getElementById('micBtn').classList.add('listening');
+    recognition.start();
+  }
 }
 
 

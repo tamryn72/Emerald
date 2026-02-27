@@ -27,7 +27,7 @@ const SAFE_WRITE_CELLS = {
   common:           ['B4','B5','B7','B8','B9','B10','B11','D10'],
   Akashic:          ['B13','B14','B15','B16','B17','B20','B21','B22',
                      'B25','B26','B27','B28','B29','B31','B32','B33','B36','B37'],
-  Counseling:       ['B14','B15','B16','B17','B18','B19','B20','B21','B22','B23'],
+  Counseling:       ['B14','B15','B16','B17','B18','B19','B20','B21','B22'],
   'Soul Emergence': ['B13','B14','B15','B16','B17','B18','B19','B20',
                      'B21','B22','B23','B24','B25']
 };
@@ -218,16 +218,15 @@ function emeraldGetClientInfo(clientName) {
     });
   } else if (type === 'Counseling') {
     Object.assign(base, {
-      themes:      sh.getRange('B14').getValue(),
-      patterns:    sh.getRange('B15').getValue(),
-      blocks:      sh.getRange('B16').getValue(),
-      connections: sh.getRange('B17').getValue(),
-      concerns:    sh.getRange('B18').getValue(),
-      notice:      sh.getRange('B19').getValue(),
-      progress:    sh.getRange('B20').getValue(),
-      planning:    sh.getRange('B21').getValue(),
-      homework:    sh.getRange('B22').getValue(),
-      followUp:    sh.getRange('B23').getValue()
+      primaryConcern:    sh.getRange('B14').getValue(),
+      clientNarrative:   sh.getRange('B15').getValue(),
+      emotionalLandscape:sh.getRange('B16').getValue(),
+      spiritualLandscape:sh.getRange('B17').getValue(),
+      cognitiveRelational:sh.getRange('B18').getValue(),
+      behaviouralPatterns:sh.getRange('B19').getValue(),
+      interventionsUsed: sh.getRange('B20').getValue(),
+      therapeuticNotes:  sh.getRange('B21').getValue(),
+      planNextSession:   sh.getRange('B22').getValue()
     });
   } else if (type === 'Soul Emergence') {
     base.journalId   = sh.getRange('E4').getValue();
@@ -387,6 +386,13 @@ function emeraldExecuteTool(toolName, toolInput) {
       case 'send_newsletter_offer':
         if (!toolInput.confirmed) return { error: 'Confirmation required.' };
         return emerald_sendNewsletterOfferAll();
+
+      case 'check_newsletter_offer_status':
+        return emerald_checkNewsletterOfferStatus(toolInput.leadName || null);
+
+      case 'reset_newsletter_offer':
+        if (!toolInput.confirmed) return { error: 'Confirmation required.' };
+        return emerald_resetNewsletterOffer();
 
       case 'send_past_client_offer':
         if (!toolInput.confirmed) return { error: 'Confirmation required.' };
@@ -839,19 +845,93 @@ function emerald_sendNewsletterOfferAll() {
   const lastRow = leadsSheet.getLastRow();
   if (lastRow < 4) return { error: 'No leads found.' };
 
-  const leads = leadsSheet.getRange(4, 1, lastRow - 3, 3).getValues()
-    .map(r => [String(r[0] || '').trim(), String(r[2] || '').trim()])
-    .filter(r => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r[1]));
+  /* Column X (col 24) tracks offer sent date — skip leads that already have one */
+  const leadsData = leadsSheet.getRange(4, 1, lastRow - 3, 24).getValues();
+  const unsent = [];
+  const rowIndices = [];
+  for (let i = 0; i < leadsData.length; i++) {
+    const name  = String(leadsData[i][0] || '').trim();
+    const email = String(leadsData[i][2] || '').trim();
+    const offerSent = leadsData[i][23]; /* Column X (index 23) */
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && !offerSent) {
+      unsent.push([name, email]);
+      rowIndices.push(i + 4); /* Actual sheet row */
+    }
+  }
 
-  if (!leads.length) return { error: 'No valid email addresses in Leads.' };
+  if (!unsent.length) return { sent: true, count: 0, message: 'All leads have already received the newsletter offer.' };
 
   let sent = 0;
-  leads.forEach(([name, email]) => {
+  const now = new Date();
+  unsent.forEach(([name, email], idx) => {
     const filled = htmlBody.replace(/\{\{NAME\}\}/g, name).replace(/\{\{CLIENT_NAME\}\}/g, name);
     GmailApp.sendEmail(email, 'Haven, The Awakening Doula - Newsletter Offer', '', { htmlBody: filled });
+    leadsSheet.getRange(rowIndices[idx], 24).setValue(now); /* Stamp Column X */
     sent++;
   });
-  return { sent: true, count: sent, message: 'Newsletter offer sent to ' + sent + ' leads.' };
+  return { sent: true, count: sent, message: 'Newsletter offer sent to ' + sent + ' new leads.' };
+}
+
+function emerald_checkNewsletterOfferStatus(leadName) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const leadsSheet = ss.getSheetByName('Leads');
+  if (!leadsSheet) return { error: 'Leads sheet not found.' };
+  const lastRow = leadsSheet.getLastRow();
+  if (lastRow < 4) return { error: 'No leads found.' };
+
+  const data = leadsSheet.getRange(4, 1, lastRow - 3, 24).getValues();
+  const sent = [];
+  const unsent = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const name  = String(data[i][0] || '').trim();
+    const email = String(data[i][2] || '').trim();
+    if (!name && !email) continue;
+    const offerDate = data[i][23];
+    if (offerDate) {
+      sent.push({ name, email, sentDate: new Date(offerDate).toLocaleDateString() });
+    } else {
+      unsent.push({ name, email });
+    }
+  }
+
+  /* If checking a specific lead */
+  if (leadName) {
+    const q = leadName.toLowerCase();
+    const match = sent.find(l => l.name.toLowerCase().includes(q) || l.email.toLowerCase().includes(q))
+               || unsent.find(l => l.name.toLowerCase().includes(q) || l.email.toLowerCase().includes(q));
+    if (!match) return { found: false, message: 'No lead found matching "' + leadName + '".' };
+    const wasSent = sent.some(l => l.name === match.name && l.email === match.email);
+    return {
+      found: true,
+      name: match.name,
+      email: match.email,
+      offerSent: wasSent,
+      sentDate: wasSent ? match.sentDate : null,
+      message: wasSent
+        ? match.name + ' was sent the newsletter offer on ' + match.sentDate + '.'
+        : match.name + ' has not been sent the newsletter offer yet.'
+    };
+  }
+
+  return {
+    totalLeads: sent.length + unsent.length,
+    sentCount: sent.length,
+    unsentCount: unsent.length,
+    unsent: unsent.slice(0, 20), /* Cap to avoid huge responses */
+    message: sent.length + ' leads have been sent the offer. ' + unsent.length + ' have not.'
+  };
+}
+
+function emerald_resetNewsletterOffer() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const leadsSheet = ss.getSheetByName('Leads');
+  if (!leadsSheet) return { error: 'Leads sheet not found.' };
+  const lastRow = leadsSheet.getLastRow();
+  if (lastRow < 4) return { message: 'No leads to reset.' };
+
+  leadsSheet.getRange(4, 24, lastRow - 3, 1).clearContent();
+  return { reset: true, message: 'Newsletter offer tracking cleared. All leads will receive the offer on next send.' };
 }
 
 function emerald_sendPastClientOfferAll() {
