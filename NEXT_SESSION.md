@@ -88,16 +88,26 @@
 
 ---
 
-## Phase 5: Field Name Updates (Waiting on Carlie)
+## Phase 5: Field Name Updates
 
-**Blocked by:** New row names (see QUESTIONS_FOR_CARLIE.md)
+### 13. Counseling Row Name Changes (Ready to Build)
+- B23 (Follow Up) removed — now 9 fields, B14–B22
+- Update cell references in CLAUDE.md, tool schemas in EmeraldAI.gs, doc generation
+- **REMINDER:** Add new row in spreadsheet Counseling template to match
 
-### 13. Counseling Row Name Changes
-- Update cell references in CLAUDE.md
-- Update tool schemas in EmeraldAI.gs
-- Update any doc generation templates
+| Cell | New Name | Doc Placeholder |
+|------|----------|----------------|
+| B14 | Primary Concern / Focus | `{{FOCUS_THEMES}}` |
+| B15 | Client Narrative | `{{INSIGHT_DOWNLOADS}}` |
+| B16 | Emotional Landscape | `{{EMOTIONAL_LANDSCAPE}}` |
+| B17 | Spiritual Landscape | `{{SPIRITUAL_LANDSCAPE}}` |
+| B18 | Cognitive + Relational Patterns | `{{COGNITIVE_RELATIONAL}}` |
+| B19 | Behavioural Patterns | `{{BEHAVIOURAL_PATTERNS}}` |
+| B20 | Interventions Used | `{{PRACTICES_ASSIGNED}}` |
+| B21 | Therapeutic Notes for Continuity | `{{PATHWAY_NOTES}}` |
+| B22 | Plan for Next Session | `{{COMPLETION_NOTES}}` |
 
-### 14. Akashic Row Name Changes
+### 14. Akashic Row Name Changes (Waiting on Carlie)
 - Same: CLAUDE.md, tool schemas, doc templates
 
 ---

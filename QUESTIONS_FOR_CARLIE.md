@@ -63,17 +63,17 @@ Emerald needs the Google Doc template IDs to generate client documents. For each
 
 ## Row Name Changes
 
-9. **Counseling client fields** — Are any of these field names changing? Write the new name next to any that need updating:
-   - B14 Themes → _______________
-   - B15 Patterns → _______________
-   - B16 Blocks → _______________
-   - B17 Connections → _______________
-   - B18 Concerns → _______________
-   - B19 Notice → _______________
-   - B20 Progress → _______________
-   - B21 Planning → _______________
-   - B22 Homework → _______________
-   - B23 Follow Up → _______________
+9. **Counseling client fields** — DONE! New names confirmed:
+   - B14: Primary Concern / Focus
+   - B15: Client Narrative
+   - B16: Emotional Landscape
+   - B17: Spiritual Landscape
+   - B18: Cognitive + Relational Patterns
+   - B19: Behavioural Patterns
+   - B20: Interventions Used
+   - B21: Therapeutic Notes for Continuity
+   - B22: Plan for Next Session
+   - B23: (removed)
 
 10. **Akashic client fields** — Same question — any name changes?
     - B13 Themes → _______________
