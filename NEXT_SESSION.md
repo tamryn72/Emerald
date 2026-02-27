@@ -4,43 +4,48 @@
 
 ---
 
-## Phase 1: UI Fixes (Ready to Build)
+## DONE — Phases 1 & 2 (built 2026-02-27)
 
-### 1. Move Newsletter Offer Button
-- **Remove** from Emails & Marketing section (per-client view)
-- **Remove** from Home > Newsletter section
-- **Add** to Home > Offer section (alongside "Send Offer to All Past Clients" and "Send Offer to One Email")
-- Backend function already done — just moving the button
+### 1. Move Newsletter Offer Button ✓
+- Moved to Offers section (home-past-clients)
+- Removed from Emails & Marketing and Newsletter sections
+- Home chip + home button renamed "Offers"
 
-### 1b. Fix Newsletter Preview on Mobile
-- Works on desktop, shows "no content available" on mobile
-- Investigate `openNewsletterPreview()` rendering — likely needs mobile-friendly modal or inline display
-- Test on iPhone Safari
+### 1b. Fix Newsletter Preview on Mobile ✓
+- Added fetch fallback for mobile Safari
+- CSS fixes: vh fallback, -webkit-overflow-scrolling, word-wrap
 
-### 1c. Add Microphone (Voice Input)
-- Mic icon next to send button in the input bar
-- Uses browser Web Speech API (Speech-to-Text) — no cost, runs client-side
-- Tap to talk → fills text input → she can edit or send
-- Works on iPhone Safari
-- Needs graceful fallback if browser doesn't support it
+### 1c. Add Microphone (Voice Input) ✓
+- Mic icon next to send button
+- Web Speech API — hidden if browser doesn't support it
+- Pulses coral when listening, fills text input
+
+### 2. Column X — Offer Sent Tracking ✓
+- Date stamp in Column X when newsletter offer sent
+- Smart send: skips leads who already got it
+- check_newsletter_offer_status tool (one lead or summary)
+- reset_newsletter_offer tool (clear all for re-send)
+
+### 13. Counseling Row Name Changes ✓
+- 9 fields B14–B22 (B23 removed)
+- Updated: CLAUDE.md, EmeraldAPI.gs, SPREADSHEET APPS SCRIPT.gs
+- **REMINDER:** Update the Counseling template sheet in the spreadsheet to match
+
+### Soul Emergence Summary Template ✓
+- Template ID wired: `1dRpRvXb14reodgFRn1E688lhWZ5wrUwbACaeBqLOs1k`
 
 ---
 
-## Phase 2: Newsletter Offer Tracking (Ready to Build)
+## NEXT STEP: Deploy
 
-### 2. Column X — Offer Sent Tracking
-- Add date stamp to **Column X** on Leads sheet when newsletter offer is sent
-- Send function skips any lead where Column X already has a value
-- New leads come in with X blank → automatically included in next send
-
-### 3. AI Can Read Offer Status
-- New read tool so Emerald can answer:
-  - "Has [name] been sent the newsletter offer?"
-  - "Who hasn't gotten the offer yet?"
-  - "How many unsent leads do I have?"
-
-### 4. Reset / Send-to-All Option
-- Button or chat command to clear Column X if Carlie writes a new offer and wants to re-send to everyone
+1. **Copy updated files into Apps Script editor:**
+   - `EmeraldAPI.gs`
+   - `EmeraldAI.gs`
+   - `EmeraldUI.html`
+   - `SPREADSHEET APPS SCRIPT.gs`
+2. **Redeploy the web app** (Deploy > Manage Deployments > edit existing)
+3. **Update the Counseling template sheet** — new row names B14–B22, remove B23
+4. **Test on mobile** — mic, newsletter preview, Offers section
 
 ---
 
@@ -84,31 +89,15 @@
 
 ### 12. Other Doc Templates
 - Client Homework — waiting on template ID
-- Soul Emergence Summary — **GOT IT:** `1dRpRvXb14reodgFRn1E688lhWZ5wrUwbACaeBqLOs1k`
+- Soul Emergence Summary — **DONE** ✓
 
 ---
 
-## Phase 5: Field Name Updates
-
-### 13. Counseling Row Name Changes (Ready to Build)
-- B23 (Follow Up) removed — now 9 fields, B14–B22
-- Update cell references in CLAUDE.md, tool schemas in EmeraldAI.gs, doc generation
-- **REMINDER:** Add new row in spreadsheet Counseling template to match
-
-| Cell | New Name | Doc Placeholder |
-|------|----------|----------------|
-| B14 | Primary Concern / Focus | `{{FOCUS_THEMES}}` |
-| B15 | Client Narrative | `{{INSIGHT_DOWNLOADS}}` |
-| B16 | Emotional Landscape | `{{EMOTIONAL_LANDSCAPE}}` |
-| B17 | Spiritual Landscape | `{{SPIRITUAL_LANDSCAPE}}` |
-| B18 | Cognitive + Relational Patterns | `{{COGNITIVE_RELATIONAL}}` |
-| B19 | Behavioural Patterns | `{{BEHAVIOURAL_PATTERNS}}` |
-| B20 | Interventions Used | `{{PRACTICES_ASSIGNED}}` |
-| B21 | Therapeutic Notes for Continuity | `{{PATHWAY_NOTES}}` |
-| B22 | Plan for Next Session | `{{COMPLETION_NOTES}}` |
+## Phase 5: Remaining Field Name Updates
 
 ### 14. Akashic Row Name Changes (Waiting on Carlie)
-- Same: CLAUDE.md, tool schemas, doc templates
+- Need clarification on scope (top section only vs whole sheet)
+- Then: CLAUDE.md, tool schemas, doc templates, safe write list
 
 ---
 
@@ -131,8 +120,8 @@
 | Acuity time zone | Her Acuity time zone setting | ACUITY_QUESTIONS.md |
 | Workbook template IDs | Weeks 2–12 Doc IDs | QUESTIONS_FOR_CARLIE.md |
 | Client lit template IDs | Intro, Packet 2, Packet 3 | QUESTIONS_FOR_CARLIE.md |
-| Other template IDs | Homework, SE Summary | QUESTIONS_FOR_CARLIE.md |
-| Row name changes | Counseling + Akashic fields | QUESTIONS_FOR_CARLIE.md |
+| Other template IDs | Homework | QUESTIONS_FOR_CARLIE.md |
+| Akashic row names | Clarify scope + new names | QUESTIONS_FOR_CARLIE.md |
 | Newsletter Offer template | Email content in Email_Templates | QUESTIONS_FOR_CARLIE.md |
 
 ---
@@ -144,5 +133,6 @@
 - Document generation (all 8 types + 3 packets)
 - Soul Emergence workbooks (weeks 2–12 need real template IDs)
 - Acuity integration (after credentials received)
+- Voice input (mic) on iPhone Safari
+- Newsletter preview on mobile
 - Memory persistence across sessions
-- iPhone Safari experience
