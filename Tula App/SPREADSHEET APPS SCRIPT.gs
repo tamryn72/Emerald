@@ -579,17 +579,35 @@ function onOptInFormSubmit(e) {
 
 function onInquiryFormSubmit(e) {
   const responses = e.response.getItemResponses();
-  let name = "", email = "";
+  let name = "", email = "", message = "";
 
   responses.forEach(r => {
     const title = r.getItem().getTitle().toLowerCase();
     if (title.includes("name")) name = r.getResponse();
-    if (title.includes("email")) email = r.getResponse();
+    else if (title.includes("email")) email = r.getResponse();
+    else if (title.includes("help")) message = r.getResponse();
   });
 
   if (email) {
     addToLeadsWithSource(name, email, "Website Inquiry");
     sendWelcomeEmail(name, email);
+    notifyPractitioner(name, email, message);
+  }
+}
+
+function notifyPractitioner(name, email, message) {
+  try {
+    const practitionerEmail = Session.getEffectiveUser().getEmail();
+    const subject = "New Inquiry from " + (name || "someone on your website");
+    const body = "You have a new inquiry from your website.\n\n" +
+      "Name: " + (name || "(not provided)") + "\n" +
+      "Email: " + (email || "(not provided)") + "\n" +
+      (message ? "Message: " + message + "\n" : "") +
+      "\nThey've been added to your Leads sheet and sent a welcome email.";
+
+    GmailApp.sendEmail(practitionerEmail, subject, body);
+  } catch (e) {
+    Logger.log("notifyPractitioner error: " + e.message);
   }
 }
 
