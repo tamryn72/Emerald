@@ -9,27 +9,43 @@
 
 Emerald will be able to manage your schedule directly from the chat — check appointments, reschedule, block time, and more.
 
-1. **API credentials** — We need your Acuity API key and User ID.
-   - Found at: Acuity > Integrations > API
-   - API Key: _______________
-   - User ID: _______________
+1. **API credentials** — We need two things from your Acuity account. Here's exactly how to find them:
 
-2. **Google Calendar sync** — Does Acuity already sync your appointments to your Google Calendar automatically?
-   - [ ] Yes, it's already syncing
-   - [ ] No, I add things to Google Calendar separately
+   **Step by step:**
+   1. Log in to Acuity Scheduling (acuityscheduling.com)
+   2. Click the **left menu** (the hamburger icon ☰ or sidebar)
+   3. Scroll down to **Integrations**
+   4. On the Integrations page, search or scroll to find **API** (it might say "API Access")
+   5. Click it — you'll see two values:
+      - **User ID** — a number (like `12345678`)
+      - **API Key** — a long string of letters and numbers
+
+   Copy both and paste them here:
+   - User ID: _______________
+   - API Key: _______________
+
+   If you can't find it, just screenshot your Integrations page and send it over — I'll walk you through it.
+
+2. **Google Calendar sync** — Does Acuity already automatically put your appointments on your Google Calendar?
+   - [ ] Yes, they show up on my Google Calendar automatically
+   - [ ] No, I manage my Google Calendar separately
    - [ ] Not sure
 
-3. **Appointment type names** — What are your appointment types called in Acuity? (e.g., do they match "Akashic Reading," "Counseling Session," "Soul Emergence," or are they labeled differently?)
-   - Type 1: _______________
-   - Type 2: _______________
-   - Type 3: _______________
-   - Others: _______________
+3. **Appointment type names** — What are your appointment types called in Acuity? (The names clients see when they book — they might be different from what's in the spreadsheet.)
 
-4. **Booking rules** — Clients book publicly through your Acuity page. When Emerald adds a session for you, should it:
-   - [ ] Follow the same availability rules as public booking (only open slots)
-   - [ ] Let you book into any time regardless of public availability
+   **To check:** Go to Acuity > Appointment Types and list what you see:
+   - _______________
+   - _______________
+   - _______________
+   - _______________
+
+4. **Booking rules** — ANSWERED ✅
+   - Open slots only (same rules as client self-booking)
+   - Override allowed only if Emerald asks for confirmation and you say yes
 
 5. **Time zone** — What time zone is your Acuity set to? _______________
+
+   **To check:** Look under your Acuity business settings/profile, usually near the bottom of the page.
 
 ---
 
