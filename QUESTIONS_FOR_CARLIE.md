@@ -57,7 +57,7 @@ Emerald needs the Google Doc template IDs to generate client documents. For each
 
 8. **Other templates:**
    - Client Homework: _______________
-   - Soul Emergence Summary: _______________
+   - Soul Emergence Summary: ✅ DONE (`1dRpRvXb14reodgFRn1E688lhWZ5wrUwbACaeBqLOs1k`)
 
 ---
 
@@ -106,9 +106,31 @@ Emerald needs the Google Doc template IDs to generate client documents. For each
 
 ---
 
+## Website Button → Leads
+
+Your website has a button that currently links to a placeholder. Here's how to wire it into your leads system — no code changes needed, it's all already built.
+
+12. **What should the button do?**
+    - [ ] **Opt-In** — just collects name + email, adds them to your Leads sheet automatically
+    - [ ] **Get In Touch** — collects name + email + a message, adds to Leads and you can follow up
+
+**Steps (takes ~2 minutes):**
+
+1. Open your spreadsheet
+2. Go to the menu: **Setup > Create Opt-In Form** (or **Create Website Inquiry Form** if you picked "Get In Touch")
+3. A popup will show the **published URL** — copy it
+4. Then run: **Setup > Install Form Triggers** (this makes new submissions auto-add to Leads)
+5. On your website, find the button and change its link to that URL
+
+That's it. Anyone who clicks the button fills out the form → lands in your Leads sheet automatically → Emerald can see them and send offers to them.
+
+**If you want the form embedded directly on your website** (instead of linking to a Google Form page), let me know — we can generate an embed snippet for you.
+
+---
+
 ## Anything Else
 
-12. What other features or changes are on your list for Emerald?
+13. What other features or changes are on your list for Emerald?
 
 _______________________________________________________________
 _______________________________________________________________
