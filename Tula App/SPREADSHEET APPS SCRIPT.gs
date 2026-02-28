@@ -571,7 +571,10 @@ function onOptInFormSubmit(e) {
     if (title.includes("email")) email = r.getResponse();
   });
 
-  if (email) addToLeadsWithSource(name, email, "Newsletter Opt-In");
+  if (email) {
+    addToLeadsWithSource(name, email, "Newsletter Opt-In");
+    sendNewsletterToOne(name, email);
+  }
 }
 
 function onInquiryFormSubmit(e) {
@@ -1477,6 +1480,45 @@ function backend_previewNewsletter() {
     .setHeight(800);
 
   SpreadsheetApp.getUi().showModalDialog(html, "Newsletter Preview");
+}
+
+
+/****************************************************************************************
+ NEWSLETTER - Send to one person (used by opt-in form auto-send)
+****************************************************************************************/
+function sendNewsletterToOne(name, email) {
+  try {
+    const ss = SpreadsheetApp.getActive();
+    const templateSheet = ss.getSheetByName("Email_Templates");
+    if (!templateSheet) return;
+
+    const names   = templateSheet.getRange("A2:A").getValues().flat();
+    const bodies  = templateSheet.getRange("B2:B").getValues().flat();
+    const actives = templateSheet.getRange("C2:C").getValues().flat();
+
+    let htmlBody = null;
+
+    for (let i = 0; i < names.length; i++) {
+      if (
+        String(names[i]).trim() === "Newsletter" &&
+        String(actives[i]).trim().toLowerCase() === "yes"
+      ) {
+        htmlBody = String(bodies[i] || "").trim();
+        break;
+      }
+    }
+
+    if (!htmlBody) return; // No active newsletter — silently skip
+
+    htmlBody = htmlBody
+      .replace(/\{\{NAME\}\}/g, name || "Friend")
+      .replace(/\{\{CLIENT_NAME\}\}/g, name || "Friend");
+
+    GmailApp.sendEmail(email, "Awakening Doula - Newsletter", "", { htmlBody: htmlBody });
+  } catch (e) {
+    // Don't let newsletter failure break the opt-in flow
+    Logger.log("sendNewsletterToOne error: " + e.message);
+  }
 }
 
 
