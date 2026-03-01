@@ -1,7 +1,7 @@
 # CLAUDE.md — Emerald AI
 
 > **Project:** Emerald — AI Assistant for Haven, The Awakening Doula
-> **Model:** `claude-opus-4-6` (Anthropic, February 2026)
+> **Model:** `claude-sonnet-4-6` (Anthropic, February 2026)
 > **Practitioner:** Carlie Wyton, MA
 > **Brand voice:** Haven, The Awakening Doula
 
@@ -65,7 +65,7 @@ Emerald follows the Wanderlust/Gilligan pattern: a Next.js-style component-drive
                     └─────────────┬───────────────────────┘
                     ┌─────────────▼───────────────────────┐
                     │  SPREADSHEET APPS SCRIPT.gs         │
-                    │  (existing — never modified)        │
+                    │  (existing — bug fixes 2026-02-26)  │
                     │   backend_generateDoulaDoc()        │
                     │   backend_sendWorkbook()            │
                     │   addNextSession()                  │
@@ -84,7 +84,7 @@ Emerald follows the Wanderlust/Gilligan pattern: a Next.js-style component-drive
 | Styling | Custom CSS — sunset design system (no framework needed at this scale) |
 | Backend | Google Apps Script (Web App — `doGet` / `doPost`) |
 | Data | Google Sheets (existing — read-only structure) |
-| AI | Anthropic Claude claude-opus-4-6 via REST API |
+| AI | Anthropic Claude claude-sonnet-4-6 via REST API |
 | Storage | GAS ScriptProperties (API key, memory, session state) |
 | Deployment | Google Apps Script Web App URL (no external hosting) |
 | Auth | Single-user; GAS runs as practitioner's Google account |
@@ -100,14 +100,14 @@ Emerald/
 ├── CONTEXT.md             ← Claude system prompt + persona
 ├── TIMELINE.md            ← Phased development plan
 └── Tula App/
-    ├── SPREADSHEET APPS SCRIPT.gs    ← EXISTING — do not modify
-    ├── SPREADSHEET SIDEBAR CODE.html ← EXISTING — do not modify
+    ├── SPREADSHEET APPS SCRIPT.gs    ← EXISTING — modified 2026-02-26 (bug fixes)
+    ├── SPREADSHEET SIDEBAR CODE.html ← EXISTING — modified 2026-02-26 (toast fix)
     ├── EmeraldAPI.gs                 ← NEW: Web App entry + data bridge
     ├── EmeraldAI.gs                  ← NEW: Claude integration + tools
     └── EmeraldUI.html                ← NEW: Mobile-first chat UI
 ```
 
-> **Golden Rule:** Never modify `SPREADSHEET APPS SCRIPT.gs` or `SPREADSHEET SIDEBAR CODE.html`. All new code is additive only.
+> **Golden Rule (updated 2026-02-26):** Prefer not to modify `SPREADSHEET APPS SCRIPT.gs` or `SPREADSHEET SIDEBAR CODE.html` unless fixing production bugs in the human-facing system. Bug fixes were applied on 2026-02-26 — see TIMELINE.md for full details.
 
 ---
 
@@ -121,6 +121,7 @@ Emerald/
 - `Intake Log` — written only by `createIntakeDoc()`
 - `Budget` — written only by `recordClientPayment()`
 - `Document Log` — written only by `logDoulaDoc()`
+- `Template Registry` — managed by Manage Templates dialog + `manage_template` AI tool
 - `Akashic_Client_Template` — template sheet
 - `Counseling_Client_Template` — template sheet
 - `SoulEmergence_Client_Template` — template sheet
@@ -174,16 +175,15 @@ Every client sheet follows this layout:
 #### Counseling Client Fields (safe write)
 | Cell | Field |
 |------|-------|
-| B14 | Themes |
-| B15 | Patterns |
-| B16 | Blocks |
-| B17 | Connections |
-| B18 | Concerns |
-| B19 | Notice |
-| B20 | Progress |
-| B21 | Planning |
-| B22 | Homework |
-| B23 | Follow Up |
+| B14 | Primary Concern / Focus |
+| B15 | Client Narrative |
+| B16 | Emotional Landscape |
+| B17 | Spiritual Landscape |
+| B18 | Cognitive + Relational Patterns |
+| B19 | Behavioural Patterns |
+| B20 | Interventions Used |
+| B21 | Therapeutic Notes for Continuity |
+| B22 | Plan for Next Session |
 
 #### Soul Emergence Fields (safe write)
 | Rows | Field |
@@ -296,6 +296,11 @@ Every Apps Script function is exposed to Claude as a named tool. Emerald can inv
 | `refresh_leads` | `refreshLeads()` | Refresh leads list |
 | `add_lead` | `addToLeads(name, email)` | Add lead manually |
 
+### Group 10: Template Management
+| Tool Name | Calls | Description |
+|-----------|-------|-------------|
+| `manage_template` | `searchDriveForTemplate()` / `wireTemplate()` / `getTemplateRegistry()` | Search Drive, wire template IDs, list missing/all templates |
+
 ---
 
 ## Design System — Sunset
@@ -379,16 +384,98 @@ Add the Web App URL to your phone's home screen for app-like experience.
 
 ---
 
+## Deployment Status
+
+```
+Status:     LIVE — First deploy 2026-02-26
+Web App:    https://script.google.com/macros/s/AKfycbyNd6z0Cxg3NI20VhLDv2wS5FemXjpRJ07SoGh1PqN8b-70GNuXttN0jroHtRzFC_sm/exec
+Model:      claude-sonnet-4-6
+API Key:    Set in Script Properties
+Testing:    End-to-end testing in progress
+```
+
+### What's Working
+- Web App loads and renders the full UI (sidebar, chat, action panels)
+- Client list loads from spreadsheet
+- Chat sends messages to Claude and receives responses
+- All 31 AI tools defined and routed
+- All action buttons wired in the UI
+- Session memory (24h rolling) and long-term memory (persistent)
+- Safe write/clear with cell validation
+- **Voice input** — microphone with Web Speech API (added 2026-02-27)
+- **Newsletter offer tracking** — Column X date stamps, smart skip (added 2026-02-27)
+- **Counseling field names** — B14–B22 updated to new labels (added 2026-02-27)
+- **Soul Emergence Summary** — template ID wired (added 2026-02-27)
+- **Sidebar toast notifications** — DOM-based feedback on every button press (fixed 2026-02-26)
+- **Calendar scheduling** — normalizeTime() handles Date objects correctly (fixed 2026-02-26)
+- **Intake status** — email-only field matching, no false positives (fixed 2026-02-26)
+- **New client setup** — B8 formula preserved (fixed 2026-02-26)
+- **Leads deduplication** — matches by name+email, updates date on refresh (fixed 2026-02-26)
+- **Email templates** — case-insensitive "Yes" matching (fixed 2026-02-26)
+- **Week 1 workbook** — real template ID restored (fixed 2026-02-26)
+- **Template Registry** — self-service template management (added 2026-03-01)
+- **Dynamic Soul Emergence weeks** — week count and names read from registry, not hard-coded (added 2026-03-01)
+- **Field Labels registry** — Akashic + Counseling field display names stored in registry, renameable (added 2026-03-01)
+- **Dynamic doc types** — document and packet button lists derive from registry (added 2026-03-01)
+- **Config via Script Properties** — practitioner name, practice name, AI name, session duration all configurable (added 2026-03-01)
+- **Dynamic system prompt** — AI persona reads config from Script Properties (added 2026-03-01)
+- **Dynamic tool enums** — generate_document and generate_client_packet enums read from registry (added 2026-03-01)
+
+### Website Forms (Both Available)
+Both forms are built into the spreadsheet and ready for Carlie to set up:
+- **Opt-In Form** — name + email → adds to Leads, auto-sends newsletter
+- **Get In Touch Form** — name + email + message → adds to Leads, notifies Carlie
+- Setup: Spreadsheet menu → Setup > Create Opt-In Form / Create Website Inquiry Form → Install Form Triggers
+- Decision: Both offered (2026-02-28)
+
+### What Still Needs Testing
+- Each tool end-to-end with real client data (all 3 types)
+- Email sending flows (onboarding, newsletter, past client offer, newsletter offer)
+- Calendar scheduling (add + delete) — code fixed, needs live verification
+- Document generation (all 8 types + 3 packets)
+- Soul Emergence workbooks (weeks 2–12 need real template IDs)
+- Memory persistence across sessions
+- Website form setup (Opt-In + Get In Touch)
+- iPhone Safari experience
+
+### Template Management (Self-Service)
+Template IDs are now managed via a **Template Registry** sheet instead of hard-coded constants:
+- **Setup:** Doula Tools > Setup > Create Template Registry (one-time, migrates existing IDs)
+- **Manage:** Doula Tools > Manage Templates (search Drive, wire templates, add new types)
+- **Via Emerald:** "Wire my Week 3 workbook" / "What templates are missing?"
+- UI buttons auto-grey-out for templates not yet wired
+- Still needed: Workbook weeks 2–12, Intro Packet, Packet 2, Packet 3, Client Homework
+
+### Self-Service Systems (added 2026-03-01)
+| System | How It Works |
+|--------|-------------|
+| Template Registry | Carlie wires template IDs via Doula Tools > Manage Templates or via chat |
+| Dynamic Weeks | Week count + names derived from workbook entries in registry — add Week 13 and everything updates |
+| Field Labels | Akashic + Counseling field display names editable in Template Registry or via chat ("rename Themes to Soul Themes") |
+| Dynamic Doc Types | Document and packet button lists in UI read from registry — add a new doc type and it appears automatically |
+| Config Settings | Setup > Configure Settings initializes Script Properties: PRACTITIONER_NAME, PRACTICE_NAME, AI_NAME, SESSION_DURATION_MINUTES |
+| Dynamic System Prompt | AI persona (name, practice, practitioner) reads from config — rebrandable without code changes |
+
+### Upcoming (March 3–4)
+- UI polish: restore last client on load, pinned reminders, loading skeleton, page title
+- Template ID wiring (Carlie self-service via Manage Templates)
+- Akashic field names (Carlie self-service via Template Registry)
+- Acuity Scheduling integration (when Carlie provides API creds)
+- End-to-end testing across all client types
+- See `NEXT_SESSION.md` for full build plan
+
+---
+
 ## Model Specification
 
 ```
-Model:    claude-opus-4-6
+Model:    claude-sonnet-4-6
 Provider: Anthropic
 API:      https://api.anthropic.com/v1/messages
 Version:  Current as of February 2026
 ```
 
-Use `claude-opus-4-6` for all AI inference. This is the most capable Claude model available as of February 2026 and is appropriate for the nuanced, multi-tool reasoning required by Emerald's doula practice workflows.
+Use `claude-sonnet-4-6` for all AI inference. This is the most capable Claude model available as of February 2026 and is appropriate for the nuanced, multi-tool reasoning required by Emerald's doula practice workflows.
 
 ---
 
@@ -414,3 +501,20 @@ They do NOT:
 - Modify existing function signatures
 - Change any spreadsheet structure
 - Conflict with the existing sidebar (both can coexist)
+
+### Existing File Modifications (2026-02-26)
+
+The following changes were made to existing files to fix production bugs in the human-facing system:
+
+**SPREADSHEET APPS SCRIPT.gs:**
+- `normalizeTime()` — handles Date objects from `getValue()` (was causing December 1899 dates)
+- `newClientSetup()` — removed B8 `setValue(0)` (was overwriting template formula)
+- `checkIntakeStatus()` / `createIntakeDoc()` — email-only field matching (was matching all form fields)
+- `addToLeads()` — complete rewrite for deduplication and date column
+- `addToLeadsWithSource()` — simplified to call `addToLeads()`
+- `getEmailTemplateList()` — case-insensitive "Yes" check
+- `WORKBOOK_TEMPLATES[1]` — restored real template ID
+
+**SPREADSHEET SIDEBAR CODE.html:**
+- Added toast notification CSS and DOM element
+- Replaced broken `google.script.host.toast()` with DOM-based `showSidebarToast()`

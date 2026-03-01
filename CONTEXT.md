@@ -7,7 +7,7 @@
 
 ## System Prompt (Production)
 
-The following is injected as the `system` parameter in every call to `claude-opus-4-6`.
+The following is injected as the `system` parameter in every call to `claude-sonnet-4-6`.
 
 ```
 You are Emerald, the AI assistant for Haven, The Awakening Doula.
@@ -136,7 +136,7 @@ Today is Tuesday, February 24, 2026.
 
 ---
 
-## Tool Schema (for claude-opus-4-6 `tools` parameter)
+## Tool Schema (for claude-sonnet-4-6 `tools` parameter)
 
 The full tool definitions array passed to Claude on every call. Each tool has a `name`, `description`, and `input_schema`.
 
@@ -539,6 +539,52 @@ The full tool definitions array passed to Claude on every call. Each tool has a 
 }
 ```
 
+### Template Management Tool
+
+```json
+{
+  "name": "manage_template",
+  "description": "Manage document templates and field labels. Actions: list_missing (show unwired templates), list_all (show all), search (find a Google Doc by name in Drive), wire (connect a template ID to a type), rename_field (rename a client field label).",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": ["search", "wire", "list_missing", "list_all", "rename_field"],
+        "description": "search = find docs in Drive, wire = connect a template ID, list_missing = show unwired, list_all = show all, rename_field = rename a field label"
+      },
+      "searchTerm": { "type": "string", "description": "Search term for Drive search (required for search action)" },
+      "category": { "type": "string", "enum": ["document", "workbook", "packet", "field_akashic", "field_counseling"], "description": "Template or field category (required for wire/rename_field action)" },
+      "label": { "type": "string", "description": "Template label or cell reference e.g. 'Week 3 - Integration & Intention' or 'B13' (required for wire/rename_field action)" },
+      "templateId": { "type": "string", "description": "Google Doc ID to wire, or new display name for rename_field (required for wire/rename_field action)" }
+    },
+    "required": ["action"]
+  }
+}
+```
+
+### Dynamic Configuration
+
+The following values are read from Script Properties (configurable via Setup > Configure Settings):
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `PRACTITIONER_NAME` | Carlie Wyton, MA | Used in system prompt and emails |
+| `PRACTICE_NAME` | Haven, The Awakening Doula | Used in system prompt, page title, sidebar |
+| `AI_NAME` | Emerald | Used in system prompt and page title |
+| `SESSION_DURATION_MINUTES` | 60 | Calendar event duration |
+
+### Dynamic Data from Template Registry
+
+| Data | Source | Fallback |
+|------|--------|----------|
+| Document types | `category = 'document'` entries | Hard-coded enum |
+| Packet types | `category = 'packet'` entries | Hard-coded enum |
+| Week count | Number of `category = 'workbook'` entries | 12 |
+| Week names | Parsed from workbook labels (`Week N - Name`) | Hard-coded SESSION_NAMES |
+| Akashic field labels | `category = 'field_akashic'` entries | Hard-coded property names |
+| Counseling field labels | `category = 'field_counseling'` entries | Hard-coded property names |
+
 ---
 
 ## Confirmation Protocol
@@ -558,6 +604,9 @@ For any action in these categories, Claude must request confirmation before call
 | Read data | No |
 | Write cell | No (for notes/scheduling data) |
 | Clear cell | Yes |
+| Wire template | Yes (confirm which doc to wire) |
+| Rename field label | Yes (confirm new name) |
+| Search templates / list missing | No |
 
 Confirmation phrasing pattern:
 > "I'm about to [action] for [client/recipient]. Shall I go ahead?"

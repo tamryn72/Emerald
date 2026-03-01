@@ -1,7 +1,7 @@
 # TIMELINE.md — Emerald Development Plan
 
 > Phased roadmap for building Emerald from planning to production.
-> Model: `claude-opus-4-6` | Stack: GAS Web App + Vanilla JS + Anthropic API
+> Model: `claude-sonnet-4-6` | Stack: GAS Web App + Vanilla JS + Anthropic API
 
 ---
 
@@ -9,20 +9,18 @@
 
 ```
 Phase 1 ──── Documentation & Architecture     [COMPLETE]
-Phase 2 ──── GAS Web App Backend Foundation   [Next]
-Phase 3 ──── Claude AI Integration            [After Phase 2]
-Phase 4 ──── Frontend: Chat UI                [After Phase 3]
-Phase 5 ──── Frontend: Client Sidebar         [Parallel with Phase 4]
-Phase 6 ──── Tool Wiring: All 32+ Actions     [After Phase 4-5]
-Phase 7 ──── Memory System                    [After Phase 6]
-Phase 8 ──── Polish, Testing & Deployment     [Final]
+Phase 2 ──── GAS Web App Backend Foundation   [COMPLETE]
+Phase 3 ──── Claude AI Integration            [COMPLETE]
+Phase 4 ──── Frontend: Chat UI                [COMPLETE]
+Phase 5 ──── Frontend: Client Sidebar         [COMPLETE]
+Phase 6 ──── Tool Wiring: All 31 Actions      [COMPLETE]
+Phase 7 ──── Memory System                    [COMPLETE]
+Phase 8 ──── Polish, Testing & Deployment     [IN PROGRESS]
 ```
 
 ---
 
-## Phase 1: Documentation & Architecture
-
-**Status: COMPLETE**
+## Phase 1: Documentation & Architecture — COMPLETE
 
 ### Deliverables
 - [x] `CLAUDE.md` — master project reference
@@ -30,502 +28,228 @@ Phase 8 ──── Polish, Testing & Deployment     [Final]
 - [x] `CONTEXT.md` — Claude system prompt + full tool schema
 - [x] `TIMELINE.md` — this document
 
-### Files Created
-- `/CLAUDE.md`
-- `/MEMORY.md`
-- `/CONTEXT.md`
-- `/TIMELINE.md`
+---
+
+## Phase 2: GAS Web App Backend Foundation — COMPLETE
+
+### Delivered: `EmeraldAPI.gs` (37 functions, 974 lines)
+
+- [x] `doGet(e)` — serves EmeraldUI.html as Web App
+- [x] `doPost(e)` — routes 10 API actions (chat, getClients, getClientInfo, getEmailTemplates, getMemory, getSessions, getNewsletterPreview, executeAction, clearMemory)
+- [x] `handleApiCall(payloadStr)` — `google.script.run` bridge (mirrors doPost, with try-catch)
+- [x] `emeraldGetClientList()` — scans all sheets, skips system sheets, returns sorted client array
+- [x] `emeraldGetClientInfo(clientName)` — reads all cells including type-specific fields
+- [x] `emeraldSafeWrite()` / `emeraldSafeClear()` — validated against SAFE_WRITE_CELLS + FORBIDDEN_CELLS
+- [x] `emeraldActivateClientSheet()` — sets active sheet before calling existing backend functions
+- [x] `emeraldExecuteTool()` — 31-case switch routing AI tool calls to API-safe implementations
+- [x] 20 `emerald_*` API-safe wrappers (replace UI-dependent originals that call `getUi()`)
 
 ---
 
-## Phase 2: GAS Web App Backend Foundation
+## Phase 3: Claude AI Integration — COMPLETE
 
-**Goal:** Set up the web app entry point, client data API, and safe read/write bridge.
+### Delivered: `EmeraldAI.gs` (14 functions, 704 lines)
 
-### Tasks
-
-#### 2.1 Create `EmeraldAPI.gs`
-
-**`doGet(e)`** — serve the Emerald UI
-```
-- Return HtmlService output of EmeraldUI.html
-- Set viewport meta for mobile
-- Set title: "Emerald | Haven"
-```
-
-**`doPost(e)`** — route incoming requests
-```
-Actions to handle:
-  ├── action: 'chat'             → callEmeraldAI(messages, clientName)
-  ├── action: 'getClients'       → emeraldGetClientList()
-  ├── action: 'getClientInfo'    → emeraldGetClientInfo(clientName)
-  ├── action: 'getEmailTemplates'→ getEmailTemplateList()
-  ├── action: 'getMemory'        → getLongTermMemory()
-  └── action: 'saveNote'        → saveClientNote(clientName, note)
-```
-
-**`emeraldGetClientList()`**
-```
-- Scan all sheets in the spreadsheet
-- Skip system sheets (Dashboard, Leads, Past Clients, Budget, etc.)
-- For each client sheet, read: B2 (name), B3 (status), B6 (service type), D3 (type)
-- Return array of client objects
-- Sort: Active first, then Complete
-```
-
-**`emeraldGetClientInfo(clientName)`**
-```
-- Find sheet by name
-- Read all relevant cells (see CLAUDE.md Spreadsheet Structure table)
-- Return full client data object
-- Include type-specific fields based on D3 value
-```
-
-**`emeraldSafeWrite(clientName, cell, value)`**
-```
-- Validate cell is in the safe-write whitelist
-- Validate client sheet exists
-- Write value
-- Return success/error
-```
-
-**`emeraldSafeClear(clientName, cell)`**
-```
-- Same validation as safeWrite
-- Clear content only (no format changes)
-```
-
-**Safe Write Whitelist:**
-```javascript
-const SAFE_WRITE_CELLS = {
-  common: ['B4', 'B5', 'B7', 'B8', 'B9', 'B10', 'B11', 'D10'],
-  Akashic: ['B13','B14','B15','B16','B17','B20','B21','B22','B25','B26','B27','B28','B29','B31','B32','B33','B36','B37'],
-  Counseling: ['B14','B15','B16','B17','B18','B19','B20','B21','B22','B23'],
-  'Soul Emergence': ['B13','B14','B15','B16','B17','B18','B19','B20','B21','B22','B23','B24','B25']
-};
-```
-
-**`emeraldActivateClientSheet(clientName)`**
-```
-- Set the active sheet to the named client sheet
-- Required before calling existing backend_ functions
-  (they use SpreadsheetApp.getActiveSheet())
-```
-
-#### 2.2 Tool Execution Bridge
-
-Many existing functions rely on `SpreadsheetApp.getActiveSheet()`. The bridge must:
-1. Set the correct client sheet as active
-2. Call the existing function
-3. Capture the return value or success/error state
-4. Restore context if needed
-
-```javascript
-function emeraldExecuteTool(toolName, toolInput) {
-  const clientName = toolInput.clientName;
-
-  // Activate client sheet if needed
-  if (clientName) {
-    emeraldActivateClientSheet(clientName);
-  }
-
-  switch(toolName) {
-    case 'generate_document':
-      return backend_generateDoulaDoc(toolInput.docType);
-    case 'send_workbook':
-      return backend_sendWorkbook(toolInput.weekNumber);
-    case 'send_onboarding_email':
-      return sendOnboardingEmail();
-    case 'check_intake_status':
-      return checkIntakeStatus();
-    case 'create_intake_doc':
-      return createIntakeDoc();
-    case 'add_session':
-      return addNextSession();
-    case 'delete_session':
-      return deleteSession();
-    case 'record_payment':
-      return recordClientPayment();
-    case 'send_receipt':
-      return sendReceipt();
-    case 'get_client_folder_url':
-      return backend_openClientFolder();
-    case 'create_journal':
-      return backend_createJournal();
-    case 'get_journal_url':
-      return backend_openJournal();
-    case 'generate_client_packet':
-      return backend_generateClientPacket(toolInput.packetType);
-    case 'send_email_template':
-      return backend_sendSalesEmailTemplate(toolInput.templateName);
-    case 'send_newsletter':
-      return backend_sendNewsletterToAll();
-    case 'send_past_client_offer':
-      return toolInput.sendToAll
-        ? backend_sendPastClientOfferAll()
-        : backend_sendPastClientOfferOne();
-    case 'refresh_dashboard':
-      return refreshDoulaDashboard();
-    case 'write_cell':
-      return emeraldSafeWrite(clientName, toolInput.cell, toolInput.value);
-    case 'clear_cell':
-      return emeraldSafeClear(clientName, toolInput.cell);
-    default:
-      throw new Error('Unknown tool: ' + toolName);
-  }
-}
-```
-
-### Files
-- `Tula App/EmeraldAPI.gs` — Created in this phase
+- [x] `callClaudeAPI()` — REST call to Anthropic API (`claude-sonnet-4-6`, 2048 max tokens)
+- [x] `runAgenticLoop()` — multi-step tool use, max 10 iterations, executes tools until no more tool_use blocks
+- [x] `handleChatRequest()` — entry point from doPost; builds context, runs loop, saves session
+- [x] `buildSystemPrompt()` — injects active client data, session summary, long-term notes, reminders, today's date
+- [x] `getToolDefinitions()` — 31 tools with full input_schema (matching CONTEXT.md spec)
 
 ---
 
-## Phase 3: Claude AI Integration
+## Phase 4: Frontend — Chat Interface — COMPLETE
 
-**Goal:** Wire up `claude-opus-4-6` with tool use, memory, and context injection.
+### Delivered: `EmeraldUI.html` (1,386 lines — 639 CSS + 747 JS/HTML)
 
-### Tasks
-
-#### 3.1 Create `EmeraldAI.gs`
-
-**`callClaudeAPI(messages, tools, systemPrompt)`**
-```
-- Retrieve ANTHROPIC_API_KEY from ScriptProperties
-- Build request payload:
-    model: 'claude-opus-4-6'
-    max_tokens: 1024
-    system: systemPrompt (with context injected)
-    messages: messages array
-    tools: tools array
-- Call https://api.anthropic.com/v1/messages via UrlFetchApp
-- Parse response
-- Handle tool_use stop reason:
-    → Execute the tool via emeraldExecuteTool()
-    → Append tool_use and tool_result to messages
-    → Call Claude again with result (agentic loop)
-- Return final text response
-```
-
-**`buildSystemPrompt(activeClientName)`**
-```
-- Load CONTEXT.md system prompt text (hardcoded in EmeraldAI.gs)
-- If activeClientName provided:
-    → Call emeraldGetClientInfo(activeClientName)
-    → Build ACTIVE_CLIENT_CONTEXT block
-- Load session memory → build SESSION_HISTORY_SUMMARY
-- Inject today's date
-- Return complete system prompt string
-```
-
-**`handleChatRequest(userMessage, activeClientName, conversationHistory)`**
-```
-- Build system prompt
-- Append userMessage to conversationHistory
-- Call callClaudeAPI with all tools
-- Handle multi-step tool use (agentic loop until stop_reason = 'end_turn')
-- Save updated conversation to session memory
-- Return { reply: string, actions: [] }
-```
-
-**`getToolDefinitions()`**
-```
-- Return the complete tools array (all 32+ tools)
-- Each tool matches the schema in CONTEXT.md
-```
-
-#### 3.2 Memory Functions
-
-**`getSessionMemory()`** — load from ScriptProperties key `EMERALD_SESSION`
-**`saveSessionMemory(session)`** — save to ScriptProperties
-**`getLongTermMemory()`** — load from ScriptProperties key `EMERALD_MEMORY`
-**`saveLongTermMemory(mem)`** — save to ScriptProperties
-**`pruneConversationHistory(history)`** — keep last 20 turns
-**`buildContextSnapshot(clientName)`** — assemble Layer 1 context
-
-#### 3.3 Tool Agentic Loop
-
-Claude may call multiple tools in sequence. The loop:
-```
-1. Send messages to Claude
-2. If response.stop_reason === 'tool_use':
-     a. Extract tool_use blocks from response.content
-     b. For each tool_use block:
-         - Call emeraldExecuteTool(tool.name, tool.input)
-         - Build tool_result message
-     c. Append assistant response + user tool_results to messages
-     d. Call Claude again
-3. Continue until stop_reason === 'end_turn'
-4. Return final text content
-```
-
-Max 10 iterations to prevent infinite loops.
-
-### Files
-- `Tula App/EmeraldAI.gs` — Created in this phase
+- [x] Mobile-first layout (100dvh, flexbox, 680px breakpoint)
+- [x] Chat area with AI bubbles (peach) + user bubbles (coral) + timestamps
+- [x] Typing indicator (animated dots)
+- [x] Input bar with auto-resize textarea + Enter-to-send
+- [x] Quick actions row (8 chips, adapts to home vs. client-selected state)
+- [x] Bottom sheet (slide-up) with action pill grids per section
+- [x] Newsletter preview modal
+- [x] New client modal (name + type)
+- [x] Toast notifications (2.5s auto-hide)
+- [x] Simple markdown rendering (bold, italic, backticks)
+- [x] All communication via `google.script.run.handleApiCall()` (no fetch/CORS issues)
 
 ---
 
-## Phase 4: Frontend — Chat Interface
+## Phase 5: Frontend — Client Sidebar — COMPLETE
 
-**Goal:** Build the mobile-first chat UI in `EmeraldUI.html`.
+Built into `EmeraldUI.html`:
 
-### Layout (Mobile-First)
-
-```
-┌─────────────────────────────────┐
-│ HEADER                          │
-│ ◆ Emerald   [Client Name] ▼    │
-│ Haven, The Awakening Doula      │
-├─────────────────────────────────┤
-│                                 │
-│ CHAT AREA (scrollable)          │
-│                                 │
-│   ┌──────────────────────────┐  │
-│   │ Emerald                  │  │
-│   │ Good morning, Carlie.    │  │
-│   │ Jane's Week 5 session    │  │
-│   │ is tomorrow at 2 PM.     │  │
-│   └──────────────────────────┘  │
-│                                 │
-│        ┌──────────────────────┐ │
-│        │ User message bubble  │ │
-│        └──────────────────────┘ │
-│                                 │
-│   ┌──────────────────────────┐  │
-│   │ ACTION CONFIRMATION      │  │
-│   │ Send Week 5 workbook to  │  │
-│   │ jane@email.com?          │  │
-│   │ [Yes, send it] [Cancel]  │  │
-│   └──────────────────────────┘  │
-│                                 │
-├─────────────────────────────────┤
-│ QUICK ACTIONS (scrollable row)  │
-│ [Docs] [Onboard] [Schedule]     │
-│ [Pay] [Email] [Utils]           │
-├─────────────────────────────────┤
-│ INPUT BAR                       │
-│ [☰] [Type a message...  ] [→]  │
-└─────────────────────────────────┘
-```
-
-### Desktop Layout (sidebar visible)
-
-```
-┌──────────────┬──────────────────────────────────┐
-│ CLIENT LIST  │ HEADER                           │
-│              │ ◆ Emerald  — Jane Doe            │
-│ ● Jane Doe   ├──────────────────────────────────┤
-│   SE Wk 5   │ CHAT AREA                        │
-│ ● Mary Smith │                                  │
-│   Akashic   │   [Emerald bubble]               │
-│ ○ Past Cl.  │                                  │
-│             │        [User bubble]              │
-│ [+ New      │                                  │
-│   Client]   │   [Action buttons panel]         │
-│             ├──────────────────────────────────┤
-│ QUICK STATS  │ QUICK ACTIONS ROW                │
-│ 2 Active    ├──────────────────────────────────┤
-│ 1 Complete  │ [Type a message...           ] → │
-└──────────────┴──────────────────────────────────┘
-```
-
-### Components
-
-**Header**
-- Logo gem icon + "Emerald" name in deep burnt umber
-- Current client name (clickable → opens client selector on mobile)
-- "Haven, The Awakening Doula" subtitle
-
-**Chat Area**
-- Smooth scroll to bottom on new messages
-- AI bubbles: left-aligned, warm peach background, gem icon
-- User bubbles: right-aligned, coral background, white text
-- Typing indicator (animated dots) while waiting for Claude
-- Timestamp on each message (subtle, small)
-- Action confirmation cards (inline, not modals):
-  - Summary of what's about to happen
-  - "Yes, do it" (primary coral button)
-  - "Never mind" (ghost button)
-
-**Quick Actions Row**
-- Horizontal scroll strip below chat, above input
-- One chip per action category: Documents, Onboarding, Schedule, Financial, Emails, Utilities
-- Tapping a chip expands a bottom sheet with that section's buttons
-- Buttons in bottom sheet match the existing sidebar exactly
-
-**Action Bottom Sheet**
-- Slides up from bottom (mobile-native feel)
-- Section title + list of buttons
-- Each button triggers the action directly (bypasses chat) or asks Emerald to do it
-- Buttons are styled by type: primary (coral), accent (gold), secondary (cream)
-
-**Input Bar**
-- Menu icon → opens client sidebar (mobile)
-- Text input: "Ask Emerald anything..."
-- Send button (arrow icon, coral)
-- Pressing Enter sends on desktop
-
-**Client Sidebar (mobile: drawer, desktop: fixed left)**
-- Client search/filter input at top
-- Client cards: Name, service type badge, week indicator (if Soul Emergence)
-- Status dot: green (active), grey (complete)
-- "New Client" button at bottom
-- Tapping a client: selects them, closes drawer, Emerald greets with their context
-
-### CSS Design Tokens (Sunset System)
-
-All from the design system in CLAUDE.md. Additional UI-specific tokens:
-
-```css
---chat-bubble-ai:     #FFF3EC;
---chat-bubble-user:   #E8654A;
---chip-bg:            #FFF8F3;
---chip-border:        #F0D9CA;
---chip-active-bg:     #E8654A;
---chip-active-color:  #ffffff;
---sheet-bg:           #FFF8F3;
---sheet-handle:       #E8B99A;
---typing-dot:         #D4A762;
-```
-
-### Files
-- `Tula App/EmeraldUI.html` — Created in this phase
+- [x] Fixed sidebar on desktop (250px), slide-over drawer on mobile
+- [x] Client cards: name, service type badge (color-coded), session count, week pill (SE)
+- [x] Status indicators: green dot (active), grey (complete)
+- [x] Real-time search/filter by name
+- [x] "New Client" button → modal with name + type → creates via chat
+- [x] Client selection: highlights card, updates header pill, shows greeting
+- [x] Footer stats: "X active · Y complete"
 
 ---
 
-## Phase 5: Frontend — Client Sidebar
+## Phase 6: Tool Wiring — All 31 Actions — COMPLETE
 
-**Goal:** Build the client selection sidebar / drawer.
-
-### Tasks
-
-- Load client list via `doPost({ action: 'getClients' })` on app start
-- Display each client as a card with:
-  - Name
-  - Service type badge (Akashic/Counseling/Soul Emergence)
-  - Status indicator
-  - Soul Emergence: current week pill
-- Active client: highlighted with coral border + glow
-- Client search: filter by name in real time
-- New Client button: opens mini-form modal (name + type select) → calls `newClientSetup` equivalent
-- On client tap: select client, close drawer, inject client context into next chat
-
----
-
-## Phase 6: Tool Wiring — All Actions
-
-**Goal:** Wire every button and tool to its correct backend function.
+All tools are wired end-to-end: UI button → `trigger()` → chat message → Claude → tool_use → `emeraldExecuteTool()` → backend function → response.
 
 ### Wiring Checklist
 
-Every action below must be tested end-to-end:
-
 **Document Generation**
-- [ ] Session Notes → `backend_generateDoulaDoc("Session Notes")`
-- [ ] Integration Guide → `backend_generateDoulaDoc("Integration Guide")`
-- [ ] Breathwork Notes → `backend_generateDoulaDoc("Breathwork Notes")`
-- [ ] Akashic Notes → `backend_generateDoulaDoc("Akashic Notes")`
-- [ ] Counseling Notes → `backend_generateDoulaDoc("Counseling Notes")`
-- [ ] Client Homework → `backend_generateDoulaDoc("Client Homework")`
-- [ ] Client Summary → `backend_generateDoulaDoc("Client Summary")`
-- [ ] Soul Emergence Summary → `backend_generateDoulaDoc("Soul Emergence Summary")`
-- [ ] Intro Packet → `backend_generateClientPacket("Intro Packet")`
-- [ ] Packet 2 → `backend_generateClientPacket("Packet 2")`
-- [ ] Packet 3 → `backend_generateClientPacket("Packet 3")`
+- [x] Session Notes, Integration Guide, Breathwork Notes, Akashic Notes
+- [x] Counseling Notes, Client Homework, Client Summary, Soul Emergence Summary
+- [x] Intro Packet, Packet 2, Packet 3
 
 **Soul Emergence**
-- [ ] Week 1–12 Workbooks → `backend_sendWorkbook(n)` for each n
-- [ ] Create Journal → `backend_createJournal()`
-- [ ] Open Journal → `backend_openJournal()` → open URL
+- [x] Week 1–12 Workbooks (individual buttons)
+- [x] Create Journal
+- [x] Open Journal (returns URL)
 
 **Onboarding**
-- [ ] Send Onboarding → `sendOnboardingEmail()`
-- [ ] Check Intake → `checkIntakeStatus()`
-- [ ] Create Intake Doc → `createIntakeDoc()`
+- [x] Send Onboarding Email (API-safe, no getUi)
+- [x] Check Intake Status
+- [x] Create Intake Doc
 
 **Scheduling**
-- [ ] Add Session → `addNextSession()`
-- [ ] Delete Session → `deleteSession()`
+- [x] Add Session to Calendar
+- [x] Get Upcoming Sessions (by event ID)
+- [x] Delete Session by Event ID
 
 **Financial**
-- [ ] Record Payment → `recordClientPayment()`
-- [ ] Send Receipt → `sendReceipt()`
-- [ ] Open Budget → `backend_openBudgetSheet()`
+- [x] Record Payment (to Budget sheet)
+- [x] Send Receipt
+- [x] Get Budget URL
 
-**Emails**
-- [ ] Preview Newsletter → `backend_previewNewsletter()`
-- [ ] Send Newsletter → `backend_sendNewsletterToAll()`
-- [ ] Dynamic email templates → `backend_sendSalesEmailTemplate(name)`
-- [ ] Past Client Offer All → `backend_sendPastClientOfferAll()`
-- [ ] Past Client Offer One → `backend_sendPastClientOfferOne()`
+**Email & Marketing**
+- [x] Get Email Templates
+- [x] Send Email Template
+- [x] Preview Newsletter
+- [x] Send Newsletter to All Leads
+- [x] Send Past Client Offer (all or one)
 
 **Utilities**
-- [ ] Open Client Folder → `backend_openClientFolder()` → open URL
-- [ ] Refresh Dashboard → `refreshDoulaDashboard()`
-- [ ] Refresh Leads → `refreshLeads()`
+- [x] Open Client Folder (Drive URL)
+- [x] Refresh Dashboard
+- [x] Refresh Leads
+- [x] Add Lead (Name/Date/Email/Service)
 
 **AI Read/Write**
-- [ ] Read client data → `emeraldGetClientInfo()`
-- [ ] Write session notes / scheduling → `emeraldSafeWrite()`
-- [ ] Clear cell → `emeraldSafeClear()`
+- [x] Read Cell
+- [x] Write Cell (safe-validated)
+- [x] Clear Cell (safe-validated)
+
+**Memory**
+- [x] Remember Note (client_note or reminder)
 
 ---
 
-## Phase 7: Memory System
+## Phase 7: Memory System — COMPLETE
 
-**Goal:** Implement session and long-term memory.
+Built into `EmeraldAI.gs`:
 
-### Tasks
-
-- [ ] Implement `getSessionMemory()` / `saveSessionMemory()`
-- [ ] Implement `getLongTermMemory()` / `saveLongTermMemory()`
-- [ ] Implement `pruneConversationHistory()`
-- [ ] On app load: restore last client + recent session
-- [ ] After each response: save conversation turn
-- [ ] After each tool call: append to `recentActions`
-- [ ] "Remember..." command processing in Claude tool: `remember_note`
-- [ ] Display pinned reminders on load (if any)
-- [ ] `clearEmeraldMemory()` admin function
+- [x] `getSessionMemory()` / `saveSessionMemory()` — ScriptProperties key `EMERALD_SESSION`
+- [x] `getLongTermMemory()` / `saveLongTermMemory()` — ScriptProperties key `EMERALD_MEMORY`
+- [x] `pruneConversationHistory()` — keeps last 20 turns
+- [x] Session TTL: 24 hours of inactivity → auto-expires
+- [x] After each response: saves conversation turn + recent actions (capped at 10)
+- [x] `remember_note` tool — saves client notes or pinned reminders via chat
+- [x] `clearEmeraldMemory()` — admin reset function
+- [ ] On app load: restore last client from long-term memory (not yet implemented in UI)
+- [ ] Display pinned reminders on load (not yet implemented in UI)
 
 ---
 
-## Phase 8: Polish, Testing & Deployment
+## Phase 8: Polish, Testing & Deployment — IN PROGRESS
 
-**Goal:** Production-ready, tested, deployed.
+### Deployment
+- [x] Set `ANTHROPIC_API_KEY` in Script Properties
+- [x] Deploy as Web App (Execute as: Me, Access: Only myself)
+- [x] Web App URL confirmed live
+- [ ] Add URL to iPhone home screen
+- [ ] Verify all tools work through Web App (end-to-end testing)
 
-### Tasks
-
-**Polish**
-- [ ] Loading skeletons for client list
-- [ ] Smooth animations: sidebar slide, bottom sheet slide-up, message fade-in
-- [ ] Error states: network error toast, API key missing alert
-- [ ] Empty state: "Select a client to get started"
-- [ ] Responsive breakpoints: 375px (iPhone SE) to 1440px (desktop)
-- [ ] Favicon: gem emoji or custom SVG
+### Polish — Planned for Monday March 3
+- [ ] Restore last client on app load (from EMERALD_MEMORY.lastClient)
+- [ ] Display pinned reminders on app load
+- [ ] Loading skeleton for client list (shimmer animation)
 - [ ] Page title updates with active client name
+- [ ] Error state: API key missing alert on first load
 
-**Testing**
-- [ ] Test all 32+ tools via chat with each client type
-- [ ] Test Soul Emergence weeks 1–12 (all 12 workbook buttons)
-- [ ] Test email flows (draft creation, newsletter, past client offer)
+### Template Management — Self-Service System (added 2026-03-01)
+- [x] Template Registry sheet with setup migration
+- [x] Manage Templates dialog (search Drive, wire, add new)
+- [x] Registry-first lookups with hard-coded fallback
+- [x] `manage_template` AI tool (search, wire, list_missing, list_all, rename_field)
+- [x] Dynamic UI — buttons grey out for unwired templates
+- [ ] Carlie runs Setup > Create Template Registry (one-time)
+- [ ] Carlie wires remaining templates via Manage Templates dialog
+
+### Dynamic Self-Service Systems (added 2026-03-01)
+- [x] Dynamic Soul Emergence weeks — count + names from registry workbook entries
+- [x] Field Labels registry — Akashic (18 fields) + Counseling (9 fields) in Template Registry
+- [x] Field rename via Manage Templates dialog (Edit button) and via chat (rename_field action)
+- [x] Dynamic doc type enums — generate_document tool reads from registry
+- [x] Dynamic packet enums — generate_client_packet tool reads from registry
+- [x] Dynamic workbook grid — UI builds week buttons from registry data
+- [x] Config via Script Properties — PRACTITIONER_NAME, PRACTICE_NAME, AI_NAME, SESSION_DURATION_MINUTES
+- [x] Setup > Configure Settings menu item
+- [x] Dynamic system prompt — AI persona reads from config, rebrandable without code changes
+- [x] Dynamic page title + sidebar brand from config
+- [x] getConfig API endpoint for UI to fetch settings
+
+### Template Wiring — Waiting on Carlie's answers (self-service now!)
+- [ ] Wire workbook template IDs weeks 2–12 (Q6) — Carlie can do via Manage Templates
+- [ ] Wire client literature template IDs: Intro, Packet 2, Packet 3 (Q7)
+- [ ] Wire client homework template ID (Q8)
+- [ ] Akashic field name changes if any (Q10) — Carlie can now rename in Manage Templates
+- [ ] Newsletter Offer email template (Q11)
+
+### Website Forms — Both offered (decided 2026-02-28)
+- [ ] Carlie runs Setup > Create Opt-In Form → gets URL
+- [ ] Carlie runs Setup > Create Website Inquiry Form → gets URL
+- [ ] Carlie runs Setup > Install Form Triggers
+- [ ] Website links updated to form URLs
+
+### Testing — Planned for Tuesday March 4
+- [ ] Test all 31+ tools via chat with each client type (Akashic, Counseling, Soul Emergence)
+- [ ] Test Soul Emergence weeks 1–12 workbook buttons
+- [ ] Test email flows (onboarding, newsletter, past client offer, newsletter offer)
 - [ ] Test scheduling (add + delete session)
 - [ ] Test safe write + clear (confirm protected cells rejected)
-- [ ] Test memory: close and reopen app, verify context restored
+- [ ] Test memory: close and reopen app, verify session context restored
 - [ ] Test on iPhone Safari (primary target)
-- [ ] Test on Chrome mobile emulator
-- [ ] Test on desktop Chrome/Firefox
+- [ ] Test on desktop Chrome
 
-**Deployment**
-- [ ] Set `ANTHROPIC_API_KEY` in Script Properties
-- [ ] Deploy as Web App (Execute as: Me, Access: Only myself)
-- [ ] Test Web App URL loads correctly
-- [ ] Add URL to iPhone home screen (Add to Home Screen)
-- [ ] Verify all tools work through Web App (not just script editor)
+---
 
-**Documentation**
-- [ ] Update CLAUDE.md with Web App URL
-- [ ] Note deployment date and version in CLAUDE.md
+## Phase 9: Acuity Scheduling Integration — PLANNED (Tuesday March 4)
+
+> Blocked by Carlie's Acuity API credentials (ACUITY_QUESTIONS.md Q1-Q5)
+
+### New Tools (5)
+- [ ] `get_schedule` — read appointments for date range
+- [ ] `check_availability` — check open slots for a date
+- [ ] `reschedule_appointment` — move existing appointment (confirmation required)
+- [ ] `block_time` — block off time
+- [ ] `cancel_appointment` — cancel appointment (confirmation required)
+
+### New Code
+- [ ] `acuityFetch_()` — internal helper for Acuity REST API (Basic Auth)
+- [ ] 5 `emerald_*` API wrapper functions in EmeraldAPI.gs
+- [ ] 5 tool definitions in EmeraldAI.gs `getToolDefinitions()`
+- [ ] 5 new cases in EmeraldAPI.gs `emeraldExecuteTool()` switch
+- [ ] "Schedule" quick action chip in EmeraldUI.html
+- [ ] Acuity credentials stored in Script Properties
+
+### Confirmation Protocol
+| Acuity Action | Confirmation Required |
+|---------------|----------------------|
+| Read schedule | No |
+| Check availability | No |
+| Reschedule | Yes |
+| Block time | No |
+| Cancel | Yes |
 
 ---
 
@@ -535,28 +259,75 @@ Every action below must be tested end-to-end:
 |------|----------|--------|
 | 2026-02-24 | GAS Web App deployment (not Cloud Run) | Simpler, no hosting cost, stays in Google ecosystem |
 | 2026-02-24 | Vanilla JS (not React/Next.js) | GAS serves HTML; no build step needed; matches complexity |
-| 2026-02-24 | claude-opus-4-6 | Most capable model for nuanced multi-tool reasoning |
+| 2026-02-24 | claude-sonnet-4-6 | Best balance of capability and cost for multi-tool doula workflows |
 | 2026-02-24 | ScriptProperties for memory | Built-in to GAS, no external DB needed, secure |
 | 2026-02-24 | No changes to existing .gs files | Preserve existing system, automations, sidebar |
 | 2026-02-24 | Sunset color palette | Matches Haven brand — warm, empowering, elegant |
+| 2026-02-26 | google.script.run instead of fetch | Avoids CORS and login-redirect issues with GAS Web App |
+| 2026-02-26 | Actions routed through chat (not direct API) | AI confirms before executing, consistent UX, single communication pattern |
+| 2026-02-28 | Both website forms offered (Opt-In + Get In Touch) | Carlie wants both options available on her website |
+| 2026-02-28 | Acuity integration planned as Phase 9 | Separate from polish/testing — depends on API credentials from Carlie |
+| 2026-03-01 | Template Registry sheet for self-service management | Carlie can wire/update template IDs without code changes or redeploy |
+| 2026-03-01 | Dynamic weeks, field labels, doc types, config from registry/properties | Full self-service: Carlie can rename fields, add weeks, change brand name — zero code changes |
+| 2026-03-01 | Keep model as claude-sonnet-4-6 | Per Carlie's preference — Sonnet, not Opus |
 
 ---
 
-## Questions & Answers
+## Bug Fixes Applied (2026-02-26) — Emerald Layer
 
-> These were clarified before development began.
+| Fix | File | Issue |
+|-----|------|-------|
+| Added `create_new_client` to tool switch | EmeraldAPI.gs | Tool defined but not routed → "Unknown tool" error |
+| Added `preview_newsletter` to tool switch | EmeraldAPI.gs | Tool defined but not routed → "Unknown tool" error |
+| Wrapped `handleApiCall` in try-catch | EmeraldAPI.gs | Uncaught exceptions crashed UI instead of returning error |
+| Fixed agentic loop exit condition | EmeraldAI.gs | `end_turn` OR check discarded tool_use blocks; now only exits when no tools |
+| Model constant corrected | EmeraldAI.gs | Changed from `claude-opus-4-6` to `claude-sonnet-4-6` |
+| add_lead column layout | EmeraldAPI.gs | Columns: A=Name, B=Date, C=Email, D=Service |
 
-**Q: Where is Wanderlust/Gilligan?**
-A: Provided by user in text — Next.js + Tailwind + GAS backend + Cloud Run. Emerald mirrors the component architecture (sidebar, chat, cards, modals) adapted for GAS-native HTML delivery.
+---
 
-**Q: Deployment?**
-A: Google Apps Script Web App — simplest path, no external hosting.
+## Critical Bug Fix Session (2026-02-26) — Human Spreadsheet Layer
 
-**Q: Auth?**
-A: Single practitioner (Carlie Wyton). Web App runs as her Google account. No login screen needed.
+> Priority pivot: All fixes below target the **human-facing spreadsheet system** (sidebar + backend functions).
+> The existing `SPREADSHEET APPS SCRIPT.gs` and `SPREADSHEET SIDEBAR CODE.html` were modified to fix production-blocking bugs.
 
-**Q: API key?**
-A: Stored in GAS Script Properties (`ANTHROPIC_API_KEY`). Never exposed to the browser.
+### Root Causes Identified & Fixed
 
-**Q: Can the spreadsheet be modified?**
-A: No. All new code is additive only. `SPREADSHEET APPS SCRIPT.gs` is never touched.
+| # | Bug | Root Cause | Fix | File |
+|---|-----|-----------|-----|------|
+| 1 | **Scheduling sets December 1899 dates** | `normalizeTime()` received Date objects from `getValue()` but only handled strings. `String(Date)` → "Sat Dec 30 1899 14:00:00..." | Added `instanceof Date` check; extract `.getHours()`/`.getMinutes()` directly | SPREADSHEET APPS SCRIPT.gs |
+| 2 | **Intake status false positives** | `checkIntakeStatus()` compared client email against ALL form fields, not just the email field | Added `ir.getItem().getTitle().toLowerCase().includes('email')` filter | SPREADSHEET APPS SCRIPT.gs + EmeraldAPI.gs |
+| 3 | **Delete sessions finds nothing** | Events were created with corrupted dates (from bug #1), so they existed in the wrong time range | Fixed by resolving bug #1 (normalizeTime) | SPREADSHEET APPS SCRIPT.gs |
+| 4 | **Sidebar buttons give no feedback** | `google.script.host.toast()` does not exist in GAS sidebars — every callback silently failed | Built DOM-based toast notification system (CSS + JS) | SPREADSHEET SIDEBAR CODE.html |
+| 5 | **New client overwrites B8 formula** | `newClientSetup()` set B8 to `0`, overwriting the template formula | Removed `setValue(0)` line; B8 left to template formula | SPREADSHEET APPS SCRIPT.gs + EmeraldAPI.gs |
+| 6 | **Leads column B shows "Direct" not date** | `addToLeads()` put string "Direct" in column B instead of today's date | Rewrote to always set `new Date()` in column B | SPREADSHEET APPS SCRIPT.gs |
+| 7 | **Duplicate leads** | `addToLeads()` only checked email for duplicates; calls without email always added new rows | Added name+email matching with 3 match paths (email match, name+fill email, name match) | SPREADSHEET APPS SCRIPT.gs |
+| 8 | **Refresh leads doesn't update date** | Existing lead rows matched but returned early without touching date column | Added `setValue(new Date())` to every match path | SPREADSHEET APPS SCRIPT.gs |
+| 9 | **Email template list empty** | `getEmailTemplateList()` used `=== "Yes"` (case-sensitive) while sheet had variations | Changed to `String(row[2]).trim().toLowerCase() === "yes"` | SPREADSHEET APPS SCRIPT.gs |
+| 10 | **Week 1 workbook template missing** | Placeholder ID was overwritten when code was updated | Restored real template ID: `1xJtINLKRfoMKYKfkVL8bxpiT7CDpyC7dndAe3hDSTvg` | SPREADSHEET APPS SCRIPT.gs |
+
+### Files Modified
+
+| File | Lines Changed | What Changed |
+|------|--------------|-------------|
+| `SPREADSHEET APPS SCRIPT.gs` | ~120 lines | normalizeTime(), newClientSetup(), checkIntakeStatus(), createIntakeDoc(), addToLeads(), addToLeadsWithSource(), getEmailTemplateList(), WORKBOOK_TEMPLATES[1] |
+| `SPREADSHEET SIDEBAR CODE.html` | ~30 lines | Added toast CSS, toast DOM element, replaced broken `google.script.host.toast()` with DOM-based `showSidebarToast()` |
+| `EmeraldAPI.gs` | ~15 lines | B8 overwrite removed from `emerald_createNewClient()`, email-only filtering in `emerald_checkIntakeStatus()` and `emerald_createIntakeDoc()` |
+
+### Known Remaining Issues
+
+| Issue | Status | Notes |
+|-------|--------|-------|
+| Workbook template IDs weeks 2–12 | **Needs user input** | Still placeholder IDs; user must provide real Google Doc URLs |
+| `CLIENT_LIT_TEMPLATES` (Intro Packet, Packet 2, Packet 3) | **Needs user input** | Placeholder IDs with `YOUR_` prefix |
+| `TEMPLATE_CLIENT_HOMEWORK` | **Needs user input** | Placeholder ID |
+| `TEMPLATE_SOUL_EMERGENCE_SUMMARY` | **Needs user input** | Placeholder ID |
+| B5 shows email instead of phone | **Template issue** | Not a code bug — user's client templates may have a formula in B5 referencing B4 |
+
+### Decision Log Update
+
+| Date | Decision | Reason |
+|------|----------|--------|
+| 2026-02-26 | Modified existing SPREADSHEET APPS SCRIPT.gs | Critical production bugs in human-facing system required fixes; "never modify" rule superseded by user directive |
+| 2026-02-26 | Modified existing SPREADSHEET SIDEBAR CODE.html | Toast notifications were completely broken; `google.script.host.toast()` doesn't exist in GAS sidebars |
+| 2026-02-26 | Human spreadsheet layer prioritized over Emerald AI | User actively using sidebar daily; AI layer can wait until human tools work perfectly |

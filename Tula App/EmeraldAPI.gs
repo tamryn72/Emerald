@@ -2,7 +2,7 @@
  * EmeraldAPI.gs — Emerald Web App Entry Point & Data Bridge
  * Haven, The Awakening Doula
  *
- * Model: claude-opus-4-6 (Anthropic, February 2026)
+ * Model: claude-sonnet-4-6 (Anthropic, February 2026)
  *
  * SAFE — additive only. Does NOT touch:
  *   onOpen(), onFormSubmit(), onOptInFormSubmit(), onInquiryFormSubmit()
@@ -20,14 +20,14 @@
 const SYSTEM_SHEETS = [
   "Dashboard", "Akashic_Client_Template", "Counseling_Client_Template",
   "SoulEmergence_Client_Template", "Email_Templates", "Intake Log",
-  "Budget", "Document Log", "Leads", "Past Clients"
+  "Budget", "Document Log", "Leads", "Past Clients", "Template Registry"
 ];
 
 const SAFE_WRITE_CELLS = {
   common:           ['B4','B5','B7','B8','B9','B10','B11','D10'],
   Akashic:          ['B13','B14','B15','B16','B17','B20','B21','B22',
                      'B25','B26','B27','B28','B29','B31','B32','B33','B36','B37'],
-  Counseling:       ['B14','B15','B16','B17','B18','B19','B20','B21','B22','B23'],
+  Counseling:       ['B14','B15','B16','B17','B18','B19','B20','B21','B22'],
   'Soul Emergence': ['B13','B14','B15','B16','B17','B18','B19','B20',
                      'B21','B22','B23','B24','B25']
 };
@@ -85,6 +85,12 @@ function doPost(e) {
       case 'executeAction':
         result = emeraldExecuteTool(data.tool, data.params || {});
         break;
+      case 'getTemplates':
+        result = getTemplateRegistry();
+        break;
+      case 'getConfig':
+        result = getEmeraldConfig();
+        break;
       case 'clearMemory':
         result = clearEmeraldMemory();
         break;
@@ -110,20 +116,26 @@ function doPost(e) {
  * no CORS or login-redirect issues.
  */
 function handleApiCall(payloadStr) {
-  const data   = JSON.parse(payloadStr);
-  const action = data.action;
+  try {
+    const data   = JSON.parse(payloadStr);
+    const action = data.action;
 
-  switch (action) {
-    case 'chat':               return handleChatRequest(data.message, data.clientName || null, data.history || []);
-    case 'getClients':         return emeraldGetClientList();
-    case 'getClientInfo':      return emeraldGetClientInfo(data.clientName);
-    case 'getEmailTemplates':  return getEmailTemplateList();
-    case 'getMemory':          return getLongTermMemory();
-    case 'getSessions':        return emerald_getUpcomingSessions(data.clientName);
-    case 'getNewsletterPreview': return emerald_getNewsletterPreview();
-    case 'executeAction':      return emeraldExecuteTool(data.tool, data.params || {});
-    case 'clearMemory':        return clearEmeraldMemory();
-    default: throw new Error('Unknown action: ' + action);
+    switch (action) {
+      case 'chat':               return handleChatRequest(data.message, data.clientName || null, data.history || []);
+      case 'getClients':         return emeraldGetClientList();
+      case 'getClientInfo':      return emeraldGetClientInfo(data.clientName);
+      case 'getEmailTemplates':  return getEmailTemplateList();
+      case 'getMemory':          return getLongTermMemory();
+      case 'getSessions':        return emerald_getUpcomingSessions(data.clientName);
+      case 'getNewsletterPreview': return emerald_getNewsletterPreview();
+      case 'executeAction':      return emeraldExecuteTool(data.tool, data.params || {});
+      case 'getTemplates':       return getTemplateRegistry();
+      case 'getConfig':          return getEmeraldConfig();
+      case 'clearMemory':        return clearEmeraldMemory();
+      default:                   return { error: 'Unknown action: ' + action };
+    }
+  } catch (err) {
+    return { error: err.message };
   }
 }
 
@@ -154,7 +166,7 @@ function emeraldGetClientList() {
       sessionsUsed: sesUsed,
       sessionsTotal: sh.getRange('B8').getValue() || 0,
       nextSession:  _formatDate(sh.getRange('B10').getValue()),
-      currentWeek:  (type === 'Soul Emergence') ? Math.min(Math.max(Math.ceil(sesUsed) || 1, 1), 12) : null,
+      currentWeek:  (type === 'Soul Emergence') ? Math.min(Math.max(Math.ceil(sesUsed) || 1, 1), getSessionNamesFromRegistry().count) : null,
       sheetId:      sh.getSheetId()
     });
   });
@@ -191,45 +203,50 @@ function emeraldGetClientInfo(clientName) {
     type:          type
   };
 
+  // Read field labels from registry (dynamic — Carlie can rename fields)
+  var fieldLabels = getFieldLabels(type);
+
   if (type === 'Akashic') {
-    Object.assign(base, {
-      themes:           sh.getRange('B13').getValue(),
-      soulMessages:     sh.getRange('B14').getValue(),
-      blocks:           sh.getRange('B15').getValue(),
-      openings:         sh.getRange('B16').getValue(),
-      pastLifeNotes:    sh.getRange('B17').getValue(),
-      breathInsights:   sh.getRange('B20').getValue(),
-      bodyFeedback:     sh.getRange('B21').getValue(),
-      breathEnergy:     sh.getRange('B22').getValue(),
-      regulation:       sh.getRange('B25').getValue(),
-      triggers:         sh.getRange('B26').getValue(),
-      soothing:         sh.getRange('B27').getValue(),
-      routine:          sh.getRange('B28').getValue(),
-      nervousEnergy:    sh.getRange('B29').getValue(),
-      sessionNotes:     sh.getRange('B31').getValue(),
-      insightDownloads: sh.getRange('B32').getValue(),
-      integrationTasks: sh.getRange('B33').getValue(),
-      completionNotes:  sh.getRange('B36').getValue(),
-      completionDate:   sh.getRange('B37').getValue()
+    // Default labels used as keys if no registry exists
+    var akashicCells = {
+      B13:'themes', B14:'soulMessages', B15:'blocks', B16:'openings', B17:'pastLifeNotes',
+      B20:'breathInsights', B21:'bodyFeedback', B22:'breathEnergy',
+      B25:'regulation', B26:'triggers', B27:'soothing', B28:'routine', B29:'nervousEnergy',
+      B31:'sessionNotes', B32:'insightDownloads', B33:'integrationTasks',
+      B36:'completionNotes', B37:'completionDate'
+    };
+    var akashicData = {};
+    Object.keys(akashicCells).forEach(function(cell) {
+      akashicData[akashicCells[cell]] = sh.getRange(cell).getValue();
+    });
+    Object.assign(base, akashicData);
+    // Include field labels so the AI knows display names
+    base.fieldLabels = {};
+    Object.keys(akashicCells).forEach(function(cell) {
+      base.fieldLabels[cell] = fieldLabels[cell] || akashicCells[cell];
     });
   } else if (type === 'Counseling') {
-    Object.assign(base, {
-      themes:      sh.getRange('B14').getValue(),
-      patterns:    sh.getRange('B15').getValue(),
-      blocks:      sh.getRange('B16').getValue(),
-      connections: sh.getRange('B17').getValue(),
-      concerns:    sh.getRange('B18').getValue(),
-      notice:      sh.getRange('B19').getValue(),
-      progress:    sh.getRange('B20').getValue(),
-      planning:    sh.getRange('B21').getValue(),
-      homework:    sh.getRange('B22').getValue(),
-      followUp:    sh.getRange('B23').getValue()
+    var counselingCells = {
+      B14:'primaryConcern', B15:'clientNarrative', B16:'emotionalLandscape',
+      B17:'spiritualLandscape', B18:'cognitiveRelational', B19:'behaviouralPatterns',
+      B20:'interventionsUsed', B21:'therapeuticNotes', B22:'planNextSession'
+    };
+    var counselingData = {};
+    Object.keys(counselingCells).forEach(function(cell) {
+      counselingData[counselingCells[cell]] = sh.getRange(cell).getValue();
+    });
+    Object.assign(base, counselingData);
+    base.fieldLabels = {};
+    Object.keys(counselingCells).forEach(function(cell) {
+      base.fieldLabels[cell] = fieldLabels[cell] || counselingCells[cell];
     });
   } else if (type === 'Soul Emergence') {
+    var sessionInfo = getSessionNamesFromRegistry();
     base.journalId   = sh.getRange('E4').getValue();
-    base.currentWeek = Math.min(Math.max(Math.ceil(base.sessionsUsed || 1), 1), 12);
+    base.currentWeek = Math.min(Math.max(Math.ceil(base.sessionsUsed || 1), 1), sessionInfo.count);
+    base.weekCount   = sessionInfo.count;
     base.finalSummary = sh.getRange('B25').getValue();
-    for (let w = 1; w <= 12; w++) {
+    for (var w = 1; w <= sessionInfo.count; w++) {
       base['week' + w + 'Notes'] = sh.getRange(12 + w, 2).getValue();
     }
   }
@@ -380,6 +397,17 @@ function emeraldExecuteTool(toolName, toolInput) {
         if (!toolInput.confirmed) return { error: 'Confirmation required.' };
         return emerald_sendNewsletterAll();
 
+      case 'send_newsletter_offer':
+        if (!toolInput.confirmed) return { error: 'Confirmation required.' };
+        return emerald_sendNewsletterOfferAll();
+
+      case 'check_newsletter_offer_status':
+        return emerald_checkNewsletterOfferStatus(toolInput.leadName || null);
+
+      case 'reset_newsletter_offer':
+        if (!toolInput.confirmed) return { error: 'Confirmation required.' };
+        return emerald_resetNewsletterOffer();
+
       case 'send_past_client_offer':
         if (!toolInput.confirmed) return { error: 'Confirmation required.' };
         if (toolInput.sendToAll) return emerald_sendPastClientOfferAll();
@@ -427,6 +455,32 @@ function emeraldExecuteTool(toolName, toolInput) {
       // ── Memory ──
       case 'remember_note':
         return saveClientNote(toolInput.clientName, toolInput.note, toolInput.type);
+
+      // ── Template Management ──
+      case 'manage_template': {
+        var tmplAction = toolInput.action;
+        if (tmplAction === 'list_missing') {
+          return { missing: getMissingTemplates() };
+        }
+        if (tmplAction === 'list_all') {
+          return { templates: getTemplateRegistry() };
+        }
+        if (tmplAction === 'search') {
+          if (!toolInput.searchTerm) throw new Error('searchTerm is required for search action.');
+          return { results: searchDriveForTemplate(toolInput.searchTerm) };
+        }
+        if (tmplAction === 'wire') {
+          if (!toolInput.category || !toolInput.label || !toolInput.templateId)
+            throw new Error('category, label, and templateId are required for wire action.');
+          return wireTemplate(toolInput.category, toolInput.label, toolInput.templateId);
+        }
+        if (tmplAction === 'rename_field') {
+          if (!toolInput.category || !toolInput.label || !toolInput.templateId)
+            throw new Error('category (field_akashic/field_counseling), label (cell ref), and templateId (new name) are required.');
+          return wireTemplate(toolInput.category, toolInput.label, toolInput.templateId);
+        }
+        throw new Error('Unknown manage_template action: ' + tmplAction);
+      }
 
       default:
         throw new Error('Unknown tool: ' + toolName);
@@ -480,11 +534,21 @@ function emerald_createNewClient(name, type) {
   const newSheet = ss.getSheets().find(s => s.getSheetId() === tempCopy.getSheetId());
 
   newSheet.setName(name);
-  ss.moveActiveSheet(ss.getSheets().length);
+
+  // Move new client tab to position 3 (after Dashboard, Leads, Instructions)
+  try {
+    Sheets.Spreadsheets.batchUpdate({ requests: [{ updateSheetProperties: {
+      properties: { sheetId: newSheet.getSheetId(), index: 3 },
+      fields: 'index'
+    }}]}, ss.getId());
+  } catch (e) {
+    // Non-critical — sheet still created, just not repositioned
+  }
+
   newSheet.getRange('B2').setValue(name);
   newSheet.getRange('B3').setValue('Active');
   newSheet.getRange('A12').setValue(clientFolder.getId());
-  newSheet.getRange('B8').setValue(0);
+  // B8 left alone — template has a formula there
   newSheet.getRange('B9').setValue(0);
   newSheet.getRange('E11').setValue('No');
 
@@ -528,7 +592,9 @@ function emerald_checkIntakeStatus(clientName) {
   let found  = false;
   form.getResponses().some(r =>
     r.getItemResponses().some(ir => {
-      if (String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
+      // Only match on the email field, not every field in the form
+      if (ir.getItem().getTitle().toLowerCase().includes('email') &&
+          String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
         found = true; return true;
       }
     })
@@ -555,7 +621,9 @@ function emerald_createIntakeDoc(clientName) {
   let matched = null;
   form.getResponses().some(r =>
     r.getItemResponses().some(ir => {
-      if (String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
+      // Only match on the email field, not every field in the form
+      if (ir.getItem().getTitle().toLowerCase().includes('email') &&
+          String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
         matched = r; return true;
       }
     })
@@ -793,6 +861,117 @@ function emerald_sendNewsletterAll() {
     sent++;
   });
   return { sent: true, count: sent, message: 'Newsletter sent to ' + sent + ' contacts.' };
+}
+
+function emerald_sendNewsletterOfferAll() {
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('Email_Templates');
+  if (!sheet) return { error: 'Email_Templates sheet not found.' };
+
+  const names   = sheet.getRange('A2:A').getValues().flat();
+  const bodies  = sheet.getRange('B2:B').getValues().flat();
+  const actives = sheet.getRange('C2:C').getValues().flat();
+
+  let htmlBody = null;
+  for (let i = 0; i < names.length; i++) {
+    if (String(names[i]).trim().toLowerCase() === 'newsletter offer' && String(actives[i]).trim().toLowerCase() === 'yes') {
+      htmlBody = String(bodies[i] || '').trim(); break;
+    }
+  }
+  if (!htmlBody) return { error: 'No active "Newsletter Offer" template found in Email_Templates.' };
+
+  const leadsSheet = ss.getSheetByName('Leads');
+  if (!leadsSheet) return { error: 'Leads sheet not found.' };
+  const lastRow = leadsSheet.getLastRow();
+  if (lastRow < 4) return { error: 'No leads found.' };
+
+  /* Column X (col 24) tracks offer sent date — skip leads that already have one */
+  const leadsData = leadsSheet.getRange(4, 1, lastRow - 3, 24).getValues();
+  const unsent = [];
+  const rowIndices = [];
+  for (let i = 0; i < leadsData.length; i++) {
+    const name  = String(leadsData[i][0] || '').trim();
+    const email = String(leadsData[i][2] || '').trim();
+    const offerSent = leadsData[i][23]; /* Column X (index 23) */
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && !offerSent) {
+      unsent.push([name, email]);
+      rowIndices.push(i + 4); /* Actual sheet row */
+    }
+  }
+
+  if (!unsent.length) return { sent: true, count: 0, message: 'All leads have already received the newsletter offer.' };
+
+  let sent = 0;
+  const now = new Date();
+  unsent.forEach(([name, email], idx) => {
+    const filled = htmlBody.replace(/\{\{NAME\}\}/g, name).replace(/\{\{CLIENT_NAME\}\}/g, name);
+    GmailApp.sendEmail(email, 'Haven, The Awakening Doula - Newsletter Offer', '', { htmlBody: filled });
+    leadsSheet.getRange(rowIndices[idx], 24).setValue(now); /* Stamp Column X */
+    sent++;
+  });
+  return { sent: true, count: sent, message: 'Newsletter offer sent to ' + sent + ' new leads.' };
+}
+
+function emerald_checkNewsletterOfferStatus(leadName) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const leadsSheet = ss.getSheetByName('Leads');
+  if (!leadsSheet) return { error: 'Leads sheet not found.' };
+  const lastRow = leadsSheet.getLastRow();
+  if (lastRow < 4) return { error: 'No leads found.' };
+
+  const data = leadsSheet.getRange(4, 1, lastRow - 3, 24).getValues();
+  const sent = [];
+  const unsent = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const name  = String(data[i][0] || '').trim();
+    const email = String(data[i][2] || '').trim();
+    if (!name && !email) continue;
+    const offerDate = data[i][23];
+    if (offerDate) {
+      sent.push({ name, email, sentDate: new Date(offerDate).toLocaleDateString() });
+    } else {
+      unsent.push({ name, email });
+    }
+  }
+
+  /* If checking a specific lead */
+  if (leadName) {
+    const q = leadName.toLowerCase();
+    const match = sent.find(l => l.name.toLowerCase().includes(q) || l.email.toLowerCase().includes(q))
+               || unsent.find(l => l.name.toLowerCase().includes(q) || l.email.toLowerCase().includes(q));
+    if (!match) return { found: false, message: 'No lead found matching "' + leadName + '".' };
+    const wasSent = sent.some(l => l.name === match.name && l.email === match.email);
+    return {
+      found: true,
+      name: match.name,
+      email: match.email,
+      offerSent: wasSent,
+      sentDate: wasSent ? match.sentDate : null,
+      message: wasSent
+        ? match.name + ' was sent the newsletter offer on ' + match.sentDate + '.'
+        : match.name + ' has not been sent the newsletter offer yet.'
+    };
+  }
+
+  return {
+    totalLeads: sent.length + unsent.length,
+    sentCount: sent.length,
+    unsentCount: unsent.length,
+    unsent: unsent.slice(0, 20), /* Cap to avoid huge responses */
+    message: sent.length + ' leads have been sent the offer. ' + unsent.length + ' have not.'
+  };
+}
+
+function emerald_resetNewsletterOffer() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const leadsSheet = ss.getSheetByName('Leads');
+  if (!leadsSheet) return { error: 'Leads sheet not found.' };
+  const lastRow = leadsSheet.getLastRow();
+  if (lastRow < 4) return { message: 'No leads to reset.' };
+
+  leadsSheet.getRange(4, 24, lastRow - 3, 1).clearContent();
+  return { reset: true, message: 'Newsletter offer tracking cleared. All leads will receive the offer on next send.' };
 }
 
 function emerald_sendPastClientOfferAll() {

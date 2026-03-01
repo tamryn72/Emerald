@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Willow — Client Instruction Manual</title>
+  <style>
+    /* ─────────────────────────────────────────
+       WILLOW GUIDE — LUXURY DESIGN SYSTEM
+    ───────────────────────────────────────── */
+
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
+
+    :root {
+      --cream:       #FDF0E8;
+      --warm-white:  #FFF8F3;
+      --coral:       #E8654A;
+      --coral-dark:  #C4472F;
+      --gold:        #D4A762;
+      --gold-light:  rgba(212, 167, 98, 0.12);
+      --deep:        #7B3F2A;
+      --text:        #2C1810;
+      --muted:       #A87B6E;
+      --border:      #F0D9CA;
+      --font-display: 'Cormorant Garamond', 'Georgia', serif;
+      --font-body:    'Georgia', 'Times New Roman', serif;
+      --font-ui:      'Helvetica Neue', Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: white;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── PAGE LAYOUT ─── */
+    .page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 60px 48px;
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: avoid; }
+
+    /* ─── COVER PAGE ─── */
+    .cover {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 80px 48px;
+      background: var(--cream);
+    }
+    .cover-mark {
+      color: var(--gold);
+      margin-bottom: 40px;
+      opacity: 0.6;
+    }
+    .cover-title {
+      font-family: var(--font-display);
+      font-size: 64px;
+      font-weight: 300;
+      color: var(--deep);
+      letter-spacing: 6px;
+      margin-bottom: 8px;
+    }
+    .cover-line {
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      margin: 24px auto;
+      opacity: 0.5;
+    }
+    .cover-subtitle {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .cover-desc {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 360px;
+      margin-top: 16px;
+      line-height: 1.8;
+    }
+    .cover-footer {
+      margin-top: auto;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+
+    /* ─── TYPOGRAPHY ─── */
+    h1 {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 300;
+      color: var(--deep);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--deep);
+      letter-spacing: 1px;
+      margin-top: 40px;
+      margin-bottom: 12px;
+    }
+    h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--coral);
+      margin-top: 28px;
+      margin-bottom: 8px;
+    }
+    .section-line {
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      margin-bottom: 32px;
+      opacity: 0.5;
+    }
+
+    p {
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+    p.lead {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+
+    /* ─── STEP BLOCKS ─── */
+    .step {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 28px;
+      align-items: flex-start;
+    }
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--gold-light);
+      border: 1px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 15px;
+      color: var(--deep);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-content {
+      flex: 1;
+    }
+    .step-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--deep);
+      margin-bottom: 4px;
+    }
+    .step-desc {
+      font-size: 13.5px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ─── INFO CARDS ─── */
+    .card {
+      background: var(--cream);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+    .card-gold {
+      background: var(--gold-light);
+      border: 1px solid rgba(212, 167, 98, 0.25);
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--deep);
+      margin-bottom: 8px;
+    }
+    .card p, .card li {
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* ─── LISTS ─── */
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    li {
+      margin-bottom: 6px;
+      padding-left: 4px;
+    }
+    li::marker {
+      color: var(--gold);
+    }
+
+    /* ─── TABLES ─── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 13px;
+    }
+    thead th {
+      text-align: left;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--deep);
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--border);
+      letter-spacing: 0.5px;
+    }
+    tbody td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:nth-child(even) { background: rgba(253, 240, 232, 0.4); }
+
+    code {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      background: var(--gold-light);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--deep);
+    }
+
+    /* ─── CALLOUT ─── */
+    .callout {
+      border-left: 3px solid var(--gold);
+      padding: 14px 20px;
+      margin: 20px 0;
+      background: var(--gold-light);
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: var(--deep);
+      line-height: 1.7;
+    }
+    .callout strong {
+      font-weight: 600;
+    }
+
+    /* ─── BUTTON REFERENCE ─── */
+    .btn-ref {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 500;
+      margin: 2px 0;
+    }
+    .btn-coral { background: var(--coral); color: white; }
+    .btn-gold { background: var(--gold); color: white; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--deep); }
+
+    /* ─── LAYOUT DIAGRAM ─── */
+    .layout-diagram {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--muted);
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    /* ─── PRINT STYLES ─── */
+    @media print {
+      body { background: white; }
+      .cover { min-height: auto; padding: 120px 48px; background: white; }
+      .page { padding: 40px 32px; }
+      .card, .callout { break-inside: avoid; }
+      .step { break-inside: avoid; }
+    }
+
+    /* ─── PAGE NUMBER ─── */
+    .page-num {
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: 12px;
+      color: var(--muted);
+      opacity: 0.5;
+      margin-top: 48px;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     COVER PAGE
+═══════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-mark">
+    <svg viewBox="0 0 100 70" width="120" height="84">
+      <path d="M50 8C42 14 30 20 24 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/>
+      <path d="M50 8C45 16 38 25 36 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/>
+      <path d="M50 8C48 18 44 30 43 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/>
+      <path d="M50 8C52 18 56 30 57 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/>
+      <path d="M50 8C55 16 62 25 64 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/>
+      <path d="M50 8C58 14 70 20 76 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="cover-title">Willow</div>
+  <div class="cover-line"></div>
+  <div class="cover-subtitle">Your Practice Assistant</div>
+  <div class="cover-desc">
+    A complete guide to setting up and using Willow &mdash;
+    your AI-powered practice management companion.
+    Everything you need, right from your phone.
+  </div>
+  <div class="cover-footer">Setup &amp; User Guide</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 1: WELCOME
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Welcome to Willow</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    Willow is your personal AI practice assistant. She lives on your phone, knows your clients,
+    and handles the day-to-day tasks of running your practice &mdash; so you can focus on the work that matters.
+  </p>
+
+  <p>
+    After a simple one-time setup, Willow can do everything from your phone: manage clients,
+    generate documents, send emails, schedule sessions, track payments, and more.
+    Just tell her what you need, or tap a button. She handles the rest.
+  </p>
+
+  <h2>What Willow Can Do</h2>
+
+  <div class="card">
+    <ul>
+      <li><strong>Manage your clients</strong> &mdash; browse, create, and update client records</li>
+      <li><strong>Generate documents</strong> &mdash; session notes, integration guides, summaries, and more</li>
+      <li><strong>Send emails</strong> &mdash; onboarding, templates, newsletters, and offers</li>
+      <li><strong>Schedule sessions</strong> &mdash; add and manage Google Calendar events</li>
+      <li><strong>Track payments</strong> &mdash; record payments and send receipts</li>
+      <li><strong>Run your Soul Emergence program</strong> &mdash; send weekly workbooks and manage journals</li>
+      <li><strong>Answer questions</strong> &mdash; ask anything about your practice data</li>
+      <li><strong>Remember things</strong> &mdash; save notes, reminders, and client observations</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <strong>How it works:</strong> Willow connects to your existing Google Sheets practice system.
+    All your data stays in your Google account &mdash; nothing is stored externally.
+    She simply reads and writes to your spreadsheet, exactly like the existing sidebar, but through a
+    warm, conversational interface you can use from anywhere.
+  </div>
+
+  <div class="page-num">1</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 2: WHAT YOU'LL NEED
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Before You Begin</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    Setting up Willow takes about 30 minutes. Here's what you'll need before we start.
+  </p>
+
+  <h3>What You'll Need</h3>
+
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <div class="step-title">A Google Account</div>
+      <div class="step-desc">
+        Willow runs entirely within Google's ecosystem &mdash; Sheets, Drive, Gmail, and Calendar.
+        You'll need the Google account that holds your practice spreadsheet.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <div class="step-title">Your Practice Spreadsheet</div>
+      <div class="step-desc">
+        The Google Sheet with your client data, templates, and practice records.
+        If you're starting fresh, Willow's setup will create the structure for you.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+      <div class="step-title">An Anthropic API Key</div>
+      <div class="step-desc">
+        Willow uses Claude AI to understand your requests and take action. You'll need an API key from
+        <strong>console.anthropic.com</strong>. If you received a trial key, you can use that to get started
+        and add your own later.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">4</div>
+    <div class="step-content">
+      <div class="step-title">30 Minutes of Quiet Time</div>
+      <div class="step-desc">
+        The setup is straightforward, but give yourself space to move through each step without rushing.
+        Once it's done, you won't need to do it again.
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-gold">
+    <div class="card-title">About Your API Key</div>
+    <p>
+      Your API key is what connects Willow to the AI that powers her. Think of it as a private passcode
+      between your Willow and the AI service. It's stored securely in your Google project and never
+      shared with anyone.
+    </p>
+    <p style="margin-bottom:0">
+      <strong>Trial key:</strong> If you were given a trial key, it will work for your first week.
+      After that, you can either get your own key at <strong>console.anthropic.com</strong> or
+      contact your provider about a monthly plan.
+    </p>
+  </div>
+
+  <div class="page-num">2</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 3–4: ONE-TIME SETUP
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>One-Time Setup</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    Follow these steps once. After this, Willow is yours &mdash; always ready on your phone.
+  </p>
+
+  <h2>Step 1: Open Apps Script</h2>
+
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <div class="step-title">Open your practice spreadsheet</div>
+      <div class="step-desc">
+        Go to your Google Sheet in a web browser (this works best on a computer).
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <div class="step-title">Open the script editor</div>
+      <div class="step-desc">
+        Click <strong>Extensions</strong> in the menu bar, then <strong>Apps Script</strong>.
+        This opens the code editor in a new tab.
+      </div>
+    </div>
+  </div>
+
+  <h2>Step 2: Add the Code Files</h2>
+
+  <p>
+    In the Apps Script editor, you'll create three new files. For each one:
+  </p>
+
+  <div class="step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+      <div class="step-title">Create the API file</div>
+      <div class="step-desc">
+        Click the <strong>+</strong> next to "Files" &rarr; select <strong>Script</strong> &rarr;
+        name it <code>EmeraldAPI</code>. Paste the provided API code into this file.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">4</div>
+    <div class="step-content">
+      <div class="step-title">Create the AI file</div>
+      <div class="step-desc">
+        Click <strong>+</strong> &rarr; <strong>Script</strong> &rarr;
+        name it <code>EmeraldAI</code>. Paste the provided AI code.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">5</div>
+    <div class="step-content">
+      <div class="step-title">Create the UI file</div>
+      <div class="step-desc">
+        Click <strong>+</strong> &rarr; <strong>HTML</strong> &rarr;
+        name it <code>EmeraldUI</code>. Paste the provided interface code.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">6</div>
+    <div class="step-content">
+      <div class="step-title">Save everything</div>
+      <div class="step-desc">
+        Press <strong>Ctrl+S</strong> (or <strong>Cmd+S</strong> on Mac) to save all files.
+        You should see three new files in the left sidebar alongside the existing code.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Don't worry</strong> &mdash; adding these files won't affect anything that's already working.
+    Your existing sidebar, forms, and automations continue to run exactly as before.
+  </div>
+
+  <div class="page-num">3</div>
+</div>
+
+<div class="page">
+  <h2>Step 3: Run First-Time Setup</h2>
+
+  <div class="step">
+    <div class="step-number">7</div>
+    <div class="step-content">
+      <div class="step-title">Go back to your spreadsheet</div>
+      <div class="step-desc">
+        Switch back to the Google Sheet tab. Refresh the page so the new menu items appear.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">8</div>
+    <div class="step-content">
+      <div class="step-title">Run the setup</div>
+      <div class="step-desc">
+        In the menu bar, click <strong>Doula Tools</strong> &rarr; <strong>Setup</strong> &rarr;
+        <strong>Configure Settings</strong>. This creates your default configuration.
+        When prompted, enter your practice name, your name, and your preferred AI assistant name.
+      </div>
+    </div>
+  </div>
+
+  <h2>Step 4: Enter Your API Key</h2>
+
+  <div class="step">
+    <div class="step-number">9</div>
+    <div class="step-content">
+      <div class="step-title">Open Project Settings</div>
+      <div class="step-desc">
+        In the Apps Script editor, click the <strong>gear icon</strong> (Project Settings) in the left sidebar.
+        Scroll down to <strong>Script Properties</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">10</div>
+    <div class="step-content">
+      <div class="step-title">Add your API key</div>
+      <div class="step-desc">
+        Click <strong>Add Script Property</strong>. Set the name to <code>ANTHROPIC_API_KEY</code>
+        and paste your API key as the value. Click <strong>Save</strong>.
+      </div>
+    </div>
+  </div>
+
+  <h2>Step 5: Deploy</h2>
+
+  <div class="step">
+    <div class="step-number">11</div>
+    <div class="step-content">
+      <div class="step-title">Create the Web App</div>
+      <div class="step-desc">
+        In the Apps Script editor, click <strong>Deploy</strong> &rarr; <strong>New deployment</strong>.
+        For type, select <strong>Web app</strong>. Set "Execute as" to <strong>Me</strong> and
+        "Who has access" to <strong>Only myself</strong>. Click <strong>Deploy</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">12</div>
+    <div class="step-content">
+      <div class="step-title">Authorize permissions</div>
+      <div class="step-desc">
+        Google will ask you to authorize. Click <strong>Authorize access</strong>, choose your account,
+        and if you see "Google hasn't verified this app," click <strong>Advanced</strong> &rarr;
+        <strong>Go to [project name]</strong>. This is safe &mdash; it's your own code running in your own account.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">13</div>
+    <div class="step-content">
+      <div class="step-title">Copy your Willow URL</div>
+      <div class="step-desc">
+        After deploying, you'll see a Web App URL. <strong>Copy this link</strong> &mdash;
+        this is your Willow's permanent home address.
+      </div>
+    </div>
+  </div>
+
+  <h2>Step 6: Add to Your Phone</h2>
+
+  <div class="step">
+    <div class="step-number">14</div>
+    <div class="step-content">
+      <div class="step-title">Open the URL on your phone</div>
+      <div class="step-desc">
+        Send yourself the Web App URL (text, email, or notes app) and open it in Safari or Chrome on your phone.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">15</div>
+    <div class="step-content">
+      <div class="step-title">Add to Home Screen</div>
+      <div class="step-desc">
+        <strong>iPhone:</strong> Tap the share button (square with arrow) &rarr; <strong>Add to Home Screen</strong>.<br>
+        <strong>Android:</strong> Tap the three-dot menu &rarr; <strong>Add to Home Screen</strong>.<br><br>
+        Willow now appears as an app icon on your phone. Tap it anytime to open.
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-gold">
+    <div class="card-title">That's it. You're done.</div>
+    <p style="margin-bottom:0">
+      Willow is now ready. Open her from your home screen and start managing your practice
+      with a simple conversation.
+    </p>
+  </div>
+
+  <div class="page-num">4</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 5: YOUR HOME SCREEN
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Your Home Screen</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    When you open Willow, here's what you'll see. Everything is designed to be simple and immediate.
+  </p>
+
+  <div class="layout-diagram">
+┌──────────────────────────────────────────────┐
+│  ☰  🌿 Willow                 [Select client]│
+│      Your Practice Name                      │
+├─────────────┬────────────────────────────────┤
+│             │                                │
+│  CLIENTS    │     Welcome                    │
+│             │                                │
+│  ● Jane D.  │     Select a client to get     │
+│  ● Sarah M. │     started, or ask me         │
+│  ● Kim R.   │     anything.                  │
+│             │                                │
+│             │  ┌──────────┐ ┌──────────────┐ │
+│             │  │ Preview  │ │Send Newsletter│ │
+│             │  │Newsletter│ │              │ │
+│             │  └──────────┘ └──────────────┘ │
+│             │  ┌──────────┐ ┌──────────────┐ │
+│             │  │  Offers  │ │ Manage Leads │ │
+│             │  └──────────┘ └──────────────┘ │
+│             │                                │
+│  [+ New     │                                │
+│   Client]   │                                │
+├─────────────┴────────────────────────────────┤
+│  Ask Willow anything...              🎤  ➤  │
+└──────────────────────────────────────────────┘</div>
+
+  <h2>The Sidebar</h2>
+  <p>
+    The left panel shows all your clients. Tap a name to select them &mdash; once selected,
+    the chat area and actions adapt to that client. You can search by name using the search field at the top.
+  </p>
+  <p>
+    Each client card shows their name, service type (Akashic, Counseling, or Soul Emergence),
+    and status. The <span class="btn-ref btn-coral">+ New Client</span> button at the bottom creates a new client.
+  </p>
+
+  <h2>The Chat Area</h2>
+  <p>
+    This is where you talk to Willow. Type a message or tap the microphone to speak.
+    Willow responds in warm, clear language and confirms every action she takes.
+  </p>
+
+  <h2>Home Actions</h2>
+  <p>
+    When no client is selected, the home screen shows quick actions that apply to your whole practice:
+  </p>
+  <ul>
+    <li><strong>Preview Newsletter</strong> &mdash; see what your newsletter looks like before sending</li>
+    <li><strong>Send Newsletter</strong> &mdash; send to all your leads</li>
+    <li><strong>Offers</strong> &mdash; send past client offers</li>
+    <li><strong>Manage Leads</strong> &mdash; view and refresh your leads list</li>
+    <li><strong>Refresh Dashboard</strong> &mdash; update your practice dashboard</li>
+  </ul>
+
+  <h2>Mobile View</h2>
+  <p>
+    On your phone, the sidebar is hidden by default. Tap the <strong>&#9776;</strong> menu icon (top left)
+    to slide it open, or tap the client pill (top right) to switch clients. Everything is designed
+    for one-handed use with comfortable touch targets.
+  </p>
+
+  <div class="page-num">5</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 6–7: WORKING WITH CLIENTS
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Working with Clients</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    Once you select a client, Willow adapts everything to that person &mdash;
+    the chat context, the available actions, and the data she can access.
+  </p>
+
+  <h2>Selecting a Client</h2>
+  <p>
+    Tap a client name in the sidebar. The header updates to show who's selected,
+    and the action buttons change to show relevant options for that client's type.
+    You can ask Willow questions about the selected client right away:
+  </p>
+  <div class="card">
+    <p><em>"What's Sarah's next session date?"</em></p>
+    <p><em>"How many sessions has she used?"</em></p>
+    <p><em>"Show me Kim's intake status."</em></p>
+    <p style="margin-bottom:0"><em>"Update Jane's session notes with: explored themes of release and trust."</em></p>
+  </div>
+
+  <h2>Creating a New Client</h2>
+  <p>
+    Tap <span class="btn-ref btn-coral">+ New Client</span> at the bottom of the sidebar.
+    Enter their full name and select their service type:
+  </p>
+  <ul>
+    <li><strong>Akashic</strong> &mdash; Akashic Records sessions</li>
+    <li><strong>Counseling</strong> &mdash; Spiritual counseling</li>
+    <li><strong>Soul Emergence</strong> &mdash; 12-week transformation program</li>
+  </ul>
+  <p>
+    Willow creates their client sheet, Google Drive folder, and sets up all default fields automatically.
+  </p>
+
+  <h2>Client Types</h2>
+  <p>
+    Each client type has its own set of session fields and actions. The buttons and data fields
+    you see adapt automatically based on the client's type:
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Akashic</th><th>Counseling</th><th>Soul Emergence</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Session notes fields</td><td>Themes, Soul Messages, Blocks, Openings, Past Life</td><td>Focus, Narrative, Emotional/Spiritual Landscape, Patterns</td><td>Weekly notes (Weeks 1&ndash;12), Final Summary</td></tr>
+      <tr><td>Breathwork section</td><td>Yes</td><td>No</td><td>No</td></tr>
+      <tr><td>Nervous system section</td><td>Yes</td><td>No</td><td>No</td></tr>
+      <tr><td>Weekly workbooks</td><td>No</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Private journal</td><td>No</td><td>No</td><td>Yes</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Client Actions</h2>
+  <p>
+    With a client selected, swipe up on the action panel or tap the category buttons at the bottom to see
+    grouped actions. Each group opens a panel of relevant buttons:
+  </p>
+
+  <div class="page-num">6</div>
+</div>
+
+<div class="page">
+
+  <h3>Documents</h3>
+  <p>Generate professional documents that pull data directly from your client's sheet:</p>
+  <ul>
+    <li><strong>Session Notes</strong> &mdash; complete session documentation</li>
+    <li><strong>Integration Guide</strong> &mdash; post-session integration plan</li>
+    <li><strong>Breathwork Notes</strong> &mdash; breathwork session record (Akashic)</li>
+    <li><strong>Akashic Notes</strong> &mdash; Akashic reading documentation</li>
+    <li><strong>Counseling Notes</strong> &mdash; counseling session notes</li>
+    <li><strong>Client Homework</strong> &mdash; assigned practices and exercises</li>
+    <li><strong>Client Summary</strong> &mdash; overall client summary</li>
+    <li><strong>Soul Emergence Summary</strong> &mdash; full program summary</li>
+  </ul>
+
+  <h3>Onboarding</h3>
+  <ul>
+    <li><strong>Send Intake Form</strong> &mdash; emails the client their intake form link</li>
+    <li><strong>Check Intake Status</strong> &mdash; see if they've submitted it</li>
+    <li><strong>Create Intake Doc</strong> &mdash; generate their intake document from responses</li>
+  </ul>
+
+  <h3>Scheduling</h3>
+  <ul>
+    <li><strong>Add Session</strong> &mdash; adds the next session to Google Calendar (date and time must be set first)</li>
+    <li><strong>Delete Session</strong> &mdash; removes a scheduled calendar event</li>
+  </ul>
+
+  <h3>Financial</h3>
+  <ul>
+    <li><strong>Record Payment</strong> &mdash; logs a payment to the Budget sheet</li>
+    <li><strong>Send Receipt</strong> &mdash; emails the client a payment receipt</li>
+    <li><strong>Open Budget</strong> &mdash; opens the Budget sheet in a new tab</li>
+  </ul>
+
+  <h3>Emails</h3>
+  <ul>
+    <li><strong>Send Email Template</strong> &mdash; sends a pre-written email template to the client</li>
+    <li><strong>Intro Packet</strong> / <strong>Packet 2</strong> / <strong>Packet 3</strong> &mdash; generate and share literature packets</li>
+  </ul>
+
+  <h3>Soul Emergence (when applicable)</h3>
+  <ul>
+    <li><strong>Send Week [N] Workbook</strong> &mdash; email and share the weekly workbook</li>
+    <li><strong>Create Journal</strong> &mdash; set up their private shared journal</li>
+    <li><strong>Open Journal</strong> &mdash; view the client's journal</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Willow always confirms</strong> before sending emails, making calendar changes,
+    recording payments, or doing anything irreversible. You'll always see what she's about to do
+    and can approve or cancel.
+  </div>
+
+  <div class="page-num">7</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 8: TALKING TO WILLOW
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Talking to Willow</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    Willow understands natural language. You don't need special commands &mdash;
+    just tell her what you need in your own words.
+  </p>
+
+  <h2>Ways to Communicate</h2>
+
+  <h3>Type a Message</h3>
+  <p>
+    Tap the text field at the bottom and type your request. Press the send button or hit Enter.
+  </p>
+
+  <h3>Use Your Voice</h3>
+  <p>
+    Tap the microphone icon to speak. Willow uses your phone's speech recognition to convert
+    your words to text. Tap again to stop. Your spoken words appear in the text field, ready to send.
+  </p>
+
+  <h3>Tap an Action Button</h3>
+  <p>
+    Many common actions have dedicated buttons in the action panels.
+    Tapping a button is the same as asking Willow to do that action &mdash;
+    she'll confirm before proceeding.
+  </p>
+
+  <h2>Example Conversations</h2>
+
+  <div class="card">
+    <div class="card-title">Client Management</div>
+    <p><em>"Create a new Akashic client named Emma Thompson"</em></p>
+    <p><em>"What's Jane's email address?"</em></p>
+    <p><em>"Update Sarah's session price to $150"</em></p>
+    <p style="margin-bottom:0"><em>"Mark Kim as complete"</em></p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Session Notes</div>
+    <p><em>"Add to themes: ancestral patterns of self-doubt emerging in the records"</em></p>
+    <p><em>"Update B14 with: Client expressed deep grief around childhood memories"</em></p>
+    <p style="margin-bottom:0"><em>"Generate session notes for Sarah"</em></p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Practice Tasks</div>
+    <p><em>"Send the week 3 workbook to Emma"</em></p>
+    <p><em>"Schedule a session for next Thursday at 2pm"</em></p>
+    <p><em>"Record a $200 payment for Jane"</em></p>
+    <p style="margin-bottom:0"><em>"Preview the newsletter before I send it"</em></p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Questions</div>
+    <p><em>"How many sessions does Sarah have left?"</em></p>
+    <p><em>"Has Emma submitted her intake form?"</em></p>
+    <p><em>"What templates are missing?"</em></p>
+    <p style="margin-bottom:0"><em>"Show me all my active clients"</em></p>
+  </div>
+
+  <div class="page-num">8</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 9: MEMORY & REMINDERS
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Memory &amp; Reminders</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    Willow remembers context within your session and can save important notes
+    for the long term.
+  </p>
+
+  <h2>Session Memory</h2>
+  <p>
+    Within a single session (up to 24 hours of activity), Willow remembers your conversation history
+    and recent actions. She knows which client you're working with and what you've already done.
+    This means you can have natural, flowing conversations without repeating yourself.
+  </p>
+
+  <h2>Long-Term Memory</h2>
+  <p>
+    Ask Willow to remember something and she'll save it permanently:
+  </p>
+  <div class="card">
+    <p><em>"Remember that Sarah prefers morning appointments"</em></p>
+    <p><em>"Note: Emma is traveling in April, reschedule her Week 4"</em></p>
+    <p style="margin-bottom:0"><em>"Remind me to follow up with Kim about her journal"</em></p>
+  </div>
+  <p>
+    These notes persist across sessions. Client-specific notes appear automatically when
+    you select that client. Pinned reminders appear at the start of every session.
+  </p>
+
+  <div class="page-num">9</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 10: TEMPLATES & PLACEHOLDERS
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Templates &amp; Placeholders</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    Willow uses Google Doc templates to generate documents and packets for your clients.
+    These templates use placeholders that get automatically filled with real client data.
+  </p>
+
+  <h2>What Are Placeholders?</h2>
+  <p>
+    Placeholders are special words in double curly braces &mdash; like <code>{{CLIENT_NAME}}</code> &mdash;
+    that Willow replaces with actual data when generating a document. You put placeholders in your
+    Google Doc templates, and Willow fills them in.
+  </p>
+
+  <h2>Common Placeholders</h2>
+
+  <table>
+    <thead>
+      <tr><th>Placeholder</th><th>What It Becomes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>{{CLIENT_NAME}}</code></td><td>The client's full name</td></tr>
+      <tr><td><code>{{NAME}}</code></td><td>Same as CLIENT_NAME (shorthand)</td></tr>
+      <tr><td><code>{{STATUS}}</code></td><td>Active or Complete</td></tr>
+      <tr><td><code>{{EMAIL}}</code></td><td>Client's email address</td></tr>
+      <tr><td><code>{{PHONE}}</code></td><td>Client's phone number</td></tr>
+      <tr><td><code>{{SERVICE_TYPE}}</code></td><td>Their service (e.g. Akashic Records)</td></tr>
+      <tr><td><code>{{PACKAGE_TYPE}}</code></td><td>Their package name</td></tr>
+      <tr><td><code>{{SESSIONS_TOTAL}}</code></td><td>Total sessions in their package</td></tr>
+      <tr><td><code>{{SESSIONS_USED}}</code></td><td>Sessions completed so far</td></tr>
+      <tr><td><code>{{NEXT_SESSION}}</code></td><td>Date of their next session</td></tr>
+      <tr><td><code>{{SESSION_PRICE}}</code></td><td>Price per session</td></tr>
+      <tr><td><code>{{TODAY}}</code></td><td>Today's date</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Akashic Client Placeholders</h2>
+  <table>
+    <thead>
+      <tr><th>Placeholder</th><th>What It Becomes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>{{THEMES}}</code></td><td>Session themes</td></tr>
+      <tr><td><code>{{SOUL_MESSAGES}}</code></td><td>Messages from the soul records</td></tr>
+      <tr><td><code>{{BLOCKS}}</code></td><td>Identified blocks</td></tr>
+      <tr><td><code>{{OPENINGS}}</code></td><td>Openings that emerged</td></tr>
+      <tr><td><code>{{PAST_LIFE_NOTES}}</code></td><td>Past life observations</td></tr>
+      <tr><td><code>{{BREATH_INSIGHTS}}</code></td><td>Breathwork insights</td></tr>
+      <tr><td><code>{{BODY_FEEDBACK}}</code></td><td>Body awareness notes</td></tr>
+      <tr><td><code>{{BREATH_ENERGY}}</code></td><td>Breath energy observations</td></tr>
+      <tr><td><code>{{REGULATION}}</code></td><td>Nervous system regulation status</td></tr>
+      <tr><td><code>{{TRIGGERS}}</code></td><td>Identified triggers</td></tr>
+      <tr><td><code>{{SOOTHING}}</code></td><td>Soothing practices</td></tr>
+      <tr><td><code>{{ROUTINE}}</code></td><td>Daily routine notes</td></tr>
+      <tr><td><code>{{NERVOUS_ENERGY}}</code></td><td>Nervous system energy state</td></tr>
+      <tr><td><code>{{SESSION_NOTES}}</code></td><td>General session notes</td></tr>
+      <tr><td><code>{{INSIGHT_DOWNLOADS}}</code></td><td>Key insights received</td></tr>
+      <tr><td><code>{{INTEGRATION_TASKS}}</code></td><td>Integration homework</td></tr>
+      <tr><td><code>{{COMPLETION_NOTES}}</code></td><td>Completion summary</td></tr>
+      <tr><td><code>{{COMPLETION_DATE}}</code></td><td>Date of completion</td></tr>
+    </tbody>
+  </table>
+
+  <div class="page-num">10</div>
+</div>
+
+<div class="page">
+  <h2>Counseling Client Placeholders</h2>
+  <table>
+    <thead>
+      <tr><th>Placeholder</th><th>What It Becomes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>{{FOCUS_THEMES}}</code></td><td>Primary concern / focus</td></tr>
+      <tr><td><code>{{INSIGHT_DOWNLOADS}}</code></td><td>Client narrative &amp; insights</td></tr>
+      <tr><td><code>{{EMOTIONAL_LANDSCAPE}}</code></td><td>Emotional landscape</td></tr>
+      <tr><td><code>{{SPIRITUAL_LANDSCAPE}}</code></td><td>Spiritual landscape</td></tr>
+      <tr><td><code>{{COGNITIVE_RELATIONAL}}</code></td><td>Cognitive &amp; relational patterns</td></tr>
+      <tr><td><code>{{BEHAVIOURAL_PATTERNS}}</code></td><td>Behavioural patterns</td></tr>
+      <tr><td><code>{{PRACTICES_ASSIGNED}}</code></td><td>Interventions &amp; practices used</td></tr>
+      <tr><td><code>{{PATHWAY_NOTES}}</code></td><td>Therapeutic continuity notes</td></tr>
+      <tr><td><code>{{COMPLETION_NOTES}}</code></td><td>Plan for next session</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Soul Emergence Placeholders</h2>
+  <table>
+    <thead>
+      <tr><th>Placeholder</th><th>What It Becomes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>{{CURRENT_WEEK}}</code></td><td>Current week number</td></tr>
+      <tr><td><code>{{CURRENT_SESSION_NAME}}</code></td><td>Name of the current week's session</td></tr>
+      <tr><td><code>{{WEEK_1_NOTES}}</code> through <code>{{WEEK_12_NOTES}}</code></td><td>Notes for each week</td></tr>
+      <tr><td><code>{{WEEK_1_NAME}}</code> through <code>{{WEEK_12_NAME}}</code></td><td>Session name for each week</td></tr>
+      <tr><td><code>{{FINAL_SUMMARY}}</code></td><td>Final program summary</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Email Placeholders</h2>
+  <table>
+    <thead>
+      <tr><th>Placeholder</th><th>What It Becomes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>{{CLIENT_NAME}}</code> or <code>{{NAME}}</code></td><td>Recipient's name</td></tr>
+      <tr><td><code>{{JOURNAL_LINK}}</code></td><td>Link to the client's private journal (Soul Emergence)</td></tr>
+      <tr><td><code>{{OPT_IN_LINK}}</code></td><td>Link to the opt-in form (for past client offers)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Document Placeholders</h2>
+  <table>
+    <thead>
+      <tr><th>Placeholder</th><th>What It Becomes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>{{ClientName}}</code></td><td>Client name (in Google Doc intake templates)</td></tr>
+      <tr><td><code>{{PractitionerName}}</code></td><td>Your email address</td></tr>
+      <tr><td><code>{{StartDate}}</code></td><td>Today's date</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Creating your own templates:</strong> Create a Google Doc with any layout you like.
+    Add placeholders wherever you want client data to appear. Then go to
+    <strong>Doula Tools &rarr; Manage Templates</strong> to connect your template to Willow.
+  </div>
+
+  <div class="page-num">11</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 12: MANAGING TEMPLATES
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Managing Templates</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    Templates are the Google Docs that Willow copies and fills with client data
+    when generating documents. You manage them through the Template Registry.
+  </p>
+
+  <h2>The Template Registry</h2>
+  <p>
+    Your spreadsheet has a special sheet called <strong>Template Registry</strong> that lists
+    every template type and its connected Google Doc ID. This is how Willow knows which
+    template to use for each document.
+  </p>
+
+  <h2>Wiring a Template</h2>
+  <p>You can connect templates two ways:</p>
+
+  <h3>Via the Menu</h3>
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <div class="step-desc">
+        Go to <strong>Doula Tools &rarr; Manage Templates</strong>
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <div class="step-desc">
+        Search for your template by name &mdash; it searches your Google Drive
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+      <div class="step-desc">
+        Click <strong>Wire</strong> next to the correct document to connect it
+      </div>
+    </div>
+  </div>
+
+  <h3>Via Chat</h3>
+  <p>Just tell Willow:</p>
+  <div class="card">
+    <p><em>"Wire my Week 3 workbook"</em></p>
+    <p><em>"What templates are missing?"</em></p>
+    <p style="margin-bottom:0"><em>"Search for Session Notes template"</em></p>
+  </div>
+
+  <h2>Template Categories</h2>
+
+  <table>
+    <thead>
+      <tr><th>Category</th><th>What It Is</th><th>Examples</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Document</strong></td><td>Session documents and summaries</td><td>Session Notes, Integration Guide, Client Summary</td></tr>
+      <tr><td><strong>Workbook</strong></td><td>Soul Emergence weekly workbooks</td><td>Week 1 &ndash; The Threshold, Week 2 &ndash; Akashic Records Reading</td></tr>
+      <tr><td><strong>Packet</strong></td><td>Client literature and info packets</td><td>Intro Packet, Packet 2, Packet 3</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Greyed-out buttons:</strong> If an action button appears greyed out in the app,
+    it means the template for that action hasn't been wired yet. Go to Manage Templates
+    to connect it.
+  </div>
+
+  <h2>Adding New Template Types</h2>
+  <p>
+    The system is flexible. You can add new document types, new workbook weeks,
+    or new packet types through the Manage Templates dialog. Once added to the registry,
+    the corresponding button appears automatically in Willow's interface.
+  </p>
+
+  <div class="page-num">12</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 13: CUSTOMIZATION
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Customization</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    Willow is designed to be yours. You can rename fields, change your practice details,
+    and personalize the experience without touching any code.
+  </p>
+
+  <h2>Practice Settings</h2>
+  <p>
+    These settings are stored in your project and control how Willow presents herself:
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Setting</th><th>What It Controls</th><th>Default</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>AI_NAME</code></td><td>Your assistant's name (appears in header, chat, and conversations)</td><td>Willow</td></tr>
+      <tr><td><code>PRACTICE_NAME</code></td><td>Your practice name (appears in header and page title)</td><td>Haven, The Awakening Doula</td></tr>
+      <tr><td><code>PRACTITIONER_NAME</code></td><td>Your name (used in greetings and system context)</td><td>Carlie Wyton, MA</td></tr>
+      <tr><td><code>SESSION_DURATION_MINUTES</code></td><td>Default session length for calendar events</td><td>60</td></tr>
+    </tbody>
+  </table>
+
+  <p>
+    To change these: go to <strong>Apps Script &rarr; Project Settings &rarr; Script Properties</strong>
+    and update the values. Or run <strong>Doula Tools &rarr; Setup &rarr; Configure Settings</strong>.
+  </p>
+
+  <h2>Renaming Client Fields</h2>
+  <p>
+    The field names that appear in Willow's interface (like "Themes," "Soul Messages," "Blocks")
+    can be renamed to match your language. You can do this through the Template Registry
+    or by telling Willow:
+  </p>
+  <div class="card">
+    <p><em>"Rename the Themes field to Soul Themes"</em></p>
+    <p style="margin-bottom:0"><em>"Change B14 label to Akashic Messages"</em></p>
+  </div>
+
+  <h2>Adding Soul Emergence Weeks</h2>
+  <p>
+    If your program grows beyond 12 weeks, simply add a new workbook entry in the Template Registry
+    (e.g., "Week 13 &mdash; Bonus Session"). The week count, session names, and UI buttons all update
+    automatically. No code changes needed.
+  </p>
+
+  <h2>Updating Your API Key</h2>
+  <p>
+    If you need to switch from a trial key to your own:
+  </p>
+  <ol>
+    <li>Go to <strong>console.anthropic.com</strong> and create an account</li>
+    <li>Generate a new API key</li>
+    <li>In Apps Script, go to <strong>Project Settings &rarr; Script Properties</strong></li>
+    <li>Update the <code>ANTHROPIC_API_KEY</code> value with your new key</li>
+  </ol>
+
+  <div class="callout">
+    <strong>No redeployment needed.</strong> Changing settings or template IDs takes effect immediately &mdash;
+    just refresh Willow in your browser.
+  </div>
+
+  <div class="page-num">13</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 14: UNDERSTANDING YOUR DATA
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Understanding Your Data</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    Everything Willow does connects to your Google Sheet. Here's how your client data is organized.
+  </p>
+
+  <h2>Client Sheet Layout</h2>
+  <p>
+    Every client has their own sheet in the spreadsheet. The cell locations are consistent
+    across all clients:
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Cell</th><th>Field</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>B2</code></td><td>Client Name</td><td>Set at creation, don't change</td></tr>
+      <tr><td><code>B3</code></td><td>Status</td><td>Active or Complete</td></tr>
+      <tr><td><code>B4</code></td><td>Email</td><td>Editable</td></tr>
+      <tr><td><code>B5</code></td><td>Phone</td><td>Editable</td></tr>
+      <tr><td><code>B6</code></td><td>Service Type</td><td>Set at creation</td></tr>
+      <tr><td><code>B7</code></td><td>Package Type</td><td>Editable</td></tr>
+      <tr><td><code>B8</code></td><td>Sessions Total</td><td>Editable</td></tr>
+      <tr><td><code>B9</code></td><td>Sessions Used</td><td>Editable</td></tr>
+      <tr><td><code>B10</code></td><td>Next Session Date</td><td>Editable &mdash; set before scheduling</td></tr>
+      <tr><td><code>B11</code></td><td>Session Price</td><td>Editable</td></tr>
+      <tr><td><code>D3</code></td><td>Client Type</td><td>Akashic, Counseling, or Soul Emergence</td></tr>
+      <tr><td><code>D10</code></td><td>Session Time</td><td>Editable &mdash; set before scheduling</td></tr>
+    </tbody>
+  </table>
+
+  <h2>What Willow Can and Cannot Edit</h2>
+
+  <div class="card card-gold">
+    <div class="card-title">Safe to Edit</div>
+    <p style="margin-bottom:0">
+      Contact info (B4, B5), package details (B7&ndash;B11), session time (D10),
+      and all session note fields (B13+ depending on client type).
+      Willow can read and write to these cells freely.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Protected &mdash; Willow Cannot Change</div>
+    <p style="margin-bottom:0">
+      Client name (B2), status (B3), service type (B6), client type (D3),
+      folder ID (A12), intake status (D7), journal ID (E4), payment status (E11).
+      These are managed by specific functions and automations.
+    </p>
+  </div>
+
+  <h2>System Sheets</h2>
+  <p>
+    Your spreadsheet also contains system sheets that Willow reads from but never directly writes to:
+  </p>
+  <ul>
+    <li><strong>Dashboard</strong> &mdash; auto-generated practice overview</li>
+    <li><strong>Leads</strong> &mdash; prospective clients</li>
+    <li><strong>Past Clients</strong> &mdash; completed client records</li>
+    <li><strong>Email_Templates</strong> &mdash; your email templates</li>
+    <li><strong>Template Registry</strong> &mdash; document template connections</li>
+    <li><strong>Budget</strong> &mdash; financial records</li>
+    <li><strong>Document Log</strong> &mdash; history of generated documents</li>
+    <li><strong>Intake Log</strong> &mdash; intake form submissions</li>
+  </ul>
+
+  <div class="page-num">14</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 15: PRIVACY & SECURITY
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Privacy &amp; Security</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    Your client data is precious. Here's exactly how Willow handles it.
+  </p>
+
+  <h2>Where Your Data Lives</h2>
+  <p>
+    All your data stays within Google's infrastructure &mdash; Google Sheets, Google Drive,
+    Gmail, and Google Calendar. Willow does not store client data anywhere outside your
+    Google account.
+  </p>
+
+  <h2>What the AI Sees</h2>
+  <p>
+    When you ask Willow a question or trigger an action, she sends your conversation
+    to the Claude AI service for processing. What gets sent:
+  </p>
+  <ul>
+    <li>Your message and recent conversation history</li>
+    <li>The currently selected client's basic info (name, status, type)</li>
+    <li>Any specific cell data needed for the action</li>
+  </ul>
+  <p>
+    The AI does <em>not</em> receive your entire spreadsheet. Only the minimal data
+    needed for your current request is included.
+  </p>
+
+  <h2>Who Has Access</h2>
+  <p>
+    Your Willow Web App runs as <strong>your Google account</strong> with access set to
+    <strong>"Only myself."</strong> No one else can open your Willow URL unless they are
+    signed in to your Google account.
+  </p>
+
+  <h2>Your API Key</h2>
+  <p>
+    Your Anthropic API key is stored in Google Apps Script's Script Properties &mdash;
+    a secure, server-side storage mechanism. It is never exposed in the browser,
+    never included in client-facing code, and never shared with anyone.
+  </p>
+
+  <div class="page-num">15</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 16: QUICK REFERENCE
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Quick Reference</h1>
+  <div class="section-line"></div>
+
+  <h2>Things You Can Say to Willow</h2>
+
+  <table>
+    <thead>
+      <tr><th>Need</th><th>Say Something Like</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Read client data</td><td><em>"What's Sarah's email?"</em></td></tr>
+      <tr><td>Update a field</td><td><em>"Set Jane's session price to $175"</em></td></tr>
+      <tr><td>Generate a document</td><td><em>"Create session notes for Kim"</em></td></tr>
+      <tr><td>Send a workbook</td><td><em>"Send week 5 workbook to Emma"</em></td></tr>
+      <tr><td>Schedule a session</td><td><em>"Add a session for next Tuesday at 10am"</em></td></tr>
+      <tr><td>Record a payment</td><td><em>"Record $200 payment for Sarah"</em></td></tr>
+      <tr><td>Send an email</td><td><em>"Send the welcome email to Jane"</em></td></tr>
+      <tr><td>Check status</td><td><em>"Has Kim submitted her intake form?"</em></td></tr>
+      <tr><td>Save a note</td><td><em>"Remember: Sarah prefers evenings"</em></td></tr>
+      <tr><td>Manage templates</td><td><em>"What templates still need wiring?"</em></td></tr>
+      <tr><td>Create a client</td><td><em>"New Akashic client: Maya Johnson"</em></td></tr>
+      <tr><td>Newsletter</td><td><em>"Preview the newsletter"</em></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Settings Reference</h2>
+  <table>
+    <thead>
+      <tr><th>Property</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>ANTHROPIC_API_KEY</code></td><td>Your AI API key</td></tr>
+      <tr><td><code>AI_NAME</code></td><td>What your assistant calls herself</td></tr>
+      <tr><td><code>PRACTICE_NAME</code></td><td>Your practice name</td></tr>
+      <tr><td><code>PRACTITIONER_NAME</code></td><td>Your name and credentials</td></tr>
+      <tr><td><code>SESSION_DURATION_MINUTES</code></td><td>Default session length</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Where to Find Things</h2>
+  <table>
+    <thead>
+      <tr><th>What</th><th>Where</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Client list</td><td>Sidebar (tap ☰ on mobile)</td></tr>
+      <tr><td>Action buttons</td><td>Category chips below the chat area</td></tr>
+      <tr><td>Settings</td><td>Apps Script &rarr; Project Settings &rarr; Script Properties</td></tr>
+      <tr><td>Templates</td><td>Doula Tools &rarr; Manage Templates</td></tr>
+      <tr><td>Web App URL</td><td>Apps Script &rarr; Deploy &rarr; Manage Deployments</td></tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:48px;text-align:center">
+    <div class="cover-line" style="margin:0 auto 20px"></div>
+    <div style="color:var(--gold);margin-bottom:16px;opacity:0.5">
+      <svg viewBox="0 0 100 70" width="60" height="42">
+        <path d="M50 8C42 14 30 20 24 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/>
+        <path d="M50 8C45 16 38 25 36 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/>
+        <path d="M50 8C48 18 44 30 43 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M50 8C52 18 56 30 57 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M50 8C55 16 62 25 64 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/>
+        <path d="M50 8C58 14 70 20 76 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div style="font-family:var(--font-display);font-size:18px;color:var(--deep);letter-spacing:3px;opacity:0.6">WILLOW</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:1px">Your Practice. Your Way.</div>
+  </div>
+
+  <div class="page-num">16</div>
+</div>
+
+</body>
+</html>

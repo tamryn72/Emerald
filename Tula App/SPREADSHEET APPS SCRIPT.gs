@@ -20,7 +20,7 @@ const TEMPLATE_CLIENT_HOMEWORK = "YOUR_HOMEWORK_TEMPLATE_ID_HERE";
 
 // Soul Emergence Workbook Templates (one per week)
 const WORKBOOK_TEMPLATES = {
-  1:  "YOUR_WEEK_1_WORKBOOK_TEMPLATE_ID",   // The Threshold
+  1:  "1xJtINLKRfoMKYKfkVL8bxpiT7CDpyC7dndAe3hDSTvg",   // The Threshold
   2:  "YOUR_WEEK_2_WORKBOOK_TEMPLATE_ID",   // Akashic Records Reading
   3:  "YOUR_WEEK_3_WORKBOOK_TEMPLATE_ID",   // Integration & Intention
   4:  "YOUR_WEEK_4_WORKBOOK_TEMPLATE_ID",   // Akashic Clearing
@@ -51,7 +51,7 @@ const SESSION_NAMES = {
 };
 
 // Soul Emergence Summary Template
-const TEMPLATE_SOUL_EMERGENCE_SUMMARY = "YOUR_SOUL_EMERGENCE_SUMMARY_TEMPLATE_ID_HERE";
+const TEMPLATE_SOUL_EMERGENCE_SUMMARY = "1dRpRvXb14reodgFRn1E688lhWZ5wrUwbACaeBqLOs1k";
 
 const JOURNAL_TEMPLATE_ID = '1oG0hnn9OEwP_uupStwUm9LybIGupeCZe2263_8X11XQ';
 const JOURNAL_DOC_CELL = 'E4';
@@ -74,6 +74,445 @@ const CLIENT_LIT_TEMPLATES = {
 
 
 /****************************************************************************************
+ TEMPLATE REGISTRY — Self-Service Template Management
+ Stores template IDs in a "Template Registry" sheet so Carlie can manage them
+ without code changes. Falls back to hard-coded constants if registry doesn't exist.
+****************************************************************************************/
+
+/**
+ * Looks up a template ID from the Template Registry sheet.
+ * Falls back to hard-coded constants if registry doesn't exist (migration safety).
+ */
+function getTemplateIdFromRegistry(category, label) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Template Registry');
+
+  // Fallback to hard-coded constants if registry doesn't exist yet
+  if (!sheet) return null;
+
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] === category && data[i][1] === label) {
+      var id = String(data[i][2]).trim();
+      return id || null;
+    }
+  }
+  return null;
+}
+
+/**
+ * Returns the full template registry as an array of objects.
+ */
+function getTemplateRegistry() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Template Registry');
+  if (!sheet) return [];
+
+  var data = sheet.getDataRange().getValues();
+  var templates = [];
+  for (var i = 1; i < data.length; i++) {
+    var id = String(data[i][2]).trim();
+    templates.push({
+      category: data[i][0],
+      label: data[i][1],
+      templateId: id,
+      status: id ? 'Active' : 'Missing',
+      lastUpdated: data[i][4] || null
+    });
+  }
+  return templates;
+}
+
+/**
+ * Returns only missing templates from the registry.
+ */
+function getMissingTemplates() {
+  return getTemplateRegistry().filter(function(t) { return t.status === 'Missing'; });
+}
+
+/**
+ * Searches Google Drive for documents matching a search term.
+ */
+function searchDriveForTemplate(searchTerm) {
+  var files = DriveApp.searchFiles(
+    'title contains "' + searchTerm.replace(/"/g, '\\"') + '" and mimeType = "application/vnd.google-apps.document"'
+  );
+  var results = [];
+  while (files.hasNext() && results.length < 20) {
+    var f = files.next();
+    results.push({ id: f.getId(), name: f.getName(), url: f.getUrl() });
+  }
+  return results;
+}
+
+/**
+ * Wires a template ID into the registry. Updates existing row or appends new.
+ */
+function wireTemplate(category, label, templateId) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Template Registry');
+  if (!sheet) throw new Error('Template Registry not found. Run Setup > Create Template Registry first.');
+
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] === category && data[i][1] === label) {
+      sheet.getRange(i + 1, 3).setValue(templateId);
+      sheet.getRange(i + 1, 4).setValue('Active');
+      sheet.getRange(i + 1, 5).setValue(new Date());
+      return { success: true, label: label, isNew: false };
+    }
+  }
+
+  // New template type — append row
+  sheet.appendRow([category, label, templateId, 'Active', new Date()]);
+  return { success: true, label: label, isNew: true };
+}
+
+/**
+ * Adds a new template type to the registry with no ID yet (Missing status).
+ */
+function addTemplateType(category, label) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Template Registry');
+  if (!sheet) throw new Error('Template Registry not found. Run Setup > Create Template Registry first.');
+
+  // Check if already exists
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] === category && data[i][1] === label) {
+      return { success: false, error: 'Template "' + label + '" already exists in registry.' };
+    }
+  }
+
+  sheet.appendRow([category, label, '', 'Missing', '']);
+  return { success: true, label: label };
+}
+
+/**
+ * Creates the Template Registry sheet and migrates all existing template IDs.
+ * One-time setup — safe to run multiple times (won't overwrite existing registry).
+ */
+function setupTemplateRegistry() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var existing = ss.getSheetByName('Template Registry');
+  if (existing) {
+    SpreadsheetApp.getUi().alert('Template Registry already exists. No changes made.');
+    return;
+  }
+
+  var sheet = ss.insertSheet('Template Registry');
+
+  // Headers
+  sheet.getRange('A1:E1').setValues([['Category', 'Label', 'Template ID', 'Status', 'Last Updated']]);
+  sheet.getRange('A1:E1').setFontWeight('bold').setBackground('#FDF0E8');
+
+  var now = new Date();
+  function row(cat, label, id) {
+    var cleanId = (id && !id.includes('YOUR_')) ? id : '';
+    return [cat, label, cleanId, cleanId ? 'Active' : 'Missing', cleanId ? now : ''];
+  }
+
+  var rows = [
+    // Documents
+    row('document', 'Session Notes', TEMPLATE_SESSION_NOTES),
+    row('document', 'Integration Guide', TEMPLATE_INTEGRATION),
+    row('document', 'Client Summary', TEMPLATE_SUMMARY),
+    row('document', 'Counseling Notes', TEMPLATE_COUNSELLING),
+    row('document', 'Breathwork Notes', TEMPLATE_BREATHWORK),
+    row('document', 'Akashic Notes', TEMPLATE_AKASHIC),
+    row('document', 'Client Homework', TEMPLATE_CLIENT_HOMEWORK),
+    row('document', 'Soul Emergence Summary', TEMPLATE_SOUL_EMERGENCE_SUMMARY),
+
+    // Workbooks
+    row('workbook', 'Week 1 - The Threshold', WORKBOOK_TEMPLATES[1]),
+    row('workbook', 'Week 2 - Akashic Records Reading', WORKBOOK_TEMPLATES[2]),
+    row('workbook', 'Week 3 - Integration & Intention', WORKBOOK_TEMPLATES[3]),
+    row('workbook', 'Week 4 - Akashic Clearing', WORKBOOK_TEMPLATES[4]),
+    row('workbook', 'Week 5 - Befriending Your Nervous System', WORKBOOK_TEMPLATES[5]),
+    row('workbook', 'Week 6 - Parts Work Integration', WORKBOOK_TEMPLATES[6]),
+    row('workbook', 'Week 7 - Timeline Therapy & Reprocessing', WORKBOOK_TEMPLATES[7]),
+    row('workbook', 'Week 8 - Clearing Old Programming', WORKBOOK_TEMPLATES[8]),
+    row('workbook', 'Week 9 - Honoring What Was', WORKBOOK_TEMPLATES[9]),
+    row('workbook', 'Week 10 - Releasing Expectations & Ritual Goodbye', WORKBOOK_TEMPLATES[10]),
+    row('workbook', 'Week 11 - Final Akashic Clearing', WORKBOOK_TEMPLATES[11]),
+    row('workbook', 'Week 12 - Emergence & Integration', WORKBOOK_TEMPLATES[12]),
+
+    // Packets
+    row('packet', 'Intro Packet', CLIENT_LIT_TEMPLATES['Intro Packet']),
+    row('packet', 'Packet 2', CLIENT_LIT_TEMPLATES['Packet 2']),
+    row('packet', 'Packet 3', CLIENT_LIT_TEMPLATES['Packet 3']),
+
+    // Field Labels — Akashic (label = cell ref, "template ID" = display name)
+    ['field_akashic', 'B13', 'Themes', 'Active', now],
+    ['field_akashic', 'B14', 'Soul Messages', 'Active', now],
+    ['field_akashic', 'B15', 'Blocks', 'Active', now],
+    ['field_akashic', 'B16', 'Openings', 'Active', now],
+    ['field_akashic', 'B17', 'Past Life Notes', 'Active', now],
+    ['field_akashic', 'B20', 'Breath Insights', 'Active', now],
+    ['field_akashic', 'B21', 'Body Feedback', 'Active', now],
+    ['field_akashic', 'B22', 'Breath Energy', 'Active', now],
+    ['field_akashic', 'B25', 'Regulation', 'Active', now],
+    ['field_akashic', 'B26', 'Triggers', 'Active', now],
+    ['field_akashic', 'B27', 'Soothing', 'Active', now],
+    ['field_akashic', 'B28', 'Routine', 'Active', now],
+    ['field_akashic', 'B29', 'Nervous Energy', 'Active', now],
+    ['field_akashic', 'B31', 'Session Notes', 'Active', now],
+    ['field_akashic', 'B32', 'Insight Downloads', 'Active', now],
+    ['field_akashic', 'B33', 'Integration Tasks', 'Active', now],
+    ['field_akashic', 'B36', 'Completion Notes', 'Active', now],
+    ['field_akashic', 'B37', 'Completion Date', 'Active', now],
+
+    // Field Labels — Counseling
+    ['field_counseling', 'B14', 'Primary Concern / Focus', 'Active', now],
+    ['field_counseling', 'B15', 'Client Narrative', 'Active', now],
+    ['field_counseling', 'B16', 'Emotional Landscape', 'Active', now],
+    ['field_counseling', 'B17', 'Spiritual Landscape', 'Active', now],
+    ['field_counseling', 'B18', 'Cognitive + Relational Patterns', 'Active', now],
+    ['field_counseling', 'B19', 'Behavioural Patterns', 'Active', now],
+    ['field_counseling', 'B20', 'Interventions Used', 'Active', now],
+    ['field_counseling', 'B21', 'Therapeutic Notes for Continuity', 'Active', now],
+    ['field_counseling', 'B22', 'Plan for Next Session', 'Active', now]
+  ];
+
+  sheet.getRange(2, 1, rows.length, 5).setValues(rows);
+
+  // Formatting
+  sheet.setFrozenRows(1);
+  sheet.autoResizeColumns(1, 5);
+  sheet.setColumnWidth(3, 300);
+
+  // Conditional formatting: green for Active, red for Missing
+  var statusRange = sheet.getRange('D2:D' + (rows.length + 1));
+  var greenRule = SpreadsheetApp.newConditionalFormatRule()
+    .whenTextEqualTo('Active')
+    .setBackground('#D4EDDA')
+    .setRanges([statusRange])
+    .build();
+  var redRule = SpreadsheetApp.newConditionalFormatRule()
+    .whenTextEqualTo('Missing')
+    .setBackground('#F8D7DA')
+    .setRanges([statusRange])
+    .build();
+  sheet.setConditionalFormatRules([greenRule, redRule]);
+
+  SpreadsheetApp.getUi().alert('Template Registry created! Go to Doula Tools > Manage Templates to wire your templates.');
+}
+
+/**
+ * Reads Soul Emergence week names from the Template Registry workbook entries.
+ * Parses "Week N - Name" labels to extract week numbers and names.
+ * Falls back to hard-coded SESSION_NAMES if registry doesn't exist.
+ */
+function getSessionNamesFromRegistry() {
+  var registry = getTemplateRegistry();
+  if (!registry || registry.length === 0) return { names: SESSION_NAMES, count: 12 };
+
+  var workbooks = registry.filter(function(t) { return t.category === 'workbook'; });
+  if (workbooks.length === 0) return { names: SESSION_NAMES, count: 12 };
+
+  var names = {};
+  var count = 0;
+  workbooks.forEach(function(w) {
+    var match = w.label.match(/^Week\s+(\d+)\s*-\s*(.+)$/i);
+    if (match) {
+      var num = parseInt(match[1]);
+      names[num] = match[2].trim();
+      if (num > count) count = num;
+    }
+  });
+
+  if (count === 0) return { names: SESSION_NAMES, count: 12 };
+  return { names: names, count: count };
+}
+
+/**
+ * Reads field display labels from the Template Registry.
+ * Categories: field_akashic, field_counseling, field_soul_emergence
+ * Returns object: { "B13": "Themes", "B14": "Soul Messages", ... }
+ */
+function getFieldLabels(clientType) {
+  var registry = getTemplateRegistry();
+  var category = 'field_' + clientType.toLowerCase().replace(/\s+/g, '_');
+  var labels = {};
+  registry.forEach(function(t) {
+    if (t.category === category && t.templateId) {
+      labels[t.label] = t.templateId;
+    }
+  });
+  return labels;
+}
+
+/**
+ * Returns Emerald configuration from Script Properties.
+ * Falls back to sensible defaults if not yet configured.
+ */
+function getEmeraldConfig() {
+  var props = PropertiesService.getScriptProperties();
+  var sessionInfo = getSessionNamesFromRegistry();
+  return {
+    sessionNames: sessionInfo.names,
+    weekCount: sessionInfo.count,
+    sessionDuration: parseInt(props.getProperty('SESSION_DURATION_MINUTES') || '60'),
+    practitionerName: props.getProperty('PRACTITIONER_NAME') || 'Carlie Wyton, MA',
+    practiceName: props.getProperty('PRACTICE_NAME') || 'Haven, The Awakening Doula',
+    aiName: props.getProperty('AI_NAME') || 'Willow'
+  };
+}
+
+/**
+ * Initializes default Emerald configuration in Script Properties.
+ * Safe to run multiple times — only sets values that don't exist yet.
+ */
+function setupEmeraldConfig() {
+  var props = PropertiesService.getScriptProperties();
+  var defaults = {
+    'SESSION_DURATION_MINUTES': '60',
+    'PRACTITIONER_NAME': 'Carlie Wyton, MA',
+    'PRACTICE_NAME': 'Haven, The Awakening Doula',
+    'AI_NAME': 'Willow'
+  };
+  Object.keys(defaults).forEach(function(key) {
+    if (!props.getProperty(key)) {
+      props.setProperty(key, defaults[key]);
+    }
+  });
+  SpreadsheetApp.getUi().alert(
+    'Configuration initialized with defaults.\n\n' +
+    'To change values, go to:\nExtensions > Apps Script > Project Settings > Script Properties\n\n' +
+    'Available settings:\n' +
+    '• PRACTITIONER_NAME\n' +
+    '• PRACTICE_NAME\n' +
+    '• AI_NAME\n' +
+    '• SESSION_DURATION_MINUTES'
+  );
+}
+
+/**
+ * Opens the Manage Templates dialog.
+ */
+function showManageTemplatesDialog() {
+  var templates = getTemplateRegistry();
+  if (templates.length === 0) {
+    SpreadsheetApp.getUi().alert('Template Registry not found. Go to Setup > Create Template Registry first.');
+    return;
+  }
+
+  // Build grouped HTML
+  var categories = { document: 'Documents', workbook: 'Workbooks', packet: 'Packets', field_akashic: 'Field Labels — Akashic', field_counseling: 'Field Labels — Counseling' };
+  var html = '<style>';
+  html += 'body{font-family:"Google Sans",Helvetica,sans-serif;background:#FDF0E8;color:#2C1810;margin:0;padding:16px;}';
+  html += 'h2{color:#7B3F2A;font-size:16px;margin:16px 0 8px;border-bottom:1px solid #F0D9CA;padding-bottom:4px;}';
+  html += 'h2:first-of-type{margin-top:0;}';
+  html += '.row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #F0D9CA;}';
+  html += '.status{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}';
+  html += '.active{background:#D4EDDA;color:#28a745;}';
+  html += '.missing{background:#F8D7DA;color:#dc3545;}';
+  html += '.label{flex:1;font-size:13px;}';
+  html += '.btn{padding:6px 12px;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;}';
+  html += '.btn-wire{background:#E8654A;color:white;}';
+  html += '.btn-wire:hover{background:#C4472F;}';
+  html += '.btn-edit{background:#7B3F2A;color:white;}';
+  html += '.btn-edit:hover{background:#5a2d1e;}';
+  html += '.btn-change{background:#D4A762;color:white;}';
+  html += '.btn-change:hover{background:#B88840;}';
+  html += '#searchPanel{display:none;background:#FFF8F3;border:1px solid #F0D9CA;border-radius:8px;padding:12px;margin:12px 0;}';
+  html += '#searchInput{width:100%;padding:8px;border:1px solid #F0D9CA;border-radius:6px;font-size:13px;box-sizing:border-box;}';
+  html += '#searchResults{margin-top:8px;max-height:200px;overflow-y:auto;}';
+  html += '.result{padding:8px;background:#FFF;border:1px solid #F0D9CA;border-radius:4px;margin:4px 0;cursor:pointer;font-size:12px;}';
+  html += '.result:hover{background:#FDF0E8;border-color:#D4A762;}';
+  html += '.result-name{font-weight:500;}';
+  html += '.result-id{color:#A87B6E;font-size:11px;word-break:break-all;}';
+  html += '#addPanel{display:none;background:#FFF8F3;border:1px solid #F0D9CA;border-radius:8px;padding:12px;margin:12px 0;}';
+  html += 'select,#newLabel{padding:8px;border:1px solid #F0D9CA;border-radius:6px;font-size:13px;width:100%;box-sizing:border-box;margin-top:4px;}';
+  html += '.add-row{margin-top:8px;}';
+  html += '.footer{margin-top:12px;display:flex;gap:8px;}';
+  html += '.btn-add{background:#7B3F2A;color:white;padding:8px 16px;}';
+  html += '.toast{display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#28a745;color:white;padding:10px 20px;border-radius:8px;font-size:13px;z-index:100;}';
+  html += '</style>';
+
+  html += '<div id="toast" class="toast"></div>';
+  html += '<div id="searchPanel">';
+  html += '<strong id="searchTitle">Search Drive</strong>';
+  html += '<input type="text" id="searchInput" placeholder="Type template name..." onkeyup="if(event.key===\'Enter\')doSearch()">';
+  html += '<button class="btn btn-wire" onclick="doSearch()" style="margin-top:8px">Search</button>';
+  html += '<div id="searchResults"></div>';
+  html += '</div>';
+
+  var catOrder = ['document', 'workbook', 'packet', 'field_akashic', 'field_counseling'];
+  for (var c = 0; c < catOrder.length; c++) {
+    var cat = catOrder[c];
+    var catTemplates = templates.filter(function(t) { return t.category === cat; });
+    if (catTemplates.length === 0) continue;
+
+    html += '<h2>' + categories[cat] + '</h2>';
+    var isFieldCategory = cat.indexOf('field_') === 0;
+
+    for (var t = 0; t < catTemplates.length; t++) {
+      var tmpl = catTemplates[t];
+      var isActive = tmpl.status === 'Active';
+      html += '<div class="row">';
+
+      if (isFieldCategory) {
+        // Field labels: show cell ref + display name + Edit button
+        html += '<div class="status active" style="font-size:11px;background:#E8F4FD;color:#2C6FA0;">' + tmpl.label + '</div>';
+        html += '<div class="label">' + (tmpl.templateId || '<em>unnamed</em>') + '</div>';
+        html += '<button class="btn btn-edit" onclick="editField(\'' + tmpl.category + '\',\'' + tmpl.label + '\',\'' + (tmpl.templateId || '').replace(/'/g, "\\'") + '\')">Edit</button>';
+      } else {
+        // Template: show status + label + Wire/Change button
+        html += '<div class="status ' + (isActive ? 'active' : 'missing') + '">' + (isActive ? '✓' : '✗') + '</div>';
+        html += '<div class="label">' + tmpl.label + '</div>';
+        if (isActive) {
+          html += '<button class="btn btn-change" onclick="startWire(\'' + tmpl.category + '\',\'' + tmpl.label.replace(/'/g, "\\'") + '\')">Change</button>';
+        } else {
+          html += '<button class="btn btn-wire" onclick="startWire(\'' + tmpl.category + '\',\'' + tmpl.label.replace(/'/g, "\\'") + '\')">Wire</button>';
+        }
+      }
+      html += '</div>';
+    }
+  }
+
+  // Add New Template section
+  html += '<div class="footer">';
+  html += '<button class="btn btn-add" onclick="showAddPanel()">+ Add New Template</button>';
+  html += '</div>';
+
+  html += '<div id="addPanel">';
+  html += '<strong>Add New Template Type</strong>';
+  html += '<div class="add-row"><label>Category:</label><select id="newCat"><option value="document">Document</option><option value="workbook">Workbook</option><option value="packet">Packet</option></select></div>';
+  html += '<div class="add-row"><label>Label:</label><input type="text" id="newLabel" placeholder="e.g. Week 13 - Bonus Session"></div>';
+  html += '<button class="btn btn-wire" style="margin-top:8px" onclick="addNew()">Add</button>';
+  html += '</div>';
+
+  // JavaScript
+  html += '<script>';
+  html += 'var wireCategory="",wireLabel="";';
+
+  html += 'function showToast(msg,color){var t=document.getElementById("toast");t.textContent=msg;t.style.background=color||"#28a745";t.style.display="block";setTimeout(function(){t.style.display="none"},3000);}';
+
+  html += 'function startWire(cat,label){wireCategory=cat;wireLabel=label;document.getElementById("searchTitle").textContent="Search for: "+label;document.getElementById("searchInput").value=label.replace(/^Week \\d+ - /,"");document.getElementById("searchResults").innerHTML="";document.getElementById("searchPanel").style.display="block";document.getElementById("searchInput").focus();}';
+
+  html += 'function doSearch(){var q=document.getElementById("searchInput").value;if(!q)return;document.getElementById("searchResults").innerHTML="Searching...";google.script.run.withSuccessHandler(showResults).withFailureHandler(function(e){document.getElementById("searchResults").innerHTML="Error: "+e.message;}).searchDriveForTemplate(q);}';
+
+  html += 'function showResults(results){var div=document.getElementById("searchResults");if(!results||results.length===0){div.innerHTML="No documents found. Try a different search term.";return;}div.innerHTML="";for(var i=0;i<results.length;i++){var r=results[i];var el=document.createElement("div");el.className="result";el.innerHTML=\'<div class="result-name">\'+r.name+\'</div><div class="result-id">ID: \'+r.id+\'</div>\';el.onclick=(function(id,name){return function(){confirmWire(id,name)};})(r.id,r.name);div.appendChild(el);}}';
+
+  html += 'function confirmWire(id,name){if(!confirm("Wire \\\""+name+"\\\" as the template for \\\""+wireLabel+"\\\"?")){return;}google.script.run.withSuccessHandler(function(res){if(res.success){showToast(wireLabel+" template wired!");document.getElementById("searchPanel").style.display="none";setTimeout(function(){google.script.host.close();showManageTemplatesDialog();},1500);}}).withFailureHandler(function(e){showToast("Error: "+e.message,"#dc3545");}).wireTemplate(wireCategory,wireLabel,id);}';
+
+  html += 'function editField(cat,cell,currentName){var newName=prompt("Rename field "+cell+" (currently: "+currentName+"):",currentName);if(!newName||newName===currentName)return;google.script.run.withSuccessHandler(function(res){if(res.success){showToast(cell+" renamed to "+newName);setTimeout(function(){google.script.host.close();showManageTemplatesDialog();},1500);}}).withFailureHandler(function(e){showToast("Error: "+e.message,"#dc3545");}).wireTemplate(cat,cell,newName);}';
+
+  html += 'function showAddPanel(){document.getElementById("addPanel").style.display="block";}';
+
+  html += 'function addNew(){var cat=document.getElementById("newCat").value;var label=document.getElementById("newLabel").value.trim();if(!label){showToast("Enter a label","#dc3545");return;}google.script.run.withSuccessHandler(function(res){if(res.success){showToast(label+" added! Click Wire to connect it.");setTimeout(function(){google.script.host.close();showManageTemplatesDialog();},1500);}else{showToast(res.error,"#dc3545");}}).withFailureHandler(function(e){showToast("Error: "+e.message,"#dc3545");}).addTemplateType(cat,label);}';
+
+  html += '</script>';
+
+  var output = HtmlService.createHtmlOutput(html)
+    .setWidth(420)
+    .setHeight(550);
+  SpreadsheetApp.getUi().showModalDialog(output, 'Manage Templates');
+}
+
+
+/****************************************************************************************
  MENU BAR
 ****************************************************************************************/
 function onOpen() {
@@ -82,6 +521,7 @@ function onOpen() {
     .addItem("New Client", "newClientSetup")
     .addItem("Open Sidebar", "openDoulaSidebar")
     .addSeparator()
+    .addItem("Manage Templates", "showManageTemplatesDialog")
     .addItem("Mark Client Complete", "markClientCompleteMenu")
     .addSeparator()
     .addItem("Open Budget", "backend_openBudgetSheet")
@@ -93,6 +533,8 @@ function onOpen() {
       .addItem("Send Offer to One Email", "menuSendPastClientOfferOne"))
     .addSeparator()
     .addSubMenu(SpreadsheetApp.getUi().createMenu("Setup")
+      .addItem("Create Template Registry", "setupTemplateRegistry")
+      .addItem("Configure Settings", "setupEmeraldConfig")
       .addItem("Create Past Clients Sheet", "ensurePastClientsSheet")
       .addItem("Create Opt-In Form", "setupOptInForm")
       .addItem("Create Website Inquiry Form", "setupWebsiteInquiryForm")
@@ -159,7 +601,7 @@ function newClientSetup() {
   newSheet.getRange("B2").setValue(clientName);
   newSheet.getRange("B3").setValue("Active");
   newSheet.getRange("A12").setValue(clientFolder.getId());
-  newSheet.getRange("B8").setValue(0);
+  // B8 left alone — template has a formula there
   newSheet.getRange("B9").setValue(0);
   newSheet.getRange("E11").setValue("No");
 
@@ -182,18 +624,38 @@ function addToLeads(name, email) {
     leadsSheet.getRange("A1:C3").setValues([
       ["LEADS", "", ""],
       ["", "", ""],
-      ["Name", "Source", "Email"]
+      ["Name", "Date", "Email"]
     ]);
     leadsSheet.getRange("A1").setFontSize(16).setFontWeight("bold");
     leadsSheet.getRange("A3:C3").setFontWeight("bold").setBackground("#1a1a2e").setFontColor("#f5f0e8");
   }
 
-  if (email) {
-    const lastRow = leadsSheet.getLastRow();
-    if (lastRow >= 4) {
-      const existingEmails = leadsSheet.getRange(4, 3, lastRow - 3, 1).getValues().flat();
-      const normalizedEmail = String(email).trim().toLowerCase();
-      if (existingEmails.some(e => String(e).trim().toLowerCase() === normalizedEmail)) {
+  const lastRow = leadsSheet.getLastRow();
+  if (lastRow >= 4) {
+    const data = leadsSheet.getRange(4, 1, lastRow - 3, 3).getValues();
+    const normalizedName = String(name).trim().toLowerCase();
+    const normalizedEmail = email ? String(email).trim().toLowerCase() : '';
+
+    for (let i = 0; i < data.length; i++) {
+      const rowName = String(data[i][0]).trim().toLowerCase();
+      const rowEmail = String(data[i][2]).trim().toLowerCase();
+
+      // Exact email match — update date, skip
+      if (normalizedEmail && rowEmail === normalizedEmail) {
+        leadsSheet.getRange(4 + i, 2).setValue(new Date());
+        return;
+      }
+
+      // Same name, row has no email — fill in the email + update date
+      if (rowName === normalizedName && !rowEmail && normalizedEmail) {
+        leadsSheet.getRange(4 + i, 2).setValue(new Date());
+        leadsSheet.getRange(4 + i, 3).setValue(email);
+        return;
+      }
+
+      // Same name, already has email — update date, skip duplicate
+      if (rowName === normalizedName) {
+        leadsSheet.getRange(4 + i, 2).setValue(new Date());
         return;
       }
     }
@@ -201,40 +663,13 @@ function addToLeads(name, email) {
 
   const nextRow = Math.max(leadsSheet.getLastRow() + 1, 4);
   leadsSheet.getRange(nextRow, 1).setValue(name);
-  leadsSheet.getRange(nextRow, 2).setValue("Direct");
+  leadsSheet.getRange(nextRow, 2).setValue(new Date());
   leadsSheet.getRange(nextRow, 3).setValue(email);
 }
 
 function addToLeadsWithSource(name, email, source) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let leadsSheet = ss.getSheetByName("Leads");
-
-  if (!leadsSheet) {
-    leadsSheet = ss.insertSheet("Leads");
-    leadsSheet.getRange("A1:C3").setValues([
-      ["LEADS", "", ""],
-      ["", "", ""],
-      ["Name", "Source", "Email"]
-    ]);
-    leadsSheet.getRange("A1").setFontSize(16).setFontWeight("bold");
-    leadsSheet.getRange("A3:C3").setFontWeight("bold").setBackground("#1a1a2e").setFontColor("#f5f0e8");
-  }
-
-  if (email) {
-    const lastRow = leadsSheet.getLastRow();
-    if (lastRow >= 4) {
-      const existingEmails = leadsSheet.getRange(4, 3, lastRow - 3, 1).getValues().flat();
-      const normalizedEmail = String(email).trim().toLowerCase();
-      if (existingEmails.some(e => String(e).trim().toLowerCase() === normalizedEmail)) {
-        return;
-      }
-    }
-  }
-
-  const nextRow = Math.max(leadsSheet.getLastRow() + 1, 4);
-  leadsSheet.getRange(nextRow, 1).setValue(name);
-  leadsSheet.getRange(nextRow, 2).setValue(source);
-  leadsSheet.getRange(nextRow, 3).setValue(email);
+  // Uses addToLeads — column B is always date now
+  addToLeads(name, email);
 }
 
 function refreshLeads() {
@@ -578,22 +1013,43 @@ function onOptInFormSubmit(e) {
     if (title.includes("email")) email = r.getResponse();
   });
 
-  if (email) addToLeadsWithSource(name, email, "Newsletter Opt-In");
+  if (email) {
+    addToLeadsWithSource(name, email, "Newsletter Opt-In");
+    sendNewsletterToOne(name, email);
+  }
 }
 
 function onInquiryFormSubmit(e) {
   const responses = e.response.getItemResponses();
-  let name = "", email = "";
+  let name = "", email = "", message = "";
 
   responses.forEach(r => {
     const title = r.getItem().getTitle().toLowerCase();
     if (title.includes("name")) name = r.getResponse();
-    if (title.includes("email")) email = r.getResponse();
+    else if (title.includes("email")) email = r.getResponse();
+    else if (title.includes("help")) message = r.getResponse();
   });
 
   if (email) {
     addToLeadsWithSource(name, email, "Website Inquiry");
     sendWelcomeEmail(name, email);
+    notifyPractitioner(name, email, message);
+  }
+}
+
+function notifyPractitioner(name, email, message) {
+  try {
+    const practitionerEmail = Session.getEffectiveUser().getEmail();
+    const subject = "New Inquiry from " + (name || "someone on your website");
+    const body = "You have a new inquiry from your website.\n\n" +
+      "Name: " + (name || "(not provided)") + "\n" +
+      "Email: " + (email || "(not provided)") + "\n" +
+      (message ? "Message: " + message + "\n" : "") +
+      "\nThey've been added to your Leads sheet and sent a welcome email.";
+
+    GmailApp.sendEmail(practitionerEmail, subject, body);
+  } catch (e) {
+    Logger.log("notifyPractitioner error: " + e.message);
   }
 }
 
@@ -682,6 +1138,10 @@ function backend_generateDoulaDoc(docType) {
 }
 
 function getTemplateForDocType(docType) {
+  // Registry-first lookup, falls back to hard-coded constants
+  var registryId = getTemplateIdFromRegistry('document', docType);
+  if (registryId) return registryId;
+
   const map = {
     "Session Notes": TEMPLATE_SESSION_NOTES,
     "Integration Guide": TEMPLATE_INTEGRATION,
@@ -715,12 +1175,17 @@ function backend_sendWorkbook(weekNumber) {
     throw new Error("Missing client name, email, or folder ID.");
   }
 
-  const templateId = WORKBOOK_TEMPLATES[weekNumber];
-  if (!templateId || templateId.includes("YOUR_")) {
-    throw new Error(`Workbook template for Week ${weekNumber} not yet configured. Add the template ID to WORKBOOK_TEMPLATES in Code.gs.`);
-  }
+  // Dynamic session names from registry
+  var sessionInfo = getSessionNamesFromRegistry();
+  var sessionName = sessionInfo.names[weekNumber];
+  if (!sessionName) throw new Error('Week ' + weekNumber + ' is not defined in the program.');
 
-  const sessionName = SESSION_NAMES[weekNumber];
+  // Registry-first lookup, falls back to hard-coded constants
+  var registryLabel = 'Week ' + weekNumber + ' - ' + sessionName;
+  var templateId = getTemplateIdFromRegistry('workbook', registryLabel) || WORKBOOK_TEMPLATES[weekNumber];
+  if (!templateId || templateId.includes("YOUR_")) {
+    throw new Error('Workbook template for Week ' + weekNumber + ' not yet configured. Go to Doula Tools > Manage Templates to wire it.');
+  }
   const folder = DriveApp.getFolderById(folderId);
   const today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMM d, yyyy");
   const docName = `Week ${weekNumber} Workbook - ${sessionName} - ${clientName}`;
@@ -769,8 +1234,9 @@ function backend_sendWorkbook(weekNumber) {
 }
 
 function getCurrentWeek(sheet) {
-  const sessionsUsed = sheet.getRange("B9").getValue() || 0;
-  const currentWeek = Math.min(Math.max(Math.ceil(sessionsUsed), 1), 12);
+  var sessionsUsed = sheet.getRange("B9").getValue() || 0;
+  var sessionInfo = getSessionNamesFromRegistry();
+  var currentWeek = Math.min(Math.max(Math.ceil(sessionsUsed), 1), sessionInfo.count);
   sheet.getRange("F1").setValue(currentWeek);
   return currentWeek;
 }
@@ -835,22 +1301,20 @@ function getAkashicFields(sh) {
 }
 
 function getCounselingFields(sh) {
-  const counselingNotesRange = sh.getRange("A13:A23").getValues();
+  const counselingNotesRange = sh.getRange("A13:A22").getValues();
   const counselingNotes = counselingNotesRange.map(row => row[0]).filter(String).join("\n");
 
   return {
     "{{COUNSELING_NOTES}}": counselingNotes,
-    "{{THEMES}}": sh.getRange("B14").getValue(),
-    "{{PATTERNS}}": sh.getRange("B15").getValue(),
-    "{{BLOCKS}}": sh.getRange("B16").getValue(),
-    "{{CONNECTIONS}}": sh.getRange("B17").getValue(),
-    "{{CONCERNS}}": sh.getRange("B18").getValue(),
-    "{{NOTICE}}": sh.getRange("B19").getValue(),
-    "{{PROGRESS}}": sh.getRange("B20").getValue(),
-    "{{PLANNING}}": sh.getRange("B21").getValue(),
-    "{{HOMEWORK}}": sh.getRange("B22").getValue(),
-    "{{FOLLOW_UP}}": sh.getRange("B23").getValue(),
-    "{{CLIENT_HOMEWORK}}": sh.getRange("B22").getValue()
+    "{{FOCUS_THEMES}}": sh.getRange("B14").getValue(),
+    "{{INSIGHT_DOWNLOADS}}": sh.getRange("B15").getValue(),
+    "{{EMOTIONAL_LANDSCAPE}}": sh.getRange("B16").getValue(),
+    "{{SPIRITUAL_LANDSCAPE}}": sh.getRange("B17").getValue(),
+    "{{COGNITIVE_RELATIONAL}}": sh.getRange("B18").getValue(),
+    "{{BEHAVIOURAL_PATTERNS}}": sh.getRange("B19").getValue(),
+    "{{PRACTICES_ASSIGNED}}": sh.getRange("B20").getValue(),
+    "{{PATHWAY_NOTES}}": sh.getRange("B21").getValue(),
+    "{{COMPLETION_NOTES}}": sh.getRange("B22").getValue()
   };
 }
 
@@ -860,18 +1324,21 @@ function getCounselingFields(sh) {
  * Row 25 = Final Summary
  */
 function getSoulEmergenceFields(sh) {
-  const currentWeek = getCurrentWeek(sh);
+  var currentWeek = getCurrentWeek(sh);
+  var sessionInfo = getSessionNamesFromRegistry();
+  var names = sessionInfo.names;
+  var count = sessionInfo.count;
 
-  let map = {
+  var map = {
     "{{CURRENT_WEEK}}": currentWeek,
-    "{{CURRENT_SESSION_NAME}}": SESSION_NAMES[currentWeek] || "",
+    "{{CURRENT_SESSION_NAME}}": names[currentWeek] || "",
     "{{FINAL_SUMMARY}}": sh.getRange("B25").getValue()
   };
 
-  for (let week = 1; week <= 12; week++) {
-    const row = 12 + week;
-    map[`{{WEEK_${week}_NOTES}}`] = sh.getRange(row, 2).getValue();
-    map[`{{WEEK_${week}_NAME}}`] = SESSION_NAMES[week];
+  for (var week = 1; week <= count; week++) {
+    var row = 12 + week;
+    map["{{WEEK_" + week + "_NOTES}}"] = sh.getRange(row, 2).getValue();
+    map["{{WEEK_" + week + "_NAME}}"] = names[week] || "";
   }
 
   return map;
@@ -900,8 +1367,9 @@ function backend_generateClientPacket(type) {
   const clientName = sheet.getRange("B2").getValue();
   const clientType = getClientType(sheet);
 
-  const templateId = CLIENT_LIT_TEMPLATES[type];
-  if (!templateId || templateId.includes("YOUR_")) throw new Error("Missing template ID for: " + type);
+  // Registry-first lookup, falls back to hard-coded constants
+  var templateId = getTemplateIdFromRegistry('packet', type) || CLIENT_LIT_TEMPLATES[type];
+  if (!templateId || templateId.includes("YOUR_")) throw new Error('Template for "' + type + '" not yet configured. Go to Doula Tools > Manage Templates to wire it.');
 
   const folder = DriveApp.getFolderById(folderId);
   const today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMM d, yyyy");
@@ -974,7 +1442,9 @@ function checkIntakeStatus() {
 
   responses.some(r =>
     r.getItemResponses().some(ir => {
-      if (String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
+      // Only match on the email field, not every field in the form
+      if (ir.getItem().getTitle().toLowerCase().includes('email') &&
+          String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
         found = true;
         return true;
       }
@@ -1013,7 +1483,9 @@ function createIntakeDoc() {
 
   responses.some(r =>
     r.getItemResponses().some(ir => {
-      if (String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
+      // Only match on the email field, not every field in the form
+      if (ir.getItem().getTitle().toLowerCase().includes('email') &&
+          String(ir.getResponse()).trim().toLowerCase() === clientEmail) {
         matched = r;
         return true;
       }
@@ -1106,27 +1578,43 @@ function createIntakeDoc() {
  SCHEDULING
 ****************************************************************************************/
 function normalizeTime(input) {
-  const str = String(input).trim().toLowerCase();
-
-  if (str.includes(':')) {
-    const [hours, minutes] = str.split(':').map(Number);
-    return { hours, minutes: minutes || 0 };
+  // Handle Date objects (Google Sheets returns Date for time-formatted cells)
+  if (input instanceof Date && !isNaN(input.getTime())) {
+    return { hours: input.getHours(), minutes: input.getMinutes() };
   }
 
-  const num = parseInt(str.replace(/\D/g, ''));
+  const str = String(input).trim().toLowerCase();
+  const isPM = str.includes('pm');
+  const isAM = str.includes('am');
+  const clean = str.replace(/[ap]m/g, '').replace(/\s+/g, '').trim();
+
+  if (clean.includes(':')) {
+    let [h, m] = clean.split(':').map(s => parseInt(s));
+    m = m || 0;
+    if (isPM && h < 12) h += 12;
+    if (isAM && h === 12) h = 0;
+    return { hours: h, minutes: m };
+  }
+
+  const num = parseInt(clean.replace(/\D/g, ''));
 
   if (num < 100) {
-    const hours = num > 12 ? num : (num < 7 ? num + 12 : num);
+    let hours = num;
+    if (isPM && hours < 12) hours += 12;
+    else if (isAM && hours === 12) hours = 0;
+    else if (!isPM && !isAM && hours < 7) hours += 12;
     return { hours, minutes: 0 };
   }
 
-  const hoursStr = str.length === 3 ? str.substring(0, 1) : str.substring(0, 2);
-  const minutesStr = str.length === 3 ? str.substring(1) : str.substring(2);
+  const hoursStr = clean.length === 3 ? clean.substring(0, 1) : clean.substring(0, 2);
+  const minutesStr = clean.length === 3 ? clean.substring(1) : clean.substring(2);
 
   let hours = parseInt(hoursStr);
   const minutes = parseInt(minutesStr);
 
-  if (hours < 7) hours += 12;
+  if (isPM && hours < 12) hours += 12;
+  else if (isAM && hours === 12) hours = 0;
+  else if (!isPM && !isAM && hours < 7) hours += 12;
 
   return { hours, minutes };
 }
@@ -1159,8 +1647,9 @@ function addNextSession() {
   const startDate = new Date(dateValue);
   startDate.setHours(time.hours, time.minutes, 0, 0);
 
+  var duration = parseInt(PropertiesService.getScriptProperties().getProperty('SESSION_DURATION_MINUTES') || '60');
   const endDate = new Date(startDate);
-  endDate.setMinutes(endDate.getMinutes() + SESSION_DURATION_MINUTES);
+  endDate.setMinutes(endDate.getMinutes() + duration);
 
   const calendar = CalendarApp.getDefaultCalendar();
   const event = calendar.createEvent(`Awakening Doula Session - ${clientName}`, startDate, endDate, {
@@ -1324,7 +1813,7 @@ function getEmailTemplateList() {
   if (!sheet) return [];
 
   const data = sheet.getRange("A2:C").getValues();
-  return data.filter(row => row[2] === "Yes" && row[0]).map(row => row[0]);
+  return data.filter(row => String(row[2]).trim().toLowerCase() === "yes" && row[0]).map(row => row[0]);
 }
 
 function backend_sendSalesEmailTemplate(templateName) {
@@ -1466,6 +1955,45 @@ function backend_previewNewsletter() {
     .setHeight(800);
 
   SpreadsheetApp.getUi().showModalDialog(html, "Newsletter Preview");
+}
+
+
+/****************************************************************************************
+ NEWSLETTER - Send to one person (used by opt-in form auto-send)
+****************************************************************************************/
+function sendNewsletterToOne(name, email) {
+  try {
+    const ss = SpreadsheetApp.getActive();
+    const templateSheet = ss.getSheetByName("Email_Templates");
+    if (!templateSheet) return;
+
+    const names   = templateSheet.getRange("A2:A").getValues().flat();
+    const bodies  = templateSheet.getRange("B2:B").getValues().flat();
+    const actives = templateSheet.getRange("C2:C").getValues().flat();
+
+    let htmlBody = null;
+
+    for (let i = 0; i < names.length; i++) {
+      if (
+        String(names[i]).trim() === "Newsletter" &&
+        String(actives[i]).trim().toLowerCase() === "yes"
+      ) {
+        htmlBody = String(bodies[i] || "").trim();
+        break;
+      }
+    }
+
+    if (!htmlBody) return; // No active newsletter — silently skip
+
+    htmlBody = htmlBody
+      .replace(/\{\{NAME\}\}/g, name || "Friend")
+      .replace(/\{\{CLIENT_NAME\}\}/g, name || "Friend");
+
+    GmailApp.sendEmail(email, "Awakening Doula - Newsletter", "", { htmlBody: htmlBody });
+  } catch (e) {
+    // Don't let newsletter failure break the opt-in flow
+    Logger.log("sendNewsletterToOne error: " + e.message);
+  }
 }
 
 
