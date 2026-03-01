@@ -355,7 +355,7 @@ function getEmeraldConfig() {
     sessionDuration: parseInt(props.getProperty('SESSION_DURATION_MINUTES') || '60'),
     practitionerName: props.getProperty('PRACTITIONER_NAME') || 'Carlie Wyton, MA',
     practiceName: props.getProperty('PRACTICE_NAME') || 'Haven, The Awakening Doula',
-    aiName: props.getProperty('AI_NAME') || 'Emerald'
+    aiName: props.getProperty('AI_NAME') || 'Willow'
   };
 }
 
@@ -369,7 +369,7 @@ function setupEmeraldConfig() {
     'SESSION_DURATION_MINUTES': '60',
     'PRACTITIONER_NAME': 'Carlie Wyton, MA',
     'PRACTICE_NAME': 'Haven, The Awakening Doula',
-    'AI_NAME': 'Emerald'
+    'AI_NAME': 'Willow'
   };
   Object.keys(defaults).forEach(function(key) {
     if (!props.getProperty(key)) {
@@ -377,7 +377,7 @@ function setupEmeraldConfig() {
     }
   });
   SpreadsheetApp.getUi().alert(
-    'Emerald configuration initialized with defaults.\n\n' +
+    'Configuration initialized with defaults.\n\n' +
     'To change values, go to:\nExtensions > Apps Script > Project Settings > Script Properties\n\n' +
     'Available settings:\n' +
     '• PRACTITIONER_NAME\n' +

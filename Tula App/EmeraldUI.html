@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Emerald | Haven, The Awakening Doula</title>
+  <title>Willow | Haven, The Awakening Doula</title>
   <style>
     /* ─────────────────────────────────────────
        SUNSET DESIGN SYSTEM
@@ -152,7 +152,8 @@
       align-items: center;
       justify-content: center;
     }
-    .header-gem { font-size: 20px; line-height: 1; }
+    .header-mark { color: var(--gold); opacity: 0.6; display: flex; align-items: center; }
+    .header-mark svg { display: block; }
     .header-titles { flex: 1; min-width: 0; }
     .header-name { font-family: var(--font-serif); font-size: 17px; font-weight: normal; color: var(--deep); }
     .header-subtitle { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
@@ -201,7 +202,10 @@
       border-radius: 50%;
       background: var(--gold);
       display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif);
       font-size: 13px;
+      font-style: italic;
+      color: white;
       flex-shrink: 0;
       margin-top: 2px;
     }
@@ -259,7 +263,11 @@
       gap: 6px;
       text-align: center;
     }
-    .home-gem { font-size: 42px; opacity: 0.55; line-height: 1; }
+    .home-mark { color: var(--gold); animation: willowBreathe 6s ease-in-out infinite; }
+    @keyframes willowBreathe {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.58; transform: scale(1.03); }
+    }
     .home-title { font-family: var(--font-serif); font-size: 19px; color: var(--deep); opacity: 0.75; margin-top: 4px; }
     .home-sub { font-size: 12px; color: var(--muted); line-height: 1.6; max-width: 220px; }
     .home-actions {
@@ -700,10 +708,10 @@
 <div class="main">
   <header class="header">
     <button class="header-menu-btn" id="menuBtn" onclick="toggleSidebar()" aria-label="Clients">☰</button>
-    <div class="header-gem">💎</div>
+    <div class="header-mark"><svg viewBox="0 0 16 22" width="14" height="18"><path d="M8 1Q4 7 5 13Q6 17 8 21Q10 17 11 13Q12 7 8 1Z" fill="currentColor"/></svg></div>
     <div class="header-titles">
-      <div class="header-name">Emerald</div>
-      <div class="header-subtitle">Haven · The Awakening Doula</div>
+      <div class="header-name" id="headerName">Willow</div>
+      <div class="header-subtitle" id="headerSubtitle">Haven · The Awakening Doula</div>
     </div>
     <div class="header-client-pill no-client" id="activeClientPill" onclick="toggleSidebar()">
       Select a client
@@ -713,8 +721,8 @@
   <div class="chat-area" id="chatArea">
     <!-- Home state — shown until first message -->
     <div class="home-state" id="homeState">
-      <div class="home-gem">💎</div>
-      <div class="home-title">Welcome, Carlie</div>
+      <div class="home-mark"><svg viewBox="0 0 100 70" width="100" height="70"><path d="M50 8C42 14 30 20 24 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/><path d="M50 8C45 16 38 25 36 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/><path d="M50 8C48 18 44 30 43 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/><path d="M50 8C52 18 56 30 57 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/><path d="M50 8C55 16 62 25 64 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/><path d="M50 8C58 14 70 20 76 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/></svg></div>
+      <div class="home-title" id="homeTitle">Welcome</div>
       <div class="home-sub">Select a client from the sidebar to get started, or ask me anything.</div>
       <div class="home-actions">
         <button class="home-action-btn gold" onclick="homeAction('preview_newsletter')">Preview Newsletter</button>
@@ -735,7 +743,8 @@
     <textarea
       class="input-field"
       id="chatInput"
-      placeholder="Ask Emerald anything..."
+      id="chatInputField"
+      placeholder="Ask Willow anything..."
       rows="1"
       onkeydown="handleInputKeydown(event)"
       oninput="autoResize(this)"
@@ -824,7 +833,7 @@ const state = {
     weekCount: 12,
     practitionerName: 'Carlie',
     practiceName: 'Haven, The Awakening Doula',
-    aiName: 'Emerald',
+    aiName: 'Willow',
     sessionDuration: 60
   }
 };
@@ -875,9 +884,19 @@ async function loadConfig() {
     if (data) {
       state.config = Object.assign(state.config, data);
       // Update dynamic UI elements
-      document.title = (state.config.aiName || 'Emerald') + ' | ' + (state.config.practiceName || 'Haven, The Awakening Doula');
+      const aiName = state.config.aiName || 'Willow';
+      const practiceName = state.config.practiceName || 'Haven, The Awakening Doula';
+      document.title = aiName + ' | ' + practiceName;
       const brand = document.getElementById('sidebarBrand');
-      if (brand) brand.textContent = state.config.practiceName || 'Haven · The Awakening Doula';
+      if (brand) brand.textContent = practiceName;
+      const headerName = document.getElementById('headerName');
+      if (headerName) headerName.textContent = aiName;
+      const headerSub = document.getElementById('headerSubtitle');
+      if (headerSub) headerSub.textContent = practiceName.replace(',', ' ·');
+      const homeTitle = document.getElementById('homeTitle');
+      if (homeTitle) homeTitle.textContent = 'Welcome';
+      const chatField = document.getElementById('chatInputField');
+      if (chatField) chatField.placeholder = 'Ask ' + aiName + ' anything...';
     }
   } catch (e) {
     // Defaults already set in state
@@ -1086,8 +1105,9 @@ function appendUserMessage(text) {
 function appendAIMessage(text) {
   const row = document.createElement('div');
   row.className = 'message-row ai';
+  const initial = (state.config.aiName || 'Willow').charAt(0);
   row.innerHTML = `
-    <div class="msg-avatar">💎</div>
+    <div class="msg-avatar">${initial}</div>
     <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
       <div class="msg-bubble">${renderMarkdown(text)}</div>
       <div class="msg-time">${formatTime(new Date())}</div>
@@ -1100,8 +1120,9 @@ let typingRow = null;
 function showTyping() {
   typingRow = document.createElement('div');
   typingRow.className = 'message-row ai';
+  const initial = (state.config.aiName || 'Willow').charAt(0);
   typingRow.innerHTML = `
-    <div class="msg-avatar">💎</div>
+    <div class="msg-avatar">${initial}</div>
     <div class="typing-indicator">
       <div class="typing-dot"></div>
       <div class="typing-dot"></div>
