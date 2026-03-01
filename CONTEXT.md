@@ -539,6 +539,30 @@ The full tool definitions array passed to Claude on every call. Each tool has a 
 }
 ```
 
+### Template Management Tool
+
+```json
+{
+  "name": "manage_template",
+  "description": "Manage document templates. Actions: list_missing (show unwired templates), list_all (show all), search (find a Google Doc by name in Drive), wire (connect a template ID to a type).",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": ["search", "wire", "list_missing", "list_all"],
+        "description": "search = find docs in Drive, wire = connect a template ID, list_missing = show unwired templates, list_all = show all templates"
+      },
+      "searchTerm": { "type": "string", "description": "Search term for Drive search (required for search action)" },
+      "category": { "type": "string", "enum": ["document", "workbook", "packet"], "description": "Template category (required for wire action)" },
+      "label": { "type": "string", "description": "Template label e.g. 'Week 3 - Integration & Intention' (required for wire action)" },
+      "templateId": { "type": "string", "description": "Google Doc ID to wire (required for wire action)" }
+    },
+    "required": ["action"]
+  }
+}
+```
+
 ---
 
 ## Confirmation Protocol
@@ -558,6 +582,8 @@ For any action in these categories, Claude must request confirmation before call
 | Read data | No |
 | Write cell | No (for notes/scheduling data) |
 | Clear cell | Yes |
+| Wire template | Yes (confirm which doc to wire) |
+| Search templates / list missing | No |
 
 Confirmation phrasing pattern:
 > "I'm about to [action] for [client/recipient]. Shall I go ahead?"

@@ -121,6 +121,7 @@ Emerald/
 - `Intake Log` — written only by `createIntakeDoc()`
 - `Budget` — written only by `recordClientPayment()`
 - `Document Log` — written only by `logDoulaDoc()`
+- `Template Registry` — managed by Manage Templates dialog + `manage_template` AI tool
 - `Akashic_Client_Template` — template sheet
 - `Counseling_Client_Template` — template sheet
 - `SoulEmergence_Client_Template` — template sheet
@@ -295,6 +296,11 @@ Every Apps Script function is exposed to Claude as a named tool. Emerald can inv
 | `refresh_leads` | `refreshLeads()` | Refresh leads list |
 | `add_lead` | `addToLeads(name, email)` | Add lead manually |
 
+### Group 10: Template Management
+| Tool Name | Calls | Description |
+|-----------|-------|-------------|
+| `manage_template` | `searchDriveForTemplate()` / `wireTemplate()` / `getTemplateRegistry()` | Search Drive, wire template IDs, list missing/all templates |
+
 ---
 
 ## Design System — Sunset
@@ -425,10 +431,13 @@ Both forms are built into the spreadsheet and ready for Carlie to set up:
 - Website form setup (Opt-In + Get In Touch)
 - iPhone Safari experience
 
-### Placeholder Template IDs Still Needed
-- `WORKBOOK_TEMPLATES` weeks 2–12 (Week 1 restored)
-- `CLIENT_LIT_TEMPLATES` — Intro Packet, Packet 2, Packet 3
-- `TEMPLATE_CLIENT_HOMEWORK`
+### Template Management (Self-Service)
+Template IDs are now managed via a **Template Registry** sheet instead of hard-coded constants:
+- **Setup:** Doula Tools > Setup > Create Template Registry (one-time, migrates existing IDs)
+- **Manage:** Doula Tools > Manage Templates (search Drive, wire templates, add new types)
+- **Via Emerald:** "Wire my Week 3 workbook" / "What templates are missing?"
+- UI buttons auto-grey-out for templates not yet wired
+- Still needed: Workbook weeks 2–12, Intro Packet, Packet 2, Packet 3, Client Homework
 
 ### Upcoming (March 3–4)
 - UI polish: restore last client on load, pinned reminders, loading skeleton, page title

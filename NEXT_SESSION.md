@@ -33,20 +33,26 @@
 
 ## Monday Build (March 3)
 
-### Block 1: Template Wiring
-> Depends on Carlie's answers to Q6-Q8
+### Block 1: Template Wiring (Now Self-Service!)
+> Carlie can do this herself — no code changes needed
 
-**Files to modify:**
-- `SPREADSHEET APPS SCRIPT.gs` — constants at top of file
+**Template Registry system is built (added 2026-03-01).** Carlie wires templates in two ways:
 
-**Changes:**
-1. Replace `WORKBOOK_TEMPLATES` placeholder IDs (lines 22-35) with real Doc IDs for weeks 2-12
-2. Replace `CLIENT_LIT_TEMPLATES` placeholder IDs (lines 69-73) for Intro Packet, Packet 2, Packet 3
-3. Replace `TEMPLATE_CLIENT_HOMEWORK` placeholder (line 19) with real Doc ID
+**Option A: Manage Templates dialog**
+1. Doula Tools > Setup > Create Template Registry (one-time setup)
+2. Doula Tools > Manage Templates
+3. Click "Wire" next to any missing template → search Drive → click to connect
 
-**Verify:**
-- No `YOUR_` prefix remains in any template constant
-- Each ID is a valid 44-character Google Doc ID
+**Option B: Via Emerald chat**
+- "What templates are still missing?"
+- "Wire my Week 3 workbook template" → Emerald searches Drive, confirms, wires it
+
+**Our job Monday:** Verify the system works end-to-end. If Carlie provides IDs directly instead, we can still wire them via the dialog or chat.
+
+**Still needed:**
+- Workbooks weeks 2-12 (11 templates)
+- Client literature: Intro Packet, Packet 2, Packet 3
+- Client Homework
 
 ---
 

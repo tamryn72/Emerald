@@ -74,6 +74,310 @@ const CLIENT_LIT_TEMPLATES = {
 
 
 /****************************************************************************************
+ TEMPLATE REGISTRY — Self-Service Template Management
+ Stores template IDs in a "Template Registry" sheet so Carlie can manage them
+ without code changes. Falls back to hard-coded constants if registry doesn't exist.
+****************************************************************************************/
+
+/**
+ * Looks up a template ID from the Template Registry sheet.
+ * Falls back to hard-coded constants if registry doesn't exist (migration safety).
+ */
+function getTemplateIdFromRegistry(category, label) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Template Registry');
+
+  // Fallback to hard-coded constants if registry doesn't exist yet
+  if (!sheet) return null;
+
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] === category && data[i][1] === label) {
+      var id = String(data[i][2]).trim();
+      return id || null;
+    }
+  }
+  return null;
+}
+
+/**
+ * Returns the full template registry as an array of objects.
+ */
+function getTemplateRegistry() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Template Registry');
+  if (!sheet) return [];
+
+  var data = sheet.getDataRange().getValues();
+  var templates = [];
+  for (var i = 1; i < data.length; i++) {
+    var id = String(data[i][2]).trim();
+    templates.push({
+      category: data[i][0],
+      label: data[i][1],
+      templateId: id,
+      status: id ? 'Active' : 'Missing',
+      lastUpdated: data[i][4] || null
+    });
+  }
+  return templates;
+}
+
+/**
+ * Returns only missing templates from the registry.
+ */
+function getMissingTemplates() {
+  return getTemplateRegistry().filter(function(t) { return t.status === 'Missing'; });
+}
+
+/**
+ * Searches Google Drive for documents matching a search term.
+ */
+function searchDriveForTemplate(searchTerm) {
+  var files = DriveApp.searchFiles(
+    'title contains "' + searchTerm.replace(/"/g, '\\"') + '" and mimeType = "application/vnd.google-apps.document"'
+  );
+  var results = [];
+  while (files.hasNext() && results.length < 20) {
+    var f = files.next();
+    results.push({ id: f.getId(), name: f.getName(), url: f.getUrl() });
+  }
+  return results;
+}
+
+/**
+ * Wires a template ID into the registry. Updates existing row or appends new.
+ */
+function wireTemplate(category, label, templateId) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Template Registry');
+  if (!sheet) throw new Error('Template Registry not found. Run Setup > Create Template Registry first.');
+
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] === category && data[i][1] === label) {
+      sheet.getRange(i + 1, 3).setValue(templateId);
+      sheet.getRange(i + 1, 4).setValue('Active');
+      sheet.getRange(i + 1, 5).setValue(new Date());
+      return { success: true, label: label, isNew: false };
+    }
+  }
+
+  // New template type — append row
+  sheet.appendRow([category, label, templateId, 'Active', new Date()]);
+  return { success: true, label: label, isNew: true };
+}
+
+/**
+ * Adds a new template type to the registry with no ID yet (Missing status).
+ */
+function addTemplateType(category, label) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Template Registry');
+  if (!sheet) throw new Error('Template Registry not found. Run Setup > Create Template Registry first.');
+
+  // Check if already exists
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] === category && data[i][1] === label) {
+      return { success: false, error: 'Template "' + label + '" already exists in registry.' };
+    }
+  }
+
+  sheet.appendRow([category, label, '', 'Missing', '']);
+  return { success: true, label: label };
+}
+
+/**
+ * Creates the Template Registry sheet and migrates all existing template IDs.
+ * One-time setup — safe to run multiple times (won't overwrite existing registry).
+ */
+function setupTemplateRegistry() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var existing = ss.getSheetByName('Template Registry');
+  if (existing) {
+    SpreadsheetApp.getUi().alert('Template Registry already exists. No changes made.');
+    return;
+  }
+
+  var sheet = ss.insertSheet('Template Registry');
+
+  // Headers
+  sheet.getRange('A1:E1').setValues([['Category', 'Label', 'Template ID', 'Status', 'Last Updated']]);
+  sheet.getRange('A1:E1').setFontWeight('bold').setBackground('#FDF0E8');
+
+  var now = new Date();
+  function row(cat, label, id) {
+    var cleanId = (id && !id.includes('YOUR_')) ? id : '';
+    return [cat, label, cleanId, cleanId ? 'Active' : 'Missing', cleanId ? now : ''];
+  }
+
+  var rows = [
+    // Documents
+    row('document', 'Session Notes', TEMPLATE_SESSION_NOTES),
+    row('document', 'Integration Guide', TEMPLATE_INTEGRATION),
+    row('document', 'Client Summary', TEMPLATE_SUMMARY),
+    row('document', 'Counseling Notes', TEMPLATE_COUNSELLING),
+    row('document', 'Breathwork Notes', TEMPLATE_BREATHWORK),
+    row('document', 'Akashic Notes', TEMPLATE_AKASHIC),
+    row('document', 'Client Homework', TEMPLATE_CLIENT_HOMEWORK),
+    row('document', 'Soul Emergence Summary', TEMPLATE_SOUL_EMERGENCE_SUMMARY),
+
+    // Workbooks
+    row('workbook', 'Week 1 - The Threshold', WORKBOOK_TEMPLATES[1]),
+    row('workbook', 'Week 2 - Akashic Records Reading', WORKBOOK_TEMPLATES[2]),
+    row('workbook', 'Week 3 - Integration & Intention', WORKBOOK_TEMPLATES[3]),
+    row('workbook', 'Week 4 - Akashic Clearing', WORKBOOK_TEMPLATES[4]),
+    row('workbook', 'Week 5 - Befriending Your Nervous System', WORKBOOK_TEMPLATES[5]),
+    row('workbook', 'Week 6 - Parts Work Integration', WORKBOOK_TEMPLATES[6]),
+    row('workbook', 'Week 7 - Timeline Therapy & Reprocessing', WORKBOOK_TEMPLATES[7]),
+    row('workbook', 'Week 8 - Clearing Old Programming', WORKBOOK_TEMPLATES[8]),
+    row('workbook', 'Week 9 - Honoring What Was', WORKBOOK_TEMPLATES[9]),
+    row('workbook', 'Week 10 - Releasing Expectations & Ritual Goodbye', WORKBOOK_TEMPLATES[10]),
+    row('workbook', 'Week 11 - Final Akashic Clearing', WORKBOOK_TEMPLATES[11]),
+    row('workbook', 'Week 12 - Emergence & Integration', WORKBOOK_TEMPLATES[12]),
+
+    // Packets
+    row('packet', 'Intro Packet', CLIENT_LIT_TEMPLATES['Intro Packet']),
+    row('packet', 'Packet 2', CLIENT_LIT_TEMPLATES['Packet 2']),
+    row('packet', 'Packet 3', CLIENT_LIT_TEMPLATES['Packet 3'])
+  ];
+
+  sheet.getRange(2, 1, rows.length, 5).setValues(rows);
+
+  // Formatting
+  sheet.setFrozenRows(1);
+  sheet.autoResizeColumns(1, 5);
+  sheet.setColumnWidth(3, 300);
+
+  // Conditional formatting: green for Active, red for Missing
+  var statusRange = sheet.getRange('D2:D' + (rows.length + 1));
+  var greenRule = SpreadsheetApp.newConditionalFormatRule()
+    .whenTextEqualTo('Active')
+    .setBackground('#D4EDDA')
+    .setRanges([statusRange])
+    .build();
+  var redRule = SpreadsheetApp.newConditionalFormatRule()
+    .whenTextEqualTo('Missing')
+    .setBackground('#F8D7DA')
+    .setRanges([statusRange])
+    .build();
+  sheet.setConditionalFormatRules([greenRule, redRule]);
+
+  SpreadsheetApp.getUi().alert('Template Registry created! Go to Doula Tools > Manage Templates to wire your templates.');
+}
+
+/**
+ * Opens the Manage Templates dialog.
+ */
+function showManageTemplatesDialog() {
+  var templates = getTemplateRegistry();
+  if (templates.length === 0) {
+    SpreadsheetApp.getUi().alert('Template Registry not found. Go to Setup > Create Template Registry first.');
+    return;
+  }
+
+  // Build grouped HTML
+  var categories = { document: 'Documents', workbook: 'Workbooks', packet: 'Packets' };
+  var html = '<style>';
+  html += 'body{font-family:"Google Sans",Helvetica,sans-serif;background:#FDF0E8;color:#2C1810;margin:0;padding:16px;}';
+  html += 'h2{color:#7B3F2A;font-size:16px;margin:16px 0 8px;border-bottom:1px solid #F0D9CA;padding-bottom:4px;}';
+  html += 'h2:first-of-type{margin-top:0;}';
+  html += '.row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #F0D9CA;}';
+  html += '.status{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}';
+  html += '.active{background:#D4EDDA;color:#28a745;}';
+  html += '.missing{background:#F8D7DA;color:#dc3545;}';
+  html += '.label{flex:1;font-size:13px;}';
+  html += '.btn{padding:6px 12px;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;}';
+  html += '.btn-wire{background:#E8654A;color:white;}';
+  html += '.btn-wire:hover{background:#C4472F;}';
+  html += '.btn-change{background:#D4A762;color:white;}';
+  html += '.btn-change:hover{background:#B88840;}';
+  html += '#searchPanel{display:none;background:#FFF8F3;border:1px solid #F0D9CA;border-radius:8px;padding:12px;margin:12px 0;}';
+  html += '#searchInput{width:100%;padding:8px;border:1px solid #F0D9CA;border-radius:6px;font-size:13px;box-sizing:border-box;}';
+  html += '#searchResults{margin-top:8px;max-height:200px;overflow-y:auto;}';
+  html += '.result{padding:8px;background:#FFF;border:1px solid #F0D9CA;border-radius:4px;margin:4px 0;cursor:pointer;font-size:12px;}';
+  html += '.result:hover{background:#FDF0E8;border-color:#D4A762;}';
+  html += '.result-name{font-weight:500;}';
+  html += '.result-id{color:#A87B6E;font-size:11px;word-break:break-all;}';
+  html += '#addPanel{display:none;background:#FFF8F3;border:1px solid #F0D9CA;border-radius:8px;padding:12px;margin:12px 0;}';
+  html += 'select,#newLabel{padding:8px;border:1px solid #F0D9CA;border-radius:6px;font-size:13px;width:100%;box-sizing:border-box;margin-top:4px;}';
+  html += '.add-row{margin-top:8px;}';
+  html += '.footer{margin-top:12px;display:flex;gap:8px;}';
+  html += '.btn-add{background:#7B3F2A;color:white;padding:8px 16px;}';
+  html += '.toast{display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#28a745;color:white;padding:10px 20px;border-radius:8px;font-size:13px;z-index:100;}';
+  html += '</style>';
+
+  html += '<div id="toast" class="toast"></div>';
+  html += '<div id="searchPanel">';
+  html += '<strong id="searchTitle">Search Drive</strong>';
+  html += '<input type="text" id="searchInput" placeholder="Type template name..." onkeyup="if(event.key===\'Enter\')doSearch()">';
+  html += '<button class="btn btn-wire" onclick="doSearch()" style="margin-top:8px">Search</button>';
+  html += '<div id="searchResults"></div>';
+  html += '</div>';
+
+  var catOrder = ['document', 'workbook', 'packet'];
+  for (var c = 0; c < catOrder.length; c++) {
+    var cat = catOrder[c];
+    var catTemplates = templates.filter(function(t) { return t.category === cat; });
+    if (catTemplates.length === 0) continue;
+
+    html += '<h2>' + categories[cat] + '</h2>';
+    for (var t = 0; t < catTemplates.length; t++) {
+      var tmpl = catTemplates[t];
+      var isActive = tmpl.status === 'Active';
+      html += '<div class="row">';
+      html += '<div class="status ' + (isActive ? 'active' : 'missing') + '">' + (isActive ? '✓' : '✗') + '</div>';
+      html += '<div class="label">' + tmpl.label + '</div>';
+      if (isActive) {
+        html += '<button class="btn btn-change" onclick="startWire(\'' + tmpl.category + '\',\'' + tmpl.label.replace(/'/g, "\\'") + '\')">Change</button>';
+      } else {
+        html += '<button class="btn btn-wire" onclick="startWire(\'' + tmpl.category + '\',\'' + tmpl.label.replace(/'/g, "\\'") + '\')">Wire</button>';
+      }
+      html += '</div>';
+    }
+  }
+
+  // Add New Template section
+  html += '<div class="footer">';
+  html += '<button class="btn btn-add" onclick="showAddPanel()">+ Add New Template</button>';
+  html += '</div>';
+
+  html += '<div id="addPanel">';
+  html += '<strong>Add New Template Type</strong>';
+  html += '<div class="add-row"><label>Category:</label><select id="newCat"><option value="document">Document</option><option value="workbook">Workbook</option><option value="packet">Packet</option></select></div>';
+  html += '<div class="add-row"><label>Label:</label><input type="text" id="newLabel" placeholder="e.g. Week 13 - Bonus Session"></div>';
+  html += '<button class="btn btn-wire" style="margin-top:8px" onclick="addNew()">Add</button>';
+  html += '</div>';
+
+  // JavaScript
+  html += '<script>';
+  html += 'var wireCategory="",wireLabel="";';
+
+  html += 'function showToast(msg,color){var t=document.getElementById("toast");t.textContent=msg;t.style.background=color||"#28a745";t.style.display="block";setTimeout(function(){t.style.display="none"},3000);}';
+
+  html += 'function startWire(cat,label){wireCategory=cat;wireLabel=label;document.getElementById("searchTitle").textContent="Search for: "+label;document.getElementById("searchInput").value=label.replace(/^Week \\d+ - /,"");document.getElementById("searchResults").innerHTML="";document.getElementById("searchPanel").style.display="block";document.getElementById("searchInput").focus();}';
+
+  html += 'function doSearch(){var q=document.getElementById("searchInput").value;if(!q)return;document.getElementById("searchResults").innerHTML="Searching...";google.script.run.withSuccessHandler(showResults).withFailureHandler(function(e){document.getElementById("searchResults").innerHTML="Error: "+e.message;}).searchDriveForTemplate(q);}';
+
+  html += 'function showResults(results){var div=document.getElementById("searchResults");if(!results||results.length===0){div.innerHTML="No documents found. Try a different search term.";return;}div.innerHTML="";for(var i=0;i<results.length;i++){var r=results[i];var el=document.createElement("div");el.className="result";el.innerHTML=\'<div class="result-name">\'+r.name+\'</div><div class="result-id">ID: \'+r.id+\'</div>\';el.onclick=(function(id,name){return function(){confirmWire(id,name)};})(r.id,r.name);div.appendChild(el);}}';
+
+  html += 'function confirmWire(id,name){if(!confirm("Wire \\\""+name+"\\\" as the template for \\\""+wireLabel+"\\\"?")){return;}google.script.run.withSuccessHandler(function(res){if(res.success){showToast(wireLabel+" template wired!");document.getElementById("searchPanel").style.display="none";setTimeout(function(){google.script.host.close();showManageTemplatesDialog();},1500);}}).withFailureHandler(function(e){showToast("Error: "+e.message,"#dc3545");}).wireTemplate(wireCategory,wireLabel,id);}';
+
+  html += 'function showAddPanel(){document.getElementById("addPanel").style.display="block";}';
+
+  html += 'function addNew(){var cat=document.getElementById("newCat").value;var label=document.getElementById("newLabel").value.trim();if(!label){showToast("Enter a label","#dc3545");return;}google.script.run.withSuccessHandler(function(res){if(res.success){showToast(label+" added! Click Wire to connect it.");setTimeout(function(){google.script.host.close();showManageTemplatesDialog();},1500);}else{showToast(res.error,"#dc3545");}}).withFailureHandler(function(e){showToast("Error: "+e.message,"#dc3545");}).addTemplateType(cat,label);}';
+
+  html += '</script>';
+
+  var output = HtmlService.createHtmlOutput(html)
+    .setWidth(420)
+    .setHeight(550);
+  SpreadsheetApp.getUi().showModalDialog(output, 'Manage Templates');
+}
+
+
+/****************************************************************************************
  MENU BAR
 ****************************************************************************************/
 function onOpen() {
@@ -82,6 +386,7 @@ function onOpen() {
     .addItem("New Client", "newClientSetup")
     .addItem("Open Sidebar", "openDoulaSidebar")
     .addSeparator()
+    .addItem("Manage Templates", "showManageTemplatesDialog")
     .addItem("Mark Client Complete", "markClientCompleteMenu")
     .addSeparator()
     .addItem("Open Budget", "backend_openBudgetSheet")
@@ -93,6 +398,7 @@ function onOpen() {
       .addItem("Send Offer to One Email", "menuSendPastClientOfferOne"))
     .addSeparator()
     .addSubMenu(SpreadsheetApp.getUi().createMenu("Setup")
+      .addItem("Create Template Registry", "setupTemplateRegistry")
       .addItem("Create Past Clients Sheet", "ensurePastClientsSheet")
       .addItem("Create Opt-In Form", "setupOptInForm")
       .addItem("Create Website Inquiry Form", "setupWebsiteInquiryForm")
@@ -696,6 +1002,10 @@ function backend_generateDoulaDoc(docType) {
 }
 
 function getTemplateForDocType(docType) {
+  // Registry-first lookup, falls back to hard-coded constants
+  var registryId = getTemplateIdFromRegistry('document', docType);
+  if (registryId) return registryId;
+
   const map = {
     "Session Notes": TEMPLATE_SESSION_NOTES,
     "Integration Guide": TEMPLATE_INTEGRATION,
@@ -729,9 +1039,11 @@ function backend_sendWorkbook(weekNumber) {
     throw new Error("Missing client name, email, or folder ID.");
   }
 
-  const templateId = WORKBOOK_TEMPLATES[weekNumber];
+  // Registry-first lookup, falls back to hard-coded constants
+  var registryLabel = 'Week ' + weekNumber + ' - ' + SESSION_NAMES[weekNumber];
+  var templateId = getTemplateIdFromRegistry('workbook', registryLabel) || WORKBOOK_TEMPLATES[weekNumber];
   if (!templateId || templateId.includes("YOUR_")) {
-    throw new Error(`Workbook template for Week ${weekNumber} not yet configured. Add the template ID to WORKBOOK_TEMPLATES in Code.gs.`);
+    throw new Error('Workbook template for Week ' + weekNumber + ' not yet configured. Go to Doula Tools > Manage Templates to wire it.');
   }
 
   const sessionName = SESSION_NAMES[weekNumber];
@@ -912,8 +1224,9 @@ function backend_generateClientPacket(type) {
   const clientName = sheet.getRange("B2").getValue();
   const clientType = getClientType(sheet);
 
-  const templateId = CLIENT_LIT_TEMPLATES[type];
-  if (!templateId || templateId.includes("YOUR_")) throw new Error("Missing template ID for: " + type);
+  // Registry-first lookup, falls back to hard-coded constants
+  var templateId = getTemplateIdFromRegistry('packet', type) || CLIENT_LIT_TEMPLATES[type];
+  if (!templateId || templateId.includes("YOUR_")) throw new Error('Template for "' + type + '" not yet configured. Go to Doula Tools > Manage Templates to wire it.');
 
   const folder = DriveApp.getFolderById(folderId);
   const today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMM d, yyyy");

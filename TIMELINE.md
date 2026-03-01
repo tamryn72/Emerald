@@ -176,6 +176,15 @@ Built into `EmeraldAI.gs`:
 - [ ] Page title updates with active client name
 - [ ] Error state: API key missing alert on first load
 
+### Template Management — Self-Service System (added 2026-03-01)
+- [x] Template Registry sheet with setup migration
+- [x] Manage Templates dialog (search Drive, wire, add new)
+- [x] Registry-first lookups with hard-coded fallback
+- [x] `manage_template` AI tool (search, wire, list_missing, list_all)
+- [x] Dynamic UI — buttons grey out for unwired templates
+- [ ] Carlie runs Setup > Create Template Registry (one-time)
+- [ ] Carlie wires remaining templates via Manage Templates dialog
+
 ### Template Wiring — Waiting on Carlie's answers
 - [ ] Wire workbook template IDs weeks 2–12 (Q6)
 - [ ] Wire client literature template IDs: Intro, Packet 2, Packet 3 (Q7)
@@ -245,6 +254,7 @@ Built into `EmeraldAI.gs`:
 | 2026-02-26 | Actions routed through chat (not direct API) | AI confirms before executing, consistent UX, single communication pattern |
 | 2026-02-28 | Both website forms offered (Opt-In + Get In Touch) | Carlie wants both options available on her website |
 | 2026-02-28 | Acuity integration planned as Phase 9 | Separate from polish/testing — depends on API credentials from Carlie |
+| 2026-03-01 | Template Registry sheet for self-service management | Carlie can wire/update template IDs without code changes or redeploy |
 
 ---
 

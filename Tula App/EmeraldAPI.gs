@@ -20,7 +20,7 @@
 const SYSTEM_SHEETS = [
   "Dashboard", "Akashic_Client_Template", "Counseling_Client_Template",
   "SoulEmergence_Client_Template", "Email_Templates", "Intake Log",
-  "Budget", "Document Log", "Leads", "Past Clients"
+  "Budget", "Document Log", "Leads", "Past Clients", "Template Registry"
 ];
 
 const SAFE_WRITE_CELLS = {
@@ -85,6 +85,9 @@ function doPost(e) {
       case 'executeAction':
         result = emeraldExecuteTool(data.tool, data.params || {});
         break;
+      case 'getTemplates':
+        result = getTemplateRegistry();
+        break;
       case 'clearMemory':
         result = clearEmeraldMemory();
         break;
@@ -123,6 +126,7 @@ function handleApiCall(payloadStr) {
       case 'getSessions':        return emerald_getUpcomingSessions(data.clientName);
       case 'getNewsletterPreview': return emerald_getNewsletterPreview();
       case 'executeAction':      return emeraldExecuteTool(data.tool, data.params || {});
+      case 'getTemplates':       return getTemplateRegistry();
       case 'clearMemory':        return clearEmeraldMemory();
       default:                   return { error: 'Unknown action: ' + action };
     }
@@ -441,6 +445,27 @@ function emeraldExecuteTool(toolName, toolInput) {
       // ── Memory ──
       case 'remember_note':
         return saveClientNote(toolInput.clientName, toolInput.note, toolInput.type);
+
+      // ── Template Management ──
+      case 'manage_template': {
+        var tmplAction = toolInput.action;
+        if (tmplAction === 'list_missing') {
+          return { missing: getMissingTemplates() };
+        }
+        if (tmplAction === 'list_all') {
+          return { templates: getTemplateRegistry() };
+        }
+        if (tmplAction === 'search') {
+          if (!toolInput.searchTerm) throw new Error('searchTerm is required for search action.');
+          return { results: searchDriveForTemplate(toolInput.searchTerm) };
+        }
+        if (tmplAction === 'wire') {
+          if (!toolInput.category || !toolInput.label || !toolInput.templateId)
+            throw new Error('category, label, and templateId are required for wire action.');
+          return wireTemplate(toolInput.category, toolInput.label, toolInput.templateId);
+        }
+        throw new Error('Unknown manage_template action: ' + tmplAction);
+      }
 
       default:
         throw new Error('Unknown tool: ' + toolName);

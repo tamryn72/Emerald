@@ -731,6 +731,23 @@ function getToolDefinitions() {
         },
         required: ['type', 'note']
       }
+    },
+
+    /* ── Template Management ── */
+    {
+      name: 'manage_template',
+      description: 'Manage document templates. Actions: "list_missing" to see which templates need wiring, "search" to find a Google Doc template by name in Drive, "wire" to connect a template ID to a template type. Use when Carlie asks about templates or wants to wire/update one.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          action: { type: 'string', enum: ['search', 'wire', 'list_missing', 'list_all'], description: 'search = find docs in Drive, wire = connect a template ID, list_missing = show unwired templates, list_all = show all templates' },
+          searchTerm: { type: 'string', description: 'Search term for Drive search (required for search action)' },
+          category: { type: 'string', enum: ['document', 'workbook', 'packet'], description: 'Template category (required for wire action)' },
+          label: { type: 'string', description: 'Template label e.g. "Week 3 - Integration & Intention" (required for wire action)' },
+          templateId: { type: 'string', description: 'Google Doc ID to wire (required for wire action)' }
+        },
+        required: ['action']
+      }
     }
 
   ];

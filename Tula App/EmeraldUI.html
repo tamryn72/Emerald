@@ -455,6 +455,9 @@
     }
     .action-pill.gold { border-color: var(--gold); font-weight: 600; }
     .action-pill.gold:hover { background: var(--gold); color: white; }
+    .action-pill.disabled, .action-pill.disabled:hover {
+      opacity: 0.4; cursor: default; background: var(--bg); color: var(--muted); border-color: var(--border);
+    }
 
     /* Workbook grid (Soul Emergence) */
     .workbook-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
@@ -472,6 +475,9 @@
       font-family: var(--font-sans);
     }
     .workbook-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+    .workbook-btn.disabled, .workbook-btn.disabled:hover {
+      opacity: 0.4; cursor: default; background: var(--bg); color: var(--muted); border-color: var(--border);
+    }
     .workbook-btn strong { display: block; font-size: 12px; margin-bottom: 2px; }
 
     /* ─────────────────────────────────────────
@@ -811,7 +817,8 @@ const state = {
   activeClient: null,
   conversationHistory: [],
   isLoading: false,
-  selectedClientType: null
+  selectedClientType: null,
+  templates: []
 };
 
 const SESSION_NAMES = {
@@ -826,12 +833,28 @@ const SESSION_NAMES = {
    INIT
 ═══════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
+  loadTemplates();
   loadClients().then(() => {
     appendAIMessage('Good ' + getTimeGreeting() + ', Carlie. Select a client from the sidebar to get started, or ask me anything about your practice.');
   });
   renderQuickActions();
   initVoiceInput();
 });
+
+async function loadTemplates() {
+  try {
+    const data = await apiCall({ action: 'getTemplates' });
+    state.templates = data || [];
+  } catch (e) {
+    state.templates = [];
+  }
+}
+
+function isTemplateActive(category, label) {
+  if (state.templates.length === 0) return true; // No registry yet — assume all active (backward compat)
+  const tmpl = state.templates.find(t => t.category === category && t.label === label);
+  return tmpl ? tmpl.status === 'Active' : true; // Unknown templates assumed active (hard-coded fallback)
+}
 
 async function loadClients() {
   try {
@@ -1179,52 +1202,71 @@ function pillSection(label, items) {
   grid.className = 'pill-grid';
   items.forEach(item => {
     const btn = document.createElement('button');
-    btn.className = 'action-pill' + (item.gold ? ' gold' : '');
+    btn.className = 'action-pill' + (item.gold ? ' gold' : '') + (item.disabled ? ' disabled' : '');
     btn.textContent = item.label;
-    btn.onclick = () => { item.action(); };
+    if (item.disabled) {
+      btn.title = 'Template not yet wired — use Doula Tools > Manage Templates';
+    } else {
+      btn.onclick = () => { item.action(); };
+    }
     grid.appendChild(btn);
   });
   wrapper.appendChild(grid);
   content.appendChild(wrapper);
 }
 
-/* Documents — dynamic by client type */
+/* Documents — dynamic by client type, template-aware */
 function buildDocumentsSection(content) {
   const type = (state.activeClient && state.activeClient.clientType || '').toLowerCase();
+
+  function docPill(docType) {
+    const active = isTemplateActive('document', docType);
+    return { label: docType, action: () => { trigger('generate_document', docType); }, disabled: !active };
+  }
+  function packetPill(packetType) {
+    const active = isTemplateActive('packet', packetType);
+    return { label: packetType, action: () => { trigger('generate_client_packet', packetType); }, disabled: !active };
+  }
 
   if (type.includes('akashic')) {
     pillSection('Generate', [
       'Session Notes','Integration Guide','Breathwork Notes','Akashic Notes','Client Summary'
-    ].map(d => ({ label: d, action: () => { trigger('generate_document', d); } })));
+    ].map(d => docPill(d)));
 
     pillSection('Literature Packets', [
       'Intro Packet','Packet 2','Packet 3'
-    ].map(p => ({ label: p, action: () => { trigger('generate_client_packet', p); } })));
+    ].map(p => packetPill(p)));
 
   } else if (type.includes('counsel')) {
     pillSection('Generate', [
       'Counseling Notes','Client Homework','Client Summary'
-    ].map(d => ({ label: d, action: () => { trigger('generate_document', d); } })));
+    ].map(d => docPill(d)));
 
   } else if (type.includes('soul') || type.includes('emergence')) {
     pillSection('Documents', [
       { label: 'Create Private Journal',     action: () => trigger('create_journal') },
       { label: 'Open Journal',               action: () => trigger('get_journal_url') },
-      { label: 'Soul Emergence Summary',     action: () => trigger('generate_document', 'Soul Emergence Summary') },
-      { label: 'Client Summary',             action: () => trigger('generate_document', 'Client Summary') }
+      docPill('Soul Emergence Summary'),
+      docPill('Client Summary')
     ]);
 
-    // Workbook grid
+    // Workbook grid — template-aware
     const wSection = document.createElement('div');
     wSection.className = 'pill-section';
     wSection.innerHTML = '<div class="pill-section-label">Send Weekly Workbook</div>';
     const grid = document.createElement('div');
     grid.className = 'workbook-grid';
     for (let w = 1; w <= 12; w++) {
+      const wLabel = 'Week ' + w + ' - ' + SESSION_NAMES[w];
+      const active = isTemplateActive('workbook', wLabel);
       const btn = document.createElement('button');
-      btn.className = 'workbook-btn';
+      btn.className = 'workbook-btn' + (active ? '' : ' disabled');
       btn.innerHTML = `<strong>Wk ${w}</strong>${SESSION_NAMES[w]}`;
-      btn.onclick = () => { trigger('send_workbook', w); };
+      if (active) {
+        btn.onclick = () => { trigger('send_workbook', w); };
+      } else {
+        btn.title = 'Template not yet wired — use Doula Tools > Manage Templates';
+      }
       grid.appendChild(btn);
     }
     wSection.appendChild(grid);
