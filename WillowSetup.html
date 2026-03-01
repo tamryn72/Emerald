@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Willow — DIY Setup Guide</title>
+  <style>
+    /* ─────────────────────────────────────────
+       WILLOW SETUP — LUXURY DESIGN SYSTEM
+    ───────────────────────────────────────── */
+
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
+
+    :root {
+      --cream:       #FDF0E8;
+      --warm-white:  #FFF8F3;
+      --coral:       #E8654A;
+      --coral-dark:  #C4472F;
+      --gold:        #D4A762;
+      --gold-light:  rgba(212, 167, 98, 0.12);
+      --deep:        #7B3F2A;
+      --text:        #2C1810;
+      --muted:       #A87B6E;
+      --border:      #F0D9CA;
+      --font-display: 'Cormorant Garamond', 'Georgia', serif;
+      --font-body:    'Georgia', 'Times New Roman', serif;
+      --font-ui:      'Helvetica Neue', Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: white;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 60px 48px;
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: avoid; }
+
+    /* ─── COVER ─── */
+    .cover {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 80px 48px;
+      background: var(--cream);
+    }
+    .cover-mark { color: var(--gold); margin-bottom: 40px; opacity: 0.6; }
+    .cover-title {
+      font-family: var(--font-display);
+      font-size: 64px;
+      font-weight: 300;
+      color: var(--deep);
+      letter-spacing: 6px;
+      margin-bottom: 8px;
+    }
+    .cover-line {
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      margin: 24px auto;
+      opacity: 0.5;
+    }
+    .cover-subtitle {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .cover-desc {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 360px;
+      margin-top: 16px;
+      line-height: 1.8;
+    }
+    .cover-footer {
+      margin-top: auto;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+
+    /* ─── TYPOGRAPHY ─── */
+    h1 {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 300;
+      color: var(--deep);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--deep);
+      letter-spacing: 1px;
+      margin-top: 40px;
+      margin-bottom: 12px;
+    }
+    h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--coral);
+      margin-top: 28px;
+      margin-bottom: 8px;
+    }
+    .section-line {
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      margin-bottom: 32px;
+      opacity: 0.5;
+    }
+
+    p { margin-bottom: 14px; color: var(--text); }
+    p.lead {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+
+    /* ─── STEP BLOCKS ─── */
+    .step {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 28px;
+      align-items: flex-start;
+    }
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--gold-light);
+      border: 1px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 15px;
+      color: var(--deep);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-content { flex: 1; }
+    .step-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--deep);
+      margin-bottom: 4px;
+    }
+    .step-desc {
+      font-size: 13.5px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ─── CARDS ─── */
+    .card {
+      background: var(--cream);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+    .card-gold {
+      background: var(--gold-light);
+      border: 1px solid rgba(212, 167, 98, 0.25);
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--deep);
+      margin-bottom: 8px;
+    }
+    .card p, .card li { font-size: 13px; line-height: 1.7; }
+
+    ul, ol { padding-left: 20px; margin-bottom: 16px; }
+    li { margin-bottom: 6px; padding-left: 4px; }
+    li::marker { color: var(--gold); }
+
+    .callout {
+      border-left: 3px solid var(--gold);
+      padding: 14px 20px;
+      margin: 20px 0;
+      background: var(--gold-light);
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: var(--deep);
+      line-height: 1.7;
+    }
+    .callout strong { font-weight: 600; }
+
+    code {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      background: var(--gold-light);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--deep);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 13px;
+    }
+    thead th {
+      text-align: left;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--deep);
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--border);
+      letter-spacing: 0.5px;
+    }
+    tbody td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:nth-child(even) { background: rgba(253, 240, 232, 0.4); }
+
+    .page-num {
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: 12px;
+      color: var(--muted);
+      opacity: 0.5;
+      margin-top: 48px;
+      letter-spacing: 2px;
+    }
+
+    @media print {
+      body { background: white; }
+      .cover { min-height: auto; padding: 120px 48px; background: white; }
+      .page { padding: 40px 32px; }
+      .card, .callout { break-inside: avoid; }
+      .step { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     COVER
+═══════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-mark">
+    <svg viewBox="0 0 100 70" width="120" height="84">
+      <path d="M50 8C42 14 30 20 24 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/>
+      <path d="M50 8C45 16 38 25 36 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/>
+      <path d="M50 8C48 18 44 30 43 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/>
+      <path d="M50 8C52 18 56 30 57 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/>
+      <path d="M50 8C55 16 62 25 64 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/>
+      <path d="M50 8C58 14 70 20 76 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="cover-title">Willow</div>
+  <div class="cover-line"></div>
+  <div class="cover-subtitle">DIY Setup Guide</div>
+  <div class="cover-desc">
+    Everything you need to install and deploy Willow yourself.
+    One-time setup, then it's yours forever.
+  </div>
+  <div class="cover-footer">Installation &amp; Deployment</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 1: BEFORE YOU BEGIN
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Before You Begin</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    Setting up Willow takes about 30 minutes. Once it's done, you won't need to do it again.
+    Give yourself quiet space to move through each step without rushing.
+  </p>
+
+  <h2>What You'll Need</h2>
+
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <div class="step-title">A Google Account</div>
+      <div class="step-desc">
+        Willow runs entirely within Google's ecosystem &mdash; Sheets, Drive, Gmail, and Calendar.
+        You'll use the Google account that holds (or will hold) your practice spreadsheet.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <div class="step-title">Your Practice Spreadsheet</div>
+      <div class="step-desc">
+        The Google Sheet with your client data, templates, and practice records.
+        If you're starting fresh, Willow's setup will create the structure for you.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+      <div class="step-title">An Anthropic API Key</div>
+      <div class="step-desc">
+        Willow uses Claude AI to understand your requests and take action. You'll need an API key from
+        <strong>console.anthropic.com</strong>. If you received a trial key, use that to get started.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">4</div>
+    <div class="step-content">
+      <div class="step-title">The Code Files</div>
+      <div class="step-desc">
+        Three files will be provided to you: <code>EmeraldAPI</code> (backend),
+        <code>EmeraldAI</code> (AI layer), and <code>EmeraldUI</code> (interface).
+        You'll paste these into your Google project.
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-gold">
+    <div class="card-title">About Your API Key</div>
+    <p>
+      Your API key is what connects Willow to the AI that powers her. Think of it as a private passcode
+      between your Willow and the AI service. It's stored securely in your Google project and never
+      shared with anyone.
+    </p>
+    <p style="margin-bottom:0">
+      <strong>Trial key:</strong> If you were given a trial key, it will work for your first period.
+      After that, you can get your own key at <strong>console.anthropic.com</strong> or
+      ask about a monthly plan.
+    </p>
+  </div>
+
+  <div class="page-num">1</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 2: OPEN APPS SCRIPT + ADD FILES
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Install the Code</h1>
+  <div class="section-line"></div>
+
+  <p class="lead">
+    You'll add three files to your Google Sheet's built-in code editor.
+    This works best on a computer.
+  </p>
+
+  <h2>Step 1: Open Apps Script</h2>
+
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <div class="step-title">Open your practice spreadsheet</div>
+      <div class="step-desc">
+        Go to your Google Sheet in a web browser (Chrome recommended).
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <div class="step-title">Open the script editor</div>
+      <div class="step-desc">
+        Click <strong>Extensions</strong> in the menu bar, then <strong>Apps Script</strong>.
+        This opens the code editor in a new tab.
+      </div>
+    </div>
+  </div>
+
+  <h2>Step 2: Create the Files</h2>
+
+  <p>
+    In the Apps Script editor, you'll create three new files. For each one:
+  </p>
+
+  <div class="step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+      <div class="step-title">Create the API file</div>
+      <div class="step-desc">
+        Click the <strong>+</strong> next to "Files" &rarr; select <strong>Script</strong> &rarr;
+        name it <code>EmeraldAPI</code>. Paste the provided API code into this file.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">4</div>
+    <div class="step-content">
+      <div class="step-title">Create the AI file</div>
+      <div class="step-desc">
+        Click <strong>+</strong> &rarr; <strong>Script</strong> &rarr;
+        name it <code>EmeraldAI</code>. Paste the provided AI code.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">5</div>
+    <div class="step-content">
+      <div class="step-title">Create the UI file</div>
+      <div class="step-desc">
+        Click <strong>+</strong> &rarr; <strong>HTML</strong> &rarr;
+        name it <code>EmeraldUI</code>. Paste the provided interface code.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">6</div>
+    <div class="step-content">
+      <div class="step-title">Save everything</div>
+      <div class="step-desc">
+        Press <strong>Ctrl+S</strong> (or <strong>Cmd+S</strong> on Mac) to save all files.
+        You should see three new files in the left sidebar alongside any existing code.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Nothing will break.</strong> Adding these files doesn't affect anything that's already working.
+    Your existing sidebar, forms, and automations continue to run exactly as before.
+  </div>
+
+  <div class="page-num">2</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 3: CONFIGURE + API KEY
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Configure Willow</h1>
+  <div class="section-line"></div>
+
+  <h2>Step 3: Run First-Time Setup</h2>
+
+  <div class="step">
+    <div class="step-number">7</div>
+    <div class="step-content">
+      <div class="step-title">Go back to your spreadsheet</div>
+      <div class="step-desc">
+        Switch back to the Google Sheet tab. <strong>Refresh the page</strong> so the new menu items appear.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">8</div>
+    <div class="step-content">
+      <div class="step-title">Run the setup</div>
+      <div class="step-desc">
+        In the menu bar, click <strong>Doula Tools</strong> &rarr; <strong>Setup</strong> &rarr;
+        <strong>Configure Settings</strong>. This creates your default configuration.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">9</div>
+    <div class="step-content">
+      <div class="step-title">Create the Template Registry</div>
+      <div class="step-desc">
+        Click <strong>Doula Tools</strong> &rarr; <strong>Setup</strong> &rarr;
+        <strong>Create Template Registry</strong>. This creates the sheet that manages your
+        document templates.
+      </div>
+    </div>
+  </div>
+
+  <h2>Step 4: Enter Your API Key</h2>
+
+  <div class="step">
+    <div class="step-number">10</div>
+    <div class="step-content">
+      <div class="step-title">Open Project Settings</div>
+      <div class="step-desc">
+        In the Apps Script editor, click the <strong>gear icon</strong> (Project Settings) in the left sidebar.
+        Scroll down to <strong>Script Properties</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">11</div>
+    <div class="step-content">
+      <div class="step-title">Add your API key</div>
+      <div class="step-desc">
+        Click <strong>Add Script Property</strong>. Set the name to <code>ANTHROPIC_API_KEY</code>
+        and paste your API key as the value. Click <strong>Save</strong>.
+      </div>
+    </div>
+  </div>
+
+  <h2>Step 5: Personalize (Optional)</h2>
+
+  <p>
+    While you're in Script Properties, you can also set these optional values:
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Property Name</th><th>What It Does</th><th>Default</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>AI_NAME</code></td><td>What your assistant calls herself</td><td>Willow</td></tr>
+      <tr><td><code>PRACTICE_NAME</code></td><td>Your practice name (appears in header)</td><td>Haven, The Awakening Doula</td></tr>
+      <tr><td><code>PRACTITIONER_NAME</code></td><td>Your name and credentials</td><td>Carlie Wyton, MA</td></tr>
+      <tr><td><code>SESSION_DURATION_MINUTES</code></td><td>Default calendar event length</td><td>60</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Change these anytime.</strong> Settings take effect immediately &mdash; just refresh Willow in your browser.
+  </div>
+
+  <div class="page-num">3</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 4: DEPLOY + ADD TO PHONE
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>Deploy &amp; Go</h1>
+  <div class="section-line"></div>
+
+  <h2>Step 6: Deploy as Web App</h2>
+
+  <div class="step">
+    <div class="step-number">12</div>
+    <div class="step-content">
+      <div class="step-title">Create the Web App</div>
+      <div class="step-desc">
+        In the Apps Script editor, click <strong>Deploy</strong> &rarr; <strong>New deployment</strong>.
+        For type, select <strong>Web app</strong>. Set "Execute as" to <strong>Me</strong> and
+        "Who has access" to <strong>Only myself</strong>. Click <strong>Deploy</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">13</div>
+    <div class="step-content">
+      <div class="step-title">Authorize permissions</div>
+      <div class="step-desc">
+        Google will ask you to authorize. Click <strong>Authorize access</strong>, choose your account,
+        and if you see "Google hasn't verified this app," click <strong>Advanced</strong> &rarr;
+        <strong>Go to [project name]</strong>. This is safe &mdash; it's your own code running in your own account.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">14</div>
+    <div class="step-content">
+      <div class="step-title">Copy your Willow URL</div>
+      <div class="step-desc">
+        After deploying, you'll see a Web App URL. <strong>Copy this link</strong> &mdash;
+        this is your Willow's permanent home address.
+      </div>
+    </div>
+  </div>
+
+  <h2>Step 7: Add to Your Phone</h2>
+
+  <div class="step">
+    <div class="step-number">15</div>
+    <div class="step-content">
+      <div class="step-title">Open the URL on your phone</div>
+      <div class="step-desc">
+        Send yourself the Web App URL (text, email, or notes app) and open it in Safari or Chrome on your phone.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">16</div>
+    <div class="step-content">
+      <div class="step-title">Add to Home Screen</div>
+      <div class="step-desc">
+        <strong>iPhone:</strong> Tap the share button (square with arrow) &rarr; <strong>Add to Home Screen</strong>.<br>
+        <strong>Android:</strong> Tap the three-dot menu &rarr; <strong>Add to Home Screen</strong>.<br><br>
+        Willow now appears as an app icon on your phone. Tap it anytime to open.
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-gold">
+    <div class="card-title">That's it. You're done.</div>
+    <p style="margin-bottom:0">
+      Willow is now ready. Open her from your home screen and start managing your practice.
+      Refer to the <strong>Willow User Guide</strong> for everything she can do.
+    </p>
+  </div>
+
+  <div class="page-num">4</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 5: UPDATING & TROUBLESHOOTING
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1>After Setup</h1>
+  <div class="section-line"></div>
+
+  <h2>Updating Willow</h2>
+  <p>
+    When you receive updated code files, repeat Steps 1&ndash;2: open Apps Script,
+    paste the new code into the existing files (replacing the old code), and save.
+  </p>
+  <p>
+    If the update requires redeployment, you'll be told. In that case:
+  </p>
+  <ol>
+    <li>Go to <strong>Deploy</strong> &rarr; <strong>Manage deployments</strong></li>
+    <li>Click the pencil icon next to your deployment</li>
+    <li>Change "Version" to <strong>New version</strong></li>
+    <li>Click <strong>Deploy</strong></li>
+  </ol>
+  <p>
+    Your URL stays the same &mdash; no need to re-bookmark.
+  </p>
+
+  <h2>Changing Your API Key</h2>
+  <ol>
+    <li>Go to <strong>console.anthropic.com</strong> and generate a new key</li>
+    <li>In Apps Script &rarr; <strong>Project Settings</strong> &rarr; <strong>Script Properties</strong></li>
+    <li>Update the <code>ANTHROPIC_API_KEY</code> value</li>
+    <li>Click <strong>Save</strong> &mdash; takes effect immediately</li>
+  </ol>
+
+  <h2>Wiring Templates</h2>
+  <p>
+    Willow generates documents from Google Doc templates. You'll want to connect your templates
+    to the system:
+  </p>
+  <ol>
+    <li>Go to <strong>Doula Tools</strong> &rarr; <strong>Manage Templates</strong></li>
+    <li>Search for your template by name (searches your Google Drive)</li>
+    <li>Click <strong>Wire</strong> to connect it</li>
+  </ol>
+  <p>
+    Or just tell Willow: <em>"Wire my Session Notes template"</em> and she'll walk you through it.
+  </p>
+
+  <h2>If Something Goes Wrong</h2>
+
+  <div class="card">
+    <div class="card-title">Willow says "Something went wrong"</div>
+    <p style="margin-bottom:0">Check that your API key is set correctly in Script Properties. Make sure there are no extra spaces before or after the key.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Clients aren't loading</div>
+    <p style="margin-bottom:0">Refresh the page. If it persists, open Apps Script and check for any error messages in the Execution Log (View &rarr; Executions).</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">A button is greyed out</div>
+    <p style="margin-bottom:0">The template for that action hasn't been wired yet. Go to Doula Tools &rarr; Manage Templates to connect it.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">"Google hasn't verified this app"</div>
+    <p style="margin-bottom:0">This is normal for personal projects. Click Advanced &rarr; Go to [project name]. It's your own code running in your own account.</p>
+  </div>
+
+  <div style="margin-top:48px;text-align:center">
+    <div style="width:60px;height:1px;background:var(--gold);margin:0 auto 20px;opacity:0.5"></div>
+    <div style="color:var(--gold);margin-bottom:16px;opacity:0.5">
+      <svg viewBox="0 0 100 70" width="60" height="42">
+        <path d="M50 8C42 14 30 20 24 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/>
+        <path d="M50 8C45 16 38 25 36 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/>
+        <path d="M50 8C48 18 44 30 43 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M50 8C52 18 56 30 57 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M50 8C55 16 62 25 64 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/>
+        <path d="M50 8C58 14 70 20 76 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div style="font-family:var(--font-display);font-size:18px;color:var(--deep);letter-spacing:3px;opacity:0.6">WILLOW</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:1px">You're all set.</div>
+  </div>
+
+  <div class="page-num">5</div>
+</div>
+
+</body>
+</html>

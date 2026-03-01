@@ -342,11 +342,11 @@
   <div class="cover-line"></div>
   <div class="cover-subtitle">Your Practice Assistant</div>
   <div class="cover-desc">
-    A complete guide to setting up and using Willow &mdash;
-    your AI-powered practice management companion.
+    Your complete guide to managing your practice with Willow &mdash;
+    your AI-powered companion.
     Everything you need, right from your phone.
   </div>
-  <div class="cover-footer">Setup &amp; User Guide</div>
+  <div class="cover-footer">User Guide</div>
 </div>
 
 
@@ -363,7 +363,7 @@
   </p>
 
   <p>
-    After a simple one-time setup, Willow can do everything from your phone: manage clients,
+    Willow can do everything from your phone: manage clients,
     generate documents, send emails, schedule sessions, track payments, and more.
     Just tell her what you need, or tap a button. She handles the rest.
   </p>
@@ -395,304 +395,14 @@
 
 
 <!-- ═══════════════════════════════════════════════════════
-     PAGE 2: WHAT YOU'LL NEED
-═══════════════════════════════════════════════════════ -->
-<div class="page">
-  <h1>Before You Begin</h1>
-  <div class="section-line"></div>
-
-  <p class="lead">
-    Setting up Willow takes about 30 minutes. Here's what you'll need before we start.
-  </p>
-
-  <h3>What You'll Need</h3>
-
-  <div class="step">
-    <div class="step-number">1</div>
-    <div class="step-content">
-      <div class="step-title">A Google Account</div>
-      <div class="step-desc">
-        Willow runs entirely within Google's ecosystem &mdash; Sheets, Drive, Gmail, and Calendar.
-        You'll need the Google account that holds your practice spreadsheet.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-number">2</div>
-    <div class="step-content">
-      <div class="step-title">Your Practice Spreadsheet</div>
-      <div class="step-desc">
-        The Google Sheet with your client data, templates, and practice records.
-        If you're starting fresh, Willow's setup will create the structure for you.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-number">3</div>
-    <div class="step-content">
-      <div class="step-title">An Anthropic API Key</div>
-      <div class="step-desc">
-        Willow uses Claude AI to understand your requests and take action. You'll need an API key from
-        <strong>console.anthropic.com</strong>. If you received a trial key, you can use that to get started
-        and add your own later.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-number">4</div>
-    <div class="step-content">
-      <div class="step-title">30 Minutes of Quiet Time</div>
-      <div class="step-desc">
-        The setup is straightforward, but give yourself space to move through each step without rushing.
-        Once it's done, you won't need to do it again.
-      </div>
-    </div>
-  </div>
-
-  <div class="card card-gold">
-    <div class="card-title">About Your API Key</div>
-    <p>
-      Your API key is what connects Willow to the AI that powers her. Think of it as a private passcode
-      between your Willow and the AI service. It's stored securely in your Google project and never
-      shared with anyone.
-    </p>
-    <p style="margin-bottom:0">
-      <strong>Trial key:</strong> If you were given a trial key, it will work for your first week.
-      After that, you can either get your own key at <strong>console.anthropic.com</strong> or
-      contact your provider about a monthly plan.
-    </p>
-  </div>
-
-  <div class="page-num">2</div>
-</div>
-
-
-<!-- ═══════════════════════════════════════════════════════
-     PAGE 3–4: ONE-TIME SETUP
-═══════════════════════════════════════════════════════ -->
-<div class="page">
-  <h1>One-Time Setup</h1>
-  <div class="section-line"></div>
-
-  <p class="lead">
-    Follow these steps once. After this, Willow is yours &mdash; always ready on your phone.
-  </p>
-
-  <h2>Step 1: Open Apps Script</h2>
-
-  <div class="step">
-    <div class="step-number">1</div>
-    <div class="step-content">
-      <div class="step-title">Open your practice spreadsheet</div>
-      <div class="step-desc">
-        Go to your Google Sheet in a web browser (this works best on a computer).
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-number">2</div>
-    <div class="step-content">
-      <div class="step-title">Open the script editor</div>
-      <div class="step-desc">
-        Click <strong>Extensions</strong> in the menu bar, then <strong>Apps Script</strong>.
-        This opens the code editor in a new tab.
-      </div>
-    </div>
-  </div>
-
-  <h2>Step 2: Add the Code Files</h2>
-
-  <p>
-    In the Apps Script editor, you'll create three new files. For each one:
-  </p>
-
-  <div class="step">
-    <div class="step-number">3</div>
-    <div class="step-content">
-      <div class="step-title">Create the API file</div>
-      <div class="step-desc">
-        Click the <strong>+</strong> next to "Files" &rarr; select <strong>Script</strong> &rarr;
-        name it <code>EmeraldAPI</code>. Paste the provided API code into this file.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-number">4</div>
-    <div class="step-content">
-      <div class="step-title">Create the AI file</div>
-      <div class="step-desc">
-        Click <strong>+</strong> &rarr; <strong>Script</strong> &rarr;
-        name it <code>EmeraldAI</code>. Paste the provided AI code.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-number">5</div>
-    <div class="step-content">
-      <div class="step-title">Create the UI file</div>
-      <div class="step-desc">
-        Click <strong>+</strong> &rarr; <strong>HTML</strong> &rarr;
-        name it <code>EmeraldUI</code>. Paste the provided interface code.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-number">6</div>
-    <div class="step-content">
-      <div class="step-title">Save everything</div>
-      <div class="step-desc">
-        Press <strong>Ctrl+S</strong> (or <strong>Cmd+S</strong> on Mac) to save all files.
-        You should see three new files in the left sidebar alongside the existing code.
-      </div>
-    </div>
-  </div>
-
-  <div class="callout">
-    <strong>Don't worry</strong> &mdash; adding these files won't affect anything that's already working.
-    Your existing sidebar, forms, and automations continue to run exactly as before.
-  </div>
-
-  <div class="page-num">3</div>
-</div>
-
-<div class="page">
-  <h2>Step 3: Run First-Time Setup</h2>
-
-  <div class="step">
-    <div class="step-number">7</div>
-    <div class="step-content">
-      <div class="step-title">Go back to your spreadsheet</div>
-      <div class="step-desc">
-        Switch back to the Google Sheet tab. Refresh the page so the new menu items appear.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-number">8</div>
-    <div class="step-content">
-      <div class="step-title">Run the setup</div>
-      <div class="step-desc">
-        In the menu bar, click <strong>Doula Tools</strong> &rarr; <strong>Setup</strong> &rarr;
-        <strong>Configure Settings</strong>. This creates your default configuration.
-        When prompted, enter your practice name, your name, and your preferred AI assistant name.
-      </div>
-    </div>
-  </div>
-
-  <h2>Step 4: Enter Your API Key</h2>
-
-  <div class="step">
-    <div class="step-number">9</div>
-    <div class="step-content">
-      <div class="step-title">Open Project Settings</div>
-      <div class="step-desc">
-        In the Apps Script editor, click the <strong>gear icon</strong> (Project Settings) in the left sidebar.
-        Scroll down to <strong>Script Properties</strong>.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-number">10</div>
-    <div class="step-content">
-      <div class="step-title">Add your API key</div>
-      <div class="step-desc">
-        Click <strong>Add Script Property</strong>. Set the name to <code>ANTHROPIC_API_KEY</code>
-        and paste your API key as the value. Click <strong>Save</strong>.
-      </div>
-    </div>
-  </div>
-
-  <h2>Step 5: Deploy</h2>
-
-  <div class="step">
-    <div class="step-number">11</div>
-    <div class="step-content">
-      <div class="step-title">Create the Web App</div>
-      <div class="step-desc">
-        In the Apps Script editor, click <strong>Deploy</strong> &rarr; <strong>New deployment</strong>.
-        For type, select <strong>Web app</strong>. Set "Execute as" to <strong>Me</strong> and
-        "Who has access" to <strong>Only myself</strong>. Click <strong>Deploy</strong>.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-number">12</div>
-    <div class="step-content">
-      <div class="step-title">Authorize permissions</div>
-      <div class="step-desc">
-        Google will ask you to authorize. Click <strong>Authorize access</strong>, choose your account,
-        and if you see "Google hasn't verified this app," click <strong>Advanced</strong> &rarr;
-        <strong>Go to [project name]</strong>. This is safe &mdash; it's your own code running in your own account.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-number">13</div>
-    <div class="step-content">
-      <div class="step-title">Copy your Willow URL</div>
-      <div class="step-desc">
-        After deploying, you'll see a Web App URL. <strong>Copy this link</strong> &mdash;
-        this is your Willow's permanent home address.
-      </div>
-    </div>
-  </div>
-
-  <h2>Step 6: Add to Your Phone</h2>
-
-  <div class="step">
-    <div class="step-number">14</div>
-    <div class="step-content">
-      <div class="step-title">Open the URL on your phone</div>
-      <div class="step-desc">
-        Send yourself the Web App URL (text, email, or notes app) and open it in Safari or Chrome on your phone.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-number">15</div>
-    <div class="step-content">
-      <div class="step-title">Add to Home Screen</div>
-      <div class="step-desc">
-        <strong>iPhone:</strong> Tap the share button (square with arrow) &rarr; <strong>Add to Home Screen</strong>.<br>
-        <strong>Android:</strong> Tap the three-dot menu &rarr; <strong>Add to Home Screen</strong>.<br><br>
-        Willow now appears as an app icon on your phone. Tap it anytime to open.
-      </div>
-    </div>
-  </div>
-
-  <div class="card card-gold">
-    <div class="card-title">That's it. You're done.</div>
-    <p style="margin-bottom:0">
-      Willow is now ready. Open her from your home screen and start managing your practice
-      with a simple conversation.
-    </p>
-  </div>
-
-  <div class="page-num">4</div>
-</div>
-
-
-<!-- ═══════════════════════════════════════════════════════
-     PAGE 5: YOUR HOME SCREEN
+     PAGE 2: YOUR HOME SCREEN
 ═══════════════════════════════════════════════════════ -->
 <div class="page">
   <h1>Your Home Screen</h1>
   <div class="section-line"></div>
 
   <p class="lead">
-    When you open Willow, here's what you'll see. Everything is designed to be simple and immediate.
+    When you open Willow, here's what you'll see. Tap the icon on your home screen and you're in.
   </p>
 
   <div class="layout-diagram">
@@ -756,12 +466,12 @@
     for one-handed use with comfortable touch targets.
   </p>
 
-  <div class="page-num">5</div>
+  <div class="page-num">2</div>
 </div>
 
 
 <!-- ═══════════════════════════════════════════════════════
-     PAGE 6–7: WORKING WITH CLIENTS
+     PAGE 3–4: WORKING WITH CLIENTS
 ═══════════════════════════════════════════════════════ -->
 <div class="page">
   <h1>Working with Clients</h1>
@@ -824,7 +534,7 @@
     grouped actions. Each group opens a panel of relevant buttons:
   </p>
 
-  <div class="page-num">6</div>
+  <div class="page-num">3</div>
 </div>
 
 <div class="page">
@@ -881,12 +591,12 @@
     and can approve or cancel.
   </div>
 
-  <div class="page-num">7</div>
+  <div class="page-num">4</div>
 </div>
 
 
 <!-- ═══════════════════════════════════════════════════════
-     PAGE 8: TALKING TO WILLOW
+     PAGE 5: TALKING TO WILLOW
 ═══════════════════════════════════════════════════════ -->
 <div class="page">
   <h1>Talking to Willow</h1>
@@ -950,12 +660,12 @@
     <p style="margin-bottom:0"><em>"Show me all my active clients"</em></p>
   </div>
 
-  <div class="page-num">8</div>
+  <div class="page-num">5</div>
 </div>
 
 
 <!-- ═══════════════════════════════════════════════════════
-     PAGE 9: MEMORY & REMINDERS
+     PAGE 6: MEMORY & REMINDERS
 ═══════════════════════════════════════════════════════ -->
 <div class="page">
   <h1>Memory &amp; Reminders</h1>
@@ -987,12 +697,12 @@
     you select that client. Pinned reminders appear at the start of every session.
   </p>
 
-  <div class="page-num">9</div>
+  <div class="page-num">6</div>
 </div>
 
 
 <!-- ═══════════════════════════════════════════════════════
-     PAGE 10: TEMPLATES & PLACEHOLDERS
+     PAGE 7: TEMPLATES & PLACEHOLDERS
 ═══════════════════════════════════════════════════════ -->
 <div class="page">
   <h1>Templates &amp; Placeholders</h1>
@@ -1059,7 +769,7 @@
     </tbody>
   </table>
 
-  <div class="page-num">10</div>
+  <div class="page-num">7</div>
 </div>
 
 <div class="page">
@@ -1125,12 +835,12 @@
     <strong>Doula Tools &rarr; Manage Templates</strong> to connect your template to Willow.
   </div>
 
-  <div class="page-num">11</div>
+  <div class="page-num">8</div>
 </div>
 
 
 <!-- ═══════════════════════════════════════════════════════
-     PAGE 12: MANAGING TEMPLATES
+     PAGE 9: MANAGING TEMPLATES
 ═══════════════════════════════════════════════════════ -->
 <div class="page">
   <h1>Managing Templates</h1>
@@ -1211,12 +921,12 @@
     the corresponding button appears automatically in Willow's interface.
   </p>
 
-  <div class="page-num">12</div>
+  <div class="page-num">9</div>
 </div>
 
 
 <!-- ═══════════════════════════════════════════════════════
-     PAGE 13: CUSTOMIZATION
+     PAGE 10: CUSTOMIZATION
 ═══════════════════════════════════════════════════════ -->
 <div class="page">
   <h1>Customization</h1>
@@ -1283,12 +993,12 @@
     just refresh Willow in your browser.
   </div>
 
-  <div class="page-num">13</div>
+  <div class="page-num">10</div>
 </div>
 
 
 <!-- ═══════════════════════════════════════════════════════
-     PAGE 14: UNDERSTANDING YOUR DATA
+     PAGE 11: UNDERSTANDING YOUR DATA
 ═══════════════════════════════════════════════════════ -->
 <div class="page">
   <h1>Understanding Your Data</h1>
@@ -1359,12 +1069,12 @@
     <li><strong>Intake Log</strong> &mdash; intake form submissions</li>
   </ul>
 
-  <div class="page-num">14</div>
+  <div class="page-num">11</div>
 </div>
 
 
 <!-- ═══════════════════════════════════════════════════════
-     PAGE 15: PRIVACY & SECURITY
+     PAGE 12: PRIVACY & SECURITY
 ═══════════════════════════════════════════════════════ -->
 <div class="page">
   <h1>Privacy &amp; Security</h1>
@@ -1410,12 +1120,12 @@
     never included in client-facing code, and never shared with anyone.
   </p>
 
-  <div class="page-num">15</div>
+  <div class="page-num">12</div>
 </div>
 
 
 <!-- ═══════════════════════════════════════════════════════
-     PAGE 16: QUICK REFERENCE
+     PAGE 13: QUICK REFERENCE
 ═══════════════════════════════════════════════════════ -->
 <div class="page">
   <h1>Quick Reference</h1>
@@ -1487,7 +1197,7 @@
     <div style="font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:1px">Your Practice. Your Way.</div>
   </div>
 
-  <div class="page-num">16</div>
+  <div class="page-num">13</div>
 </div>
 
 </body>

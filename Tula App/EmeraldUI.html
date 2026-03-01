@@ -743,7 +743,6 @@
     <textarea
       class="input-field"
       id="chatInput"
-      id="chatInputField"
       placeholder="Ask Willow anything..."
       rows="1"
       onkeydown="handleInputKeydown(event)"
@@ -895,7 +894,7 @@ async function loadConfig() {
       if (headerSub) headerSub.textContent = practiceName.replace(',', ' ·');
       const homeTitle = document.getElementById('homeTitle');
       if (homeTitle) homeTitle.textContent = 'Welcome';
-      const chatField = document.getElementById('chatInputField');
+      const chatField = document.getElementById('chatInput');
       if (chatField) chatField.placeholder = 'Ask ' + aiName + ' anything...';
     }
   } catch (e) {
