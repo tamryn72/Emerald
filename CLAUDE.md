@@ -1,6 +1,6 @@
-# CLAUDE.md — Emerald AI
+# CLAUDE.md — Willow AI
 
-> **Project:** Emerald — AI Assistant for Haven, The Awakening Doula
+> **Project:** Willow — AI Assistant for Haven, The Awakening Doula
 > **Model:** `claude-sonnet-4-6` (Anthropic, February 2026)
 > **Practitioner:** Carlie Wyton, MA
 > **Brand voice:** Haven, The Awakening Doula
@@ -9,16 +9,16 @@
 
 ## What This Project Is
 
-Emerald is a mobile-first AI chat interface for Haven, The Awakening Doula. It gives the practitioner a phone-app experience to manage every aspect of their client practice — through conversation, through tapping buttons, or through a mix of both.
+Willow is a mobile-first AI chat interface for Haven, The Awakening Doula. It gives the practitioner a phone-app experience to manage every aspect of their client practice — through conversation, through tapping buttons, or through a mix of both.
 
-Emerald can:
+Willow can:
 - Browse and select clients from a sidebar list
 - Read client data from the spreadsheet in real time
 - Write or clear cell data (within safe, non-automation ranges)
 - Trigger any of the 50+ backend actions that exist in the spreadsheet system
 - Answer questions, draft content, and guide workflows conversationally
 
-Emerald **cannot**:
+Willow **cannot**:
 - Modify the spreadsheet structure (no sheet creation/deletion via AI)
 - Interfere with form triggers or automation functions (`onFormSubmit`, `onOptInFormSubmit`, `onInquiryFormSubmit`)
 - Access any cell outside the defined safe write ranges for each client type
@@ -27,16 +27,16 @@ Emerald **cannot**:
 
 ## Architecture
 
-Emerald follows the Wanderlust/Gilligan pattern: a Next.js-style component-driven frontend, a Google Apps Script backend that exposes a Web App API, and Claude as the AI reasoning layer with tool use.
+Willow follows the Wanderlust/Gilligan pattern: a Next.js-style component-driven frontend, a Google Apps Script backend that exposes a Web App API, and Claude as the AI reasoning layer with tool use.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  Emerald UI  (EmeraldUI.html — GAS Web App)             │
+│  Willow UI  (EmeraldUI.html — GAS Web App)              │
 │                                                         │
 │  ┌──────────────┐  ┌──────────────────────────────────┐ │
 │  │ Client       │  │ Chat Area                        │ │
 │  │ Sidebar      │  │  • Message thread                │ │
-│  │              │  │  • Emerald responses             │ │
+│  │              │  │  • Willow responses              │ │
 │  │  ● Client A  │  │  • Action confirmations          │ │
 │  │  ● Client B  │  │                                  │ │
 │  │  ● Client C  │  │ Action Panel (per client type)   │ │
@@ -99,15 +99,20 @@ Emerald/
 ├── MEMORY.md              ← Memory & context architecture
 ├── CONTEXT.md             ← Claude system prompt + persona
 ├── TIMELINE.md            ← Phased development plan
+├── NEXT_SESSION.md        ← Monday/Tuesday build plan
+├── WillowGuide.html       ← 13-page luxury user guide
+├── WillowSetup.html       ← 5-page standalone DIY setup guide
 └── Tula App/
     ├── SPREADSHEET APPS SCRIPT.gs    ← EXISTING — modified 2026-02-26 (bug fixes)
     ├── SPREADSHEET SIDEBAR CODE.html ← EXISTING — modified 2026-02-26 (toast fix)
-    ├── EmeraldAPI.gs                 ← NEW: Web App entry + data bridge
-    ├── EmeraldAI.gs                  ← NEW: Claude integration + tools
-    └── EmeraldUI.html                ← NEW: Mobile-first chat UI
+    ├── EmeraldAPI.gs                 ← Web App entry + data bridge
+    ├── EmeraldAI.gs                  ← Claude integration + tools
+    └── EmeraldUI.html                ← Mobile-first chat UI (Willow-branded)
 ```
 
 > **Golden Rule (updated 2026-02-26):** Prefer not to modify `SPREADSHEET APPS SCRIPT.gs` or `SPREADSHEET SIDEBAR CODE.html` unless fixing production bugs in the human-facing system. Bug fixes were applied on 2026-02-26 — see TIMELINE.md for full details.
+>
+> **Note:** File names in the GAS project (`EmeraldAPI.gs`, `EmeraldAI.gs`, `EmeraldUI.html`) still use the "Emerald" prefix for backwards compatibility. The AI persona is "Willow" — configured via `AI_NAME` Script Property.
 
 ---
 
@@ -217,7 +222,7 @@ Every client sheet follows this layout:
 
 ## Complete Tool Map
 
-Every Apps Script function is exposed to Claude as a named tool. Emerald can invoke any of these.
+Every Apps Script function is exposed to Claude as a named tool. Willow can invoke any of these.
 
 ### Group 1: Client Information (Read-Only)
 | Tool Name | Calls | Description |
@@ -306,7 +311,7 @@ Every Apps Script function is exposed to Claude as a named tool. Emerald can inv
 ## Design System — Sunset
 
 ```css
-/* Sunset Palette */
+/* Sunset Palette (CSS variables retain --emerald- prefix for compatibility) */
 --emerald-bg:         #FDF0E8;   /* Warm peach cream — main background */
 --emerald-surface:    #FFF8F3;   /* Soft white — cards, panels */
 --emerald-primary:    #E8654A;   /* Sunset coral — primary actions */
@@ -337,17 +342,17 @@ Every Apps Script function is exposed to Claude as a named tool. Emerald can inv
 
 ---
 
-## AI Persona — Emerald
+## AI Persona — Willow
 
-Emerald is a warm, wise, efficient assistant for Haven, The Awakening Doula. She speaks in a calm, professional, gently empowering tone. She is never robotic, never verbose. She confirms actions clearly and asks only what she needs.
+Willow is a warm, wise, efficient assistant for Haven, The Awakening Doula. She speaks in a calm, professional, gently empowering tone. She is never robotic, never verbose. She confirms actions clearly and asks only what she needs.
 
-**Emerald's voice:**
+**Willow's voice:**
 - Clear and direct — no fluff
 - Warm and affirming — never clinical
 - Proactive — anticipates next steps
 - Trustworthy — always confirms before sending emails or making irreversible changes
 
-**What Emerald says:**
+**What Willow says:**
 - "Done — Session Notes created for [Client]."
 - "Week 3 workbook sent to [Client] at [email]."
 - "I've drafted the past client offer — want me to send it to all 12 contacts?"
@@ -377,7 +382,7 @@ Apps Script → Deploy → New Deployment:
 - Execute as: Me (Carlie's Google account)
 - Who has access: Only myself
 
-Copy the Web App URL — this is Emerald's home URL.
+Copy the Web App URL — this is Willow's home URL.
 
 ### 4. Bookmark on phone
 Add the Web App URL to your phone's home screen for app-like experience.
@@ -420,6 +425,9 @@ Testing:    End-to-end testing in progress
 - **Config via Script Properties** — practitioner name, practice name, AI name, session duration all configurable (added 2026-03-01)
 - **Dynamic system prompt** — AI persona reads config from Script Properties (added 2026-03-01)
 - **Dynamic tool enums** — generate_document and generate_client_packet enums read from registry (added 2026-03-01)
+- **Willow rebrand** — AI persona renamed from Emerald to Willow, SVG willow icons, breathing animation, serif monograms (added 2026-03-01)
+- **WillowGuide.html** — 13-page luxury user guide with Cormorant Garamond typography (added 2026-03-01)
+- **WillowSetup.html** — 5-page standalone DIY setup guide (added 2026-03-01)
 
 ### Website Forms (Both Available)
 Both forms are built into the spreadsheet and ready for Carlie to set up:
@@ -442,7 +450,7 @@ Both forms are built into the spreadsheet and ready for Carlie to set up:
 Template IDs are now managed via a **Template Registry** sheet instead of hard-coded constants:
 - **Setup:** Doula Tools > Setup > Create Template Registry (one-time, migrates existing IDs)
 - **Manage:** Doula Tools > Manage Templates (search Drive, wire templates, add new types)
-- **Via Emerald:** "Wire my Week 3 workbook" / "What templates are missing?"
+- **Via Willow:** "Wire my Week 3 workbook" / "What templates are missing?"
 - UI buttons auto-grey-out for templates not yet wired
 - Still needed: Workbook weeks 2–12, Intro Packet, Packet 2, Packet 3, Client Homework
 
@@ -475,7 +483,7 @@ API:      https://api.anthropic.com/v1/messages
 Version:  Current as of February 2026
 ```
 
-Use `claude-sonnet-4-6` for all AI inference. This is the most capable Claude model available as of February 2026 and is appropriate for the nuanced, multi-tool reasoning required by Emerald's doula practice workflows.
+Use `claude-sonnet-4-6` for all AI inference. This is the most capable Claude model available as of February 2026 and is appropriate for the nuanced, multi-tool reasoning required by Willow's doula practice workflows.
 
 ---
 
@@ -491,7 +499,7 @@ Use `claude-sonnet-4-6` for all AI inference. This is the most capable Claude mo
 
 ## Non-Interference Guarantee
 
-Emerald's new GAS files add only:
+Willow's GAS files add only:
 1. A `doGet()` entry point (serves the UI)
 2. A `doPost()` entry point (handles chat/actions)
 3. New AI-specific helper functions

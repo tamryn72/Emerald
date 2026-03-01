@@ -1,6 +1,6 @@
-# TIMELINE.md — Emerald Development Plan
+# TIMELINE.md — Willow Development Plan
 
-> Phased roadmap for building Emerald from planning to production.
+> Phased roadmap for building Willow (formerly Emerald) from planning to production.
 > Model: `claude-sonnet-4-6` | Stack: GAS Web App + Vanilla JS + Anthropic API
 
 ---
@@ -32,7 +32,7 @@ Phase 8 ──── Polish, Testing & Deployment     [IN PROGRESS]
 
 ## Phase 2: GAS Web App Backend Foundation — COMPLETE
 
-### Delivered: `EmeraldAPI.gs` (37 functions, 974 lines)
+### Delivered: `EmeraldAPI.gs`
 
 - [x] `doGet(e)` — serves EmeraldUI.html as Web App
 - [x] `doPost(e)` — routes 10 API actions (chat, getClients, getClientInfo, getEmailTemplates, getMemory, getSessions, getNewsletterPreview, executeAction, clearMemory)
@@ -48,7 +48,7 @@ Phase 8 ──── Polish, Testing & Deployment     [IN PROGRESS]
 
 ## Phase 3: Claude AI Integration — COMPLETE
 
-### Delivered: `EmeraldAI.gs` (14 functions, 704 lines)
+### Delivered: `EmeraldAI.gs`
 
 - [x] `callClaudeAPI()` — REST call to Anthropic API (`claude-sonnet-4-6`, 2048 max tokens)
 - [x] `runAgenticLoop()` — multi-step tool use, max 10 iterations, executes tools until no more tool_use blocks
@@ -60,7 +60,7 @@ Phase 8 ──── Polish, Testing & Deployment     [IN PROGRESS]
 
 ## Phase 4: Frontend — Chat Interface — COMPLETE
 
-### Delivered: `EmeraldUI.html` (1,386 lines — 639 CSS + 747 JS/HTML)
+### Delivered: `EmeraldUI.html`
 
 - [x] Mobile-first layout (100dvh, flexbox, 680px breakpoint)
 - [x] Chat area with AI bubbles (peach) + user bubbles (coral) + timestamps
@@ -170,7 +170,7 @@ Built into `EmeraldAI.gs`:
 - [ ] Verify all tools work through Web App (end-to-end testing)
 
 ### Polish — Planned for Monday March 3
-- [ ] Restore last client on app load (from EMERALD_MEMORY.lastClient)
+- [ ] Restore last client on app load (from long-term memory lastClient)
 - [ ] Display pinned reminders on app load
 - [ ] Loading skeleton for client list (shimmer animation)
 - [ ] Page title updates with active client name
@@ -197,6 +197,16 @@ Built into `EmeraldAI.gs`:
 - [x] Dynamic system prompt — AI persona reads from config, rebrandable without code changes
 - [x] Dynamic page title + sidebar brand from config
 - [x] getConfig API endpoint for UI to fetch settings
+
+### Willow Rebrand (added 2026-03-01)
+- [x] AI persona renamed from Emerald to Willow (UI, config defaults, system prompt)
+- [x] SVG willow leaf icon replaces gem emoji in header
+- [x] Cascading willow branches SVG with breathing animation on home screen
+- [x] Serif italic monogram (dynamic first letter from config) replaces gem in chat avatars
+- [x] Dynamic branding — all UI text updates from AI_NAME config setting
+- [x] WillowGuide.html — 13-page luxury user guide (Cormorant Garamond, warm cream/gold palette)
+- [x] WillowSetup.html — 5-page standalone DIY setup guide
+- [x] All documentation updated (CLAUDE.md, MEMORY.md, CONTEXT.md, TIMELINE.md, NEXT_SESSION.md)
 
 ### Template Wiring — Waiting on Carlie's answers (self-service now!)
 - [ ] Wire workbook template IDs weeks 2–12 (Q6) — Carlie can do via Manage Templates
@@ -270,10 +280,11 @@ Built into `EmeraldAI.gs`:
 | 2026-03-01 | Template Registry sheet for self-service management | Carlie can wire/update template IDs without code changes or redeploy |
 | 2026-03-01 | Dynamic weeks, field labels, doc types, config from registry/properties | Full self-service: Carlie can rename fields, add weeks, change brand name — zero code changes |
 | 2026-03-01 | Keep model as claude-sonnet-4-6 | Per Carlie's preference — Sonnet, not Opus |
+| 2026-03-01 | Rebrand AI from Emerald to Willow | Carlie chose the name; elegant willow imagery replaces gem emoji |
 
 ---
 
-## Bug Fixes Applied (2026-02-26) — Emerald Layer
+## Bug Fixes Applied (2026-02-26) — Willow Layer
 
 | Fix | File | Issue |
 |-----|------|-------|

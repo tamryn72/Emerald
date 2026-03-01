@@ -1,12 +1,12 @@
-# MEMORY.md — Emerald Memory Architecture
+# MEMORY.md — Willow Memory Architecture
 
-> How Emerald remembers things within and across sessions.
+> How Willow remembers things within and across sessions.
 
 ---
 
 ## Overview
 
-Emerald uses a **three-layer memory model** that keeps things lightweight (no external database) while giving the practitioner a coherent, contextual experience every time she opens the app.
+Willow uses a **three-layer memory model** that keeps things lightweight (no external database) while giving the practitioner a coherent, contextual experience every time she opens the app.
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -142,13 +142,13 @@ Stored in `ScriptProperties` under key `EMERALD_MEMORY`.
 3. Save updated session to `ScriptProperties`
 
 ### "Remember" Commands
-Emerald listens for memory phrases:
+Willow listens for memory phrases:
 - "Remember that Jane likes mornings" → writes to `clientNotes["Jane"]`
 - "Remind me to follow up with Mary next week" → appends to `pinnedReminders`
 - "Forget the note about Jane" → clears that client note
 
 ### Memory Retrieval
-When Emerald needs context about a client beyond the spreadsheet data, she checks:
+When Willow needs context about a client beyond the spreadsheet data, she checks:
 1. `clientNotes` for that client
 2. `recentActions` for recent history
 3. `conversationHistory` for ongoing thread context

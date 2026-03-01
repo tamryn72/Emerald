@@ -1,4 +1,4 @@
-# Emerald — Monday/Tuesday Build Plan
+# Willow — Monday/Tuesday Build Plan
 
 > Last updated: 2026-02-28
 > Questions sent to Carlie — answers expected before Monday.
@@ -43,9 +43,9 @@
 2. Doula Tools > Manage Templates
 3. Click "Wire" next to any missing template → search Drive → click to connect
 
-**Option B: Via Emerald chat**
+**Option B: Via Willow chat**
 - "What templates are still missing?"
-- "Wire my Week 3 workbook template" → Emerald searches Drive, confirms, wires it
+- "Wire my Week 3 workbook template" → Willow searches Drive, confirms, wires it
 
 **Our job Monday:** Verify the system works end-to-end. If Carlie provides IDs directly instead, we can still wire them via the dialog or chat.
 
@@ -62,7 +62,7 @@
 **No code changes needed!** Field labels are now stored in the Template Registry:
 - Doula Tools > Manage Templates > scroll to "Field Labels — Akashic" section
 - Click "Edit" next to any field to rename it
-- OR via chat: "Rename the Themes field to Soul Themes for Akashic clients"
+- OR via Willow chat: "Rename the Themes field to Soul Themes for Akashic clients"
 
 **Original plan (no longer needed):**
 ~~Files to modify (4):~~
@@ -150,11 +150,11 @@ Add CSS for `.skeleton` pulse animation.
 #### 5d. Page Title with Active Client
 In `selectClient()`:
 ```js
-document.title = clientName + ' | Emerald';
+document.title = clientName + ' | Willow';
 ```
 On deselect / return to home:
 ```js
-document.title = 'Emerald | Haven, The Awakening Doula';
+document.title = 'Willow | Haven, The Awakening Doula';
 ```
 
 ---
@@ -312,6 +312,9 @@ If Acuity creds haven't arrived by Tuesday:
 
 ## Previously Completed (2026-03-01)
 
+- [x] Willow rebrand — AI renamed from Emerald, SVG willow icons, breathing animation, serif monograms
+- [x] WillowGuide.html — 13-page luxury user guide
+- [x] WillowSetup.html — 5-page standalone DIY setup guide
 - [x] Template Registry — self-service template management system
 - [x] Manage Templates dialog (search Drive, wire, add new, edit field labels)
 - [x] Dynamic Soul Emergence weeks (count + names from registry)
@@ -335,7 +338,7 @@ If Acuity creds haven't arrived by Tuesday:
 ## Previously Completed (2026-02-26)
 
 - [x] 10 critical bug fixes (see TIMELINE.md)
-- [x] Full Emerald system live: API + AI + UI
+- [x] Full Willow system live: API + AI + UI
 - [x] 31 tools wired end-to-end
 - [x] Memory system (session + long-term)
 - [x] Week 1 workbook real template ID restored
