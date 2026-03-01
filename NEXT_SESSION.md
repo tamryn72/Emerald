@@ -57,12 +57,18 @@
 ---
 
 ### Block 2: Akashic Field Name Changes
-> Depends on Carlie's answer to Q10
+> **NOW SELF-SERVICE** — Carlie can rename fields via Manage Templates dialog or via chat
 
-**Files to modify (4):**
-1. `SPREADSHEET APPS SCRIPT.gs` — Akashic template section (row labels in `newClientSetup`)
-2. `EmeraldAPI.gs` — `emeraldGetClientInfo()` Akashic branch (~line 230) field label strings
-3. `CLAUDE.md` — Akashic Client Fields table
+**No code changes needed!** Field labels are now stored in the Template Registry:
+- Doula Tools > Manage Templates > scroll to "Field Labels — Akashic" section
+- Click "Edit" next to any field to rename it
+- OR via chat: "Rename the Themes field to Soul Themes for Akashic clients"
+
+**Original plan (no longer needed):**
+~~Files to modify (4):~~
+~~1. `SPREADSHEET APPS SCRIPT.gs` — Akashic template section (row labels in `newClientSetup`)~~
+~~2. `EmeraldAPI.gs` — `emeraldGetClientInfo()` Akashic branch field label strings~~
+~~3. `CLAUDE.md` — Akashic Client Fields table~~
 4. `CONTEXT.md` — tool descriptions if field names referenced
 
 **Changes per file:**
@@ -303,6 +309,18 @@ If Acuity creds haven't arrived by Tuesday:
 - **Deploy Block 8** with whatever is complete
 
 ---
+
+## Previously Completed (2026-03-01)
+
+- [x] Template Registry — self-service template management system
+- [x] Manage Templates dialog (search Drive, wire, add new, edit field labels)
+- [x] Dynamic Soul Emergence weeks (count + names from registry)
+- [x] Field Labels registry (Akashic 18 fields + Counseling 9 fields)
+- [x] Dynamic doc type and packet enums from registry
+- [x] Config via Script Properties (practitioner name, practice name, AI name, session duration)
+- [x] Dynamic system prompt (reads persona from config)
+- [x] Dynamic page title and sidebar brand
+- [x] getConfig API endpoint
 
 ## Previously Completed (2026-02-27)
 

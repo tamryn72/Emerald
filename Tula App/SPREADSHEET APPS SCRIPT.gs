@@ -240,7 +240,38 @@ function setupTemplateRegistry() {
     // Packets
     row('packet', 'Intro Packet', CLIENT_LIT_TEMPLATES['Intro Packet']),
     row('packet', 'Packet 2', CLIENT_LIT_TEMPLATES['Packet 2']),
-    row('packet', 'Packet 3', CLIENT_LIT_TEMPLATES['Packet 3'])
+    row('packet', 'Packet 3', CLIENT_LIT_TEMPLATES['Packet 3']),
+
+    // Field Labels — Akashic (label = cell ref, "template ID" = display name)
+    ['field_akashic', 'B13', 'Themes', 'Active', now],
+    ['field_akashic', 'B14', 'Soul Messages', 'Active', now],
+    ['field_akashic', 'B15', 'Blocks', 'Active', now],
+    ['field_akashic', 'B16', 'Openings', 'Active', now],
+    ['field_akashic', 'B17', 'Past Life Notes', 'Active', now],
+    ['field_akashic', 'B20', 'Breath Insights', 'Active', now],
+    ['field_akashic', 'B21', 'Body Feedback', 'Active', now],
+    ['field_akashic', 'B22', 'Breath Energy', 'Active', now],
+    ['field_akashic', 'B25', 'Regulation', 'Active', now],
+    ['field_akashic', 'B26', 'Triggers', 'Active', now],
+    ['field_akashic', 'B27', 'Soothing', 'Active', now],
+    ['field_akashic', 'B28', 'Routine', 'Active', now],
+    ['field_akashic', 'B29', 'Nervous Energy', 'Active', now],
+    ['field_akashic', 'B31', 'Session Notes', 'Active', now],
+    ['field_akashic', 'B32', 'Insight Downloads', 'Active', now],
+    ['field_akashic', 'B33', 'Integration Tasks', 'Active', now],
+    ['field_akashic', 'B36', 'Completion Notes', 'Active', now],
+    ['field_akashic', 'B37', 'Completion Date', 'Active', now],
+
+    // Field Labels — Counseling
+    ['field_counseling', 'B14', 'Primary Concern / Focus', 'Active', now],
+    ['field_counseling', 'B15', 'Client Narrative', 'Active', now],
+    ['field_counseling', 'B16', 'Emotional Landscape', 'Active', now],
+    ['field_counseling', 'B17', 'Spiritual Landscape', 'Active', now],
+    ['field_counseling', 'B18', 'Cognitive + Relational Patterns', 'Active', now],
+    ['field_counseling', 'B19', 'Behavioural Patterns', 'Active', now],
+    ['field_counseling', 'B20', 'Interventions Used', 'Active', now],
+    ['field_counseling', 'B21', 'Therapeutic Notes for Continuity', 'Active', now],
+    ['field_counseling', 'B22', 'Plan for Next Session', 'Active', now]
   ];
 
   sheet.getRange(2, 1, rows.length, 5).setValues(rows);
@@ -268,6 +299,95 @@ function setupTemplateRegistry() {
 }
 
 /**
+ * Reads Soul Emergence week names from the Template Registry workbook entries.
+ * Parses "Week N - Name" labels to extract week numbers and names.
+ * Falls back to hard-coded SESSION_NAMES if registry doesn't exist.
+ */
+function getSessionNamesFromRegistry() {
+  var registry = getTemplateRegistry();
+  if (!registry || registry.length === 0) return { names: SESSION_NAMES, count: 12 };
+
+  var workbooks = registry.filter(function(t) { return t.category === 'workbook'; });
+  if (workbooks.length === 0) return { names: SESSION_NAMES, count: 12 };
+
+  var names = {};
+  var count = 0;
+  workbooks.forEach(function(w) {
+    var match = w.label.match(/^Week\s+(\d+)\s*-\s*(.+)$/i);
+    if (match) {
+      var num = parseInt(match[1]);
+      names[num] = match[2].trim();
+      if (num > count) count = num;
+    }
+  });
+
+  if (count === 0) return { names: SESSION_NAMES, count: 12 };
+  return { names: names, count: count };
+}
+
+/**
+ * Reads field display labels from the Template Registry.
+ * Categories: field_akashic, field_counseling, field_soul_emergence
+ * Returns object: { "B13": "Themes", "B14": "Soul Messages", ... }
+ */
+function getFieldLabels(clientType) {
+  var registry = getTemplateRegistry();
+  var category = 'field_' + clientType.toLowerCase().replace(/\s+/g, '_');
+  var labels = {};
+  registry.forEach(function(t) {
+    if (t.category === category && t.templateId) {
+      labels[t.label] = t.templateId;
+    }
+  });
+  return labels;
+}
+
+/**
+ * Returns Emerald configuration from Script Properties.
+ * Falls back to sensible defaults if not yet configured.
+ */
+function getEmeraldConfig() {
+  var props = PropertiesService.getScriptProperties();
+  var sessionInfo = getSessionNamesFromRegistry();
+  return {
+    sessionNames: sessionInfo.names,
+    weekCount: sessionInfo.count,
+    sessionDuration: parseInt(props.getProperty('SESSION_DURATION_MINUTES') || '60'),
+    practitionerName: props.getProperty('PRACTITIONER_NAME') || 'Carlie Wyton, MA',
+    practiceName: props.getProperty('PRACTICE_NAME') || 'Haven, The Awakening Doula',
+    aiName: props.getProperty('AI_NAME') || 'Emerald'
+  };
+}
+
+/**
+ * Initializes default Emerald configuration in Script Properties.
+ * Safe to run multiple times — only sets values that don't exist yet.
+ */
+function setupEmeraldConfig() {
+  var props = PropertiesService.getScriptProperties();
+  var defaults = {
+    'SESSION_DURATION_MINUTES': '60',
+    'PRACTITIONER_NAME': 'Carlie Wyton, MA',
+    'PRACTICE_NAME': 'Haven, The Awakening Doula',
+    'AI_NAME': 'Emerald'
+  };
+  Object.keys(defaults).forEach(function(key) {
+    if (!props.getProperty(key)) {
+      props.setProperty(key, defaults[key]);
+    }
+  });
+  SpreadsheetApp.getUi().alert(
+    'Emerald configuration initialized with defaults.\n\n' +
+    'To change values, go to:\nExtensions > Apps Script > Project Settings > Script Properties\n\n' +
+    'Available settings:\n' +
+    '• PRACTITIONER_NAME\n' +
+    '• PRACTICE_NAME\n' +
+    '• AI_NAME\n' +
+    '• SESSION_DURATION_MINUTES'
+  );
+}
+
+/**
  * Opens the Manage Templates dialog.
  */
 function showManageTemplatesDialog() {
@@ -278,7 +398,7 @@ function showManageTemplatesDialog() {
   }
 
   // Build grouped HTML
-  var categories = { document: 'Documents', workbook: 'Workbooks', packet: 'Packets' };
+  var categories = { document: 'Documents', workbook: 'Workbooks', packet: 'Packets', field_akashic: 'Field Labels — Akashic', field_counseling: 'Field Labels — Counseling' };
   var html = '<style>';
   html += 'body{font-family:"Google Sans",Helvetica,sans-serif;background:#FDF0E8;color:#2C1810;margin:0;padding:16px;}';
   html += 'h2{color:#7B3F2A;font-size:16px;margin:16px 0 8px;border-bottom:1px solid #F0D9CA;padding-bottom:4px;}';
@@ -291,6 +411,8 @@ function showManageTemplatesDialog() {
   html += '.btn{padding:6px 12px;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;}';
   html += '.btn-wire{background:#E8654A;color:white;}';
   html += '.btn-wire:hover{background:#C4472F;}';
+  html += '.btn-edit{background:#7B3F2A;color:white;}';
+  html += '.btn-edit:hover{background:#5a2d1e;}';
   html += '.btn-change{background:#D4A762;color:white;}';
   html += '.btn-change:hover{background:#B88840;}';
   html += '#searchPanel{display:none;background:#FFF8F3;border:1px solid #F0D9CA;border-radius:8px;padding:12px;margin:12px 0;}';
@@ -316,23 +438,34 @@ function showManageTemplatesDialog() {
   html += '<div id="searchResults"></div>';
   html += '</div>';
 
-  var catOrder = ['document', 'workbook', 'packet'];
+  var catOrder = ['document', 'workbook', 'packet', 'field_akashic', 'field_counseling'];
   for (var c = 0; c < catOrder.length; c++) {
     var cat = catOrder[c];
     var catTemplates = templates.filter(function(t) { return t.category === cat; });
     if (catTemplates.length === 0) continue;
 
     html += '<h2>' + categories[cat] + '</h2>';
+    var isFieldCategory = cat.indexOf('field_') === 0;
+
     for (var t = 0; t < catTemplates.length; t++) {
       var tmpl = catTemplates[t];
       var isActive = tmpl.status === 'Active';
       html += '<div class="row">';
-      html += '<div class="status ' + (isActive ? 'active' : 'missing') + '">' + (isActive ? '✓' : '✗') + '</div>';
-      html += '<div class="label">' + tmpl.label + '</div>';
-      if (isActive) {
-        html += '<button class="btn btn-change" onclick="startWire(\'' + tmpl.category + '\',\'' + tmpl.label.replace(/'/g, "\\'") + '\')">Change</button>';
+
+      if (isFieldCategory) {
+        // Field labels: show cell ref + display name + Edit button
+        html += '<div class="status active" style="font-size:11px;background:#E8F4FD;color:#2C6FA0;">' + tmpl.label + '</div>';
+        html += '<div class="label">' + (tmpl.templateId || '<em>unnamed</em>') + '</div>';
+        html += '<button class="btn btn-edit" onclick="editField(\'' + tmpl.category + '\',\'' + tmpl.label + '\',\'' + (tmpl.templateId || '').replace(/'/g, "\\'") + '\')">Edit</button>';
       } else {
-        html += '<button class="btn btn-wire" onclick="startWire(\'' + tmpl.category + '\',\'' + tmpl.label.replace(/'/g, "\\'") + '\')">Wire</button>';
+        // Template: show status + label + Wire/Change button
+        html += '<div class="status ' + (isActive ? 'active' : 'missing') + '">' + (isActive ? '✓' : '✗') + '</div>';
+        html += '<div class="label">' + tmpl.label + '</div>';
+        if (isActive) {
+          html += '<button class="btn btn-change" onclick="startWire(\'' + tmpl.category + '\',\'' + tmpl.label.replace(/'/g, "\\'") + '\')">Change</button>';
+        } else {
+          html += '<button class="btn btn-wire" onclick="startWire(\'' + tmpl.category + '\',\'' + tmpl.label.replace(/'/g, "\\'") + '\')">Wire</button>';
+        }
       }
       html += '</div>';
     }
@@ -363,6 +496,8 @@ function showManageTemplatesDialog() {
   html += 'function showResults(results){var div=document.getElementById("searchResults");if(!results||results.length===0){div.innerHTML="No documents found. Try a different search term.";return;}div.innerHTML="";for(var i=0;i<results.length;i++){var r=results[i];var el=document.createElement("div");el.className="result";el.innerHTML=\'<div class="result-name">\'+r.name+\'</div><div class="result-id">ID: \'+r.id+\'</div>\';el.onclick=(function(id,name){return function(){confirmWire(id,name)};})(r.id,r.name);div.appendChild(el);}}';
 
   html += 'function confirmWire(id,name){if(!confirm("Wire \\\""+name+"\\\" as the template for \\\""+wireLabel+"\\\"?")){return;}google.script.run.withSuccessHandler(function(res){if(res.success){showToast(wireLabel+" template wired!");document.getElementById("searchPanel").style.display="none";setTimeout(function(){google.script.host.close();showManageTemplatesDialog();},1500);}}).withFailureHandler(function(e){showToast("Error: "+e.message,"#dc3545");}).wireTemplate(wireCategory,wireLabel,id);}';
+
+  html += 'function editField(cat,cell,currentName){var newName=prompt("Rename field "+cell+" (currently: "+currentName+"):",currentName);if(!newName||newName===currentName)return;google.script.run.withSuccessHandler(function(res){if(res.success){showToast(cell+" renamed to "+newName);setTimeout(function(){google.script.host.close();showManageTemplatesDialog();},1500);}}).withFailureHandler(function(e){showToast("Error: "+e.message,"#dc3545");}).wireTemplate(cat,cell,newName);}';
 
   html += 'function showAddPanel(){document.getElementById("addPanel").style.display="block";}';
 
@@ -399,6 +534,7 @@ function onOpen() {
     .addSeparator()
     .addSubMenu(SpreadsheetApp.getUi().createMenu("Setup")
       .addItem("Create Template Registry", "setupTemplateRegistry")
+      .addItem("Configure Settings", "setupEmeraldConfig")
       .addItem("Create Past Clients Sheet", "ensurePastClientsSheet")
       .addItem("Create Opt-In Form", "setupOptInForm")
       .addItem("Create Website Inquiry Form", "setupWebsiteInquiryForm")
@@ -1039,14 +1175,17 @@ function backend_sendWorkbook(weekNumber) {
     throw new Error("Missing client name, email, or folder ID.");
   }
 
+  // Dynamic session names from registry
+  var sessionInfo = getSessionNamesFromRegistry();
+  var sessionName = sessionInfo.names[weekNumber];
+  if (!sessionName) throw new Error('Week ' + weekNumber + ' is not defined in the program.');
+
   // Registry-first lookup, falls back to hard-coded constants
-  var registryLabel = 'Week ' + weekNumber + ' - ' + SESSION_NAMES[weekNumber];
+  var registryLabel = 'Week ' + weekNumber + ' - ' + sessionName;
   var templateId = getTemplateIdFromRegistry('workbook', registryLabel) || WORKBOOK_TEMPLATES[weekNumber];
   if (!templateId || templateId.includes("YOUR_")) {
     throw new Error('Workbook template for Week ' + weekNumber + ' not yet configured. Go to Doula Tools > Manage Templates to wire it.');
   }
-
-  const sessionName = SESSION_NAMES[weekNumber];
   const folder = DriveApp.getFolderById(folderId);
   const today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMM d, yyyy");
   const docName = `Week ${weekNumber} Workbook - ${sessionName} - ${clientName}`;
@@ -1095,8 +1234,9 @@ function backend_sendWorkbook(weekNumber) {
 }
 
 function getCurrentWeek(sheet) {
-  const sessionsUsed = sheet.getRange("B9").getValue() || 0;
-  const currentWeek = Math.min(Math.max(Math.ceil(sessionsUsed), 1), 12);
+  var sessionsUsed = sheet.getRange("B9").getValue() || 0;
+  var sessionInfo = getSessionNamesFromRegistry();
+  var currentWeek = Math.min(Math.max(Math.ceil(sessionsUsed), 1), sessionInfo.count);
   sheet.getRange("F1").setValue(currentWeek);
   return currentWeek;
 }
@@ -1184,18 +1324,21 @@ function getCounselingFields(sh) {
  * Row 25 = Final Summary
  */
 function getSoulEmergenceFields(sh) {
-  const currentWeek = getCurrentWeek(sh);
+  var currentWeek = getCurrentWeek(sh);
+  var sessionInfo = getSessionNamesFromRegistry();
+  var names = sessionInfo.names;
+  var count = sessionInfo.count;
 
-  let map = {
+  var map = {
     "{{CURRENT_WEEK}}": currentWeek,
-    "{{CURRENT_SESSION_NAME}}": SESSION_NAMES[currentWeek] || "",
+    "{{CURRENT_SESSION_NAME}}": names[currentWeek] || "",
     "{{FINAL_SUMMARY}}": sh.getRange("B25").getValue()
   };
 
-  for (let week = 1; week <= 12; week++) {
-    const row = 12 + week;
-    map[`{{WEEK_${week}_NOTES}}`] = sh.getRange(row, 2).getValue();
-    map[`{{WEEK_${week}_NAME}}`] = SESSION_NAMES[week];
+  for (var week = 1; week <= count; week++) {
+    var row = 12 + week;
+    map["{{WEEK_" + week + "_NOTES}}"] = sh.getRange(row, 2).getValue();
+    map["{{WEEK_" + week + "_NAME}}"] = names[week] || "";
   }
 
   return map;
@@ -1504,8 +1647,9 @@ function addNextSession() {
   const startDate = new Date(dateValue);
   startDate.setHours(time.hours, time.minutes, 0, 0);
 
+  var duration = parseInt(PropertiesService.getScriptProperties().getProperty('SESSION_DURATION_MINUTES') || '60');
   const endDate = new Date(startDate);
-  endDate.setMinutes(endDate.getMinutes() + SESSION_DURATION_MINUTES);
+  endDate.setMinutes(endDate.getMinutes() + duration);
 
   const calendar = CalendarApp.getDefaultCalendar();
   const event = calendar.createEvent(`Awakening Doula Session - ${clientName}`, startDate, endDate, {

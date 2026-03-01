@@ -183,16 +183,18 @@ function buildSystemPrompt(activeClientName) {
     ? '\n\nPinned reminders:\n' + mem.pinnedReminders.map(r => '• ' + r).join('\n')
     : '';
 
-  return `You are Emerald, the AI assistant for Haven, The Awakening Doula.
+  const config = getEmeraldConfig();
 
-You support Carlie Wyton, MA — a spiritual counselor and doula — in managing her practice through a calm, intelligent, phone-app experience.
+  return `You are ${config.aiName}, the AI assistant for ${config.practiceName}.
+
+You support ${config.practitionerName} — a spiritual counselor and doula — in managing her practice through a calm, intelligent, phone-app experience.
 
 ## Your Identity
-- Name: Emerald
-- Practice: Haven, The Awakening Doula
-- Practitioner: Carlie Wyton, MA
+- Name: ${config.aiName}
+- Practice: ${config.practiceName}
+- Practitioner: ${config.practitionerName}
 - Tone: Warm, wise, clear, and efficient. Never robotic. Never verbose.
-- Purpose: Help Carlie manage her client practice through conversation and action.
+- Purpose: Help ${config.practitionerName.split(',')[0]} manage her client practice through conversation and action.
 
 ## What You Can Do
 You have tools to read client data, trigger any practice management action, and write to client sheets within safe limits. See tool definitions for the full list.
@@ -239,13 +241,8 @@ Payment: ${info.paymentStatus || 'Unknown'}
 Intake: ${info.intakeStatus || 'Not sent'}`;
 
   if (info.currentWeek) {
-    const weekNames = {
-      1:'The Threshold', 2:'Akashic Records Reading', 3:'Integration & Intention',
-      4:'Akashic Clearing', 5:'Befriending Your Nervous System', 6:'Parts Work Integration',
-      7:'Timeline Therapy & Reprocessing', 8:'Clearing Old Programming', 9:'Honoring What Was',
-      10:'Releasing Expectations & Ritual Goodbye', 11:'Final Akashic Clearing', 12:'Emergence & Integration'
-    };
-    text += `\nCurrent Week: ${info.currentWeek} — ${weekNames[info.currentWeek] || ''}`;
+    const sessionInfo = getSessionNamesFromRegistry();
+    text += `\nCurrent Week: ${info.currentWeek} of ${sessionInfo.count} — ${sessionInfo.names[info.currentWeek] || ''}`;
     text += `\nJournal: ${info.journalId ? 'Created' : 'Not yet created'}`;
   }
 
@@ -345,6 +342,20 @@ function _newSession() {
 ═══════════════════════════════════════════════════════════════ */
 
 function getToolDefinitions() {
+  // Dynamic enums from Template Registry
+  var registry = getTemplateRegistry();
+  var docTypes = registry
+    .filter(function(t) { return t.category === 'document'; })
+    .map(function(t) { return t.label; });
+  if (docTypes.length === 0) docTypes = ['Session Notes','Integration Guide','Breathwork Notes','Akashic Notes','Counseling Notes','Client Homework','Client Summary','Soul Emergence Summary'];
+
+  var packetTypes = registry
+    .filter(function(t) { return t.category === 'packet'; })
+    .map(function(t) { return t.label; });
+  if (packetTypes.length === 0) packetTypes = ['Intro Packet','Packet 2','Packet 3'];
+
+  var sessionInfo = getSessionNamesFromRegistry();
+
   return [
 
     /* ── Client Info ── */
@@ -417,10 +428,7 @@ function getToolDefinitions() {
           clientName: { type: 'string' },
           docType: {
             type: 'string',
-            enum: [
-              'Session Notes', 'Integration Guide', 'Breathwork Notes', 'Akashic Notes',
-              'Counseling Notes', 'Client Homework', 'Client Summary', 'Soul Emergence Summary'
-            ]
+            enum: docTypes
           }
         },
         required: ['clientName', 'docType']
@@ -433,7 +441,7 @@ function getToolDefinitions() {
         type: 'object',
         properties: {
           clientName: { type: 'string' },
-          packetType: { type: 'string', enum: ['Intro Packet', 'Packet 2', 'Packet 3'] }
+          packetType: { type: 'string', enum: packetTypes }
         },
         required: ['clientName', 'packetType']
       }
@@ -447,7 +455,7 @@ function getToolDefinitions() {
         type: 'object',
         properties: {
           clientName: { type: 'string' },
-          weekNumber: { type: 'integer', minimum: 1, maximum: 12 }
+          weekNumber: { type: 'integer', minimum: 1, maximum: sessionInfo.count }
         },
         required: ['clientName', 'weekNumber']
       }
@@ -736,15 +744,15 @@ function getToolDefinitions() {
     /* ── Template Management ── */
     {
       name: 'manage_template',
-      description: 'Manage document templates. Actions: "list_missing" to see which templates need wiring, "search" to find a Google Doc template by name in Drive, "wire" to connect a template ID to a template type. Use when Carlie asks about templates or wants to wire/update one.',
+      description: 'Manage document templates and field labels. Actions: "list_missing" to see unwired templates, "list_all" to see all, "search" to find a Google Doc in Drive, "wire" to connect a template ID or update a field label, "rename_field" to rename a client field label.',
       input_schema: {
         type: 'object',
         properties: {
-          action: { type: 'string', enum: ['search', 'wire', 'list_missing', 'list_all'], description: 'search = find docs in Drive, wire = connect a template ID, list_missing = show unwired templates, list_all = show all templates' },
+          action: { type: 'string', enum: ['search', 'wire', 'list_missing', 'list_all', 'rename_field'], description: 'search = find docs in Drive, wire = connect a template ID, list_missing = show unwired templates, list_all = show all, rename_field = rename a field label' },
           searchTerm: { type: 'string', description: 'Search term for Drive search (required for search action)' },
-          category: { type: 'string', enum: ['document', 'workbook', 'packet'], description: 'Template category (required for wire action)' },
-          label: { type: 'string', description: 'Template label e.g. "Week 3 - Integration & Intention" (required for wire action)' },
-          templateId: { type: 'string', description: 'Google Doc ID to wire (required for wire action)' }
+          category: { type: 'string', enum: ['document', 'workbook', 'packet', 'field_akashic', 'field_counseling'], description: 'Template or field category (required for wire/rename_field action)' },
+          label: { type: 'string', description: 'Template label or cell reference e.g. "Week 3 - Integration & Intention" or "B13" (required for wire/rename_field action)' },
+          templateId: { type: 'string', description: 'Google Doc ID to wire, or new display name for rename_field (required for wire/rename_field action)' }
         },
         required: ['action']
       }

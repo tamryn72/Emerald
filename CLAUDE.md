@@ -413,6 +413,13 @@ Testing:    End-to-end testing in progress
 - **Leads deduplication** — matches by name+email, updates date on refresh (fixed 2026-02-26)
 - **Email templates** — case-insensitive "Yes" matching (fixed 2026-02-26)
 - **Week 1 workbook** — real template ID restored (fixed 2026-02-26)
+- **Template Registry** — self-service template management (added 2026-03-01)
+- **Dynamic Soul Emergence weeks** — week count and names read from registry, not hard-coded (added 2026-03-01)
+- **Field Labels registry** — Akashic + Counseling field display names stored in registry, renameable (added 2026-03-01)
+- **Dynamic doc types** — document and packet button lists derive from registry (added 2026-03-01)
+- **Config via Script Properties** — practitioner name, practice name, AI name, session duration all configurable (added 2026-03-01)
+- **Dynamic system prompt** — AI persona reads config from Script Properties (added 2026-03-01)
+- **Dynamic tool enums** — generate_document and generate_client_packet enums read from registry (added 2026-03-01)
 
 ### Website Forms (Both Available)
 Both forms are built into the spreadsheet and ready for Carlie to set up:
@@ -439,10 +446,20 @@ Template IDs are now managed via a **Template Registry** sheet instead of hard-c
 - UI buttons auto-grey-out for templates not yet wired
 - Still needed: Workbook weeks 2–12, Intro Packet, Packet 2, Packet 3, Client Homework
 
+### Self-Service Systems (added 2026-03-01)
+| System | How It Works |
+|--------|-------------|
+| Template Registry | Carlie wires template IDs via Doula Tools > Manage Templates or via chat |
+| Dynamic Weeks | Week count + names derived from workbook entries in registry — add Week 13 and everything updates |
+| Field Labels | Akashic + Counseling field display names editable in Template Registry or via chat ("rename Themes to Soul Themes") |
+| Dynamic Doc Types | Document and packet button lists in UI read from registry — add a new doc type and it appears automatically |
+| Config Settings | Setup > Configure Settings initializes Script Properties: PRACTITIONER_NAME, PRACTICE_NAME, AI_NAME, SESSION_DURATION_MINUTES |
+| Dynamic System Prompt | AI persona (name, practice, practitioner) reads from config — rebrandable without code changes |
+
 ### Upcoming (March 3–4)
 - UI polish: restore last client on load, pinned reminders, loading skeleton, page title
-- Template ID wiring (when Carlie provides them)
-- Akashic field names (when Carlie confirms)
+- Template ID wiring (Carlie self-service via Manage Templates)
+- Akashic field names (Carlie self-service via Template Registry)
 - Acuity Scheduling integration (when Carlie provides API creds)
 - End-to-end testing across all client types
 - See `NEXT_SESSION.md` for full build plan

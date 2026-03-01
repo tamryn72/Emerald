@@ -180,16 +180,29 @@ Built into `EmeraldAI.gs`:
 - [x] Template Registry sheet with setup migration
 - [x] Manage Templates dialog (search Drive, wire, add new)
 - [x] Registry-first lookups with hard-coded fallback
-- [x] `manage_template` AI tool (search, wire, list_missing, list_all)
+- [x] `manage_template` AI tool (search, wire, list_missing, list_all, rename_field)
 - [x] Dynamic UI — buttons grey out for unwired templates
 - [ ] Carlie runs Setup > Create Template Registry (one-time)
 - [ ] Carlie wires remaining templates via Manage Templates dialog
 
-### Template Wiring — Waiting on Carlie's answers
-- [ ] Wire workbook template IDs weeks 2–12 (Q6)
+### Dynamic Self-Service Systems (added 2026-03-01)
+- [x] Dynamic Soul Emergence weeks — count + names from registry workbook entries
+- [x] Field Labels registry — Akashic (18 fields) + Counseling (9 fields) in Template Registry
+- [x] Field rename via Manage Templates dialog (Edit button) and via chat (rename_field action)
+- [x] Dynamic doc type enums — generate_document tool reads from registry
+- [x] Dynamic packet enums — generate_client_packet tool reads from registry
+- [x] Dynamic workbook grid — UI builds week buttons from registry data
+- [x] Config via Script Properties — PRACTITIONER_NAME, PRACTICE_NAME, AI_NAME, SESSION_DURATION_MINUTES
+- [x] Setup > Configure Settings menu item
+- [x] Dynamic system prompt — AI persona reads from config, rebrandable without code changes
+- [x] Dynamic page title + sidebar brand from config
+- [x] getConfig API endpoint for UI to fetch settings
+
+### Template Wiring — Waiting on Carlie's answers (self-service now!)
+- [ ] Wire workbook template IDs weeks 2–12 (Q6) — Carlie can do via Manage Templates
 - [ ] Wire client literature template IDs: Intro, Packet 2, Packet 3 (Q7)
 - [ ] Wire client homework template ID (Q8)
-- [ ] Akashic field name changes if any (Q10)
+- [ ] Akashic field name changes if any (Q10) — Carlie can now rename in Manage Templates
 - [ ] Newsletter Offer email template (Q11)
 
 ### Website Forms — Both offered (decided 2026-02-28)
@@ -255,6 +268,8 @@ Built into `EmeraldAI.gs`:
 | 2026-02-28 | Both website forms offered (Opt-In + Get In Touch) | Carlie wants both options available on her website |
 | 2026-02-28 | Acuity integration planned as Phase 9 | Separate from polish/testing — depends on API credentials from Carlie |
 | 2026-03-01 | Template Registry sheet for self-service management | Carlie can wire/update template IDs without code changes or redeploy |
+| 2026-03-01 | Dynamic weeks, field labels, doc types, config from registry/properties | Full self-service: Carlie can rename fields, add weeks, change brand name — zero code changes |
+| 2026-03-01 | Keep model as claude-sonnet-4-6 | Per Carlie's preference — Sonnet, not Opus |
 
 ---
 

@@ -673,7 +673,7 @@
 <!-- ─── CLIENT SIDEBAR ─── -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <div class="sidebar-brand">Haven · The Awakening Doula</div>
+    <div class="sidebar-brand" id="sidebarBrand">Haven · The Awakening Doula</div>
     <input class="sidebar-search" id="clientSearch" type="text" placeholder="Search clients..." oninput="filterClients()">
   </div>
   <div class="client-list" id="clientList">
@@ -818,24 +818,43 @@ const state = {
   conversationHistory: [],
   isLoading: false,
   selectedClientType: null,
-  templates: []
+  templates: [],
+  config: {
+    sessionNames: {},
+    weekCount: 12,
+    practitionerName: 'Carlie',
+    practiceName: 'Haven, The Awakening Doula',
+    aiName: 'Emerald',
+    sessionDuration: 60
+  }
 };
 
-const SESSION_NAMES = {
+// Fallback — overwritten by loadConfig() from registry
+const DEFAULT_SESSION_NAMES = {
   1:'The Threshold', 2:'Akashic Records Reading', 3:'Integration & Intention',
   4:'Akashic Clearing', 5:'Befriending Your Nervous System', 6:'Parts Work Integration',
   7:'Timeline Therapy & Reprocessing', 8:'Clearing Old Programming', 9:'Honoring What Was',
   10:'Releasing Expectations & Ritual Goodbye', 11:'Final Akashic Clearing', 12:'Emergence & Integration'
 };
 
+function getSessionName(week) {
+  return state.config.sessionNames[week] || DEFAULT_SESSION_NAMES[week] || 'Week ' + week;
+}
+
+function getWeekCount() {
+  return state.config.weekCount || 12;
+}
+
 
 /* ═══════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  loadTemplates();
-  loadClients().then(() => {
-    appendAIMessage('Good ' + getTimeGreeting() + ', Carlie. Select a client from the sidebar to get started, or ask me anything about your practice.');
+  Promise.all([loadTemplates(), loadConfig()]).then(() => {
+    const firstName = (state.config.practitionerName || 'Carlie').split(',')[0].split(' ')[0];
+    loadClients().then(() => {
+      appendAIMessage('Good ' + getTimeGreeting() + ', ' + firstName + '. Select a client from the sidebar to get started, or ask me anything about your practice.');
+    });
   });
   renderQuickActions();
   initVoiceInput();
@@ -847,6 +866,21 @@ async function loadTemplates() {
     state.templates = data || [];
   } catch (e) {
     state.templates = [];
+  }
+}
+
+async function loadConfig() {
+  try {
+    const data = await apiCall({ action: 'getConfig' });
+    if (data) {
+      state.config = Object.assign(state.config, data);
+      // Update dynamic UI elements
+      document.title = (state.config.aiName || 'Emerald') + ' | ' + (state.config.practiceName || 'Haven, The Awakening Doula');
+      const brand = document.getElementById('sidebarBrand');
+      if (brand) brand.textContent = state.config.practiceName || 'Haven · The Awakening Doula';
+    }
+  } catch (e) {
+    // Defaults already set in state
   }
 }
 
@@ -936,7 +970,7 @@ function selectClient(client) {
   if (window.innerWidth <= 680) closeSidebar();
 
   const t = (client.clientType || '').toLowerCase();
-  const typeLabel = t.includes('soul') ? `Soul Emergence (Week ${client.currentWeek || 1} of 12)`
+  const typeLabel = t.includes('soul') ? `Soul Emergence (Week ${client.currentWeek || 1} of ${getWeekCount()})`
                   : (client.clientType || client.serviceType || 'client');
   appendAIMessage(`Switched to ${client.name} — ${typeLabel}.\n\nWhat would you like to do?`);
 }
@@ -1228,19 +1262,31 @@ function buildDocumentsSection(content) {
     return { label: packetType, action: () => { trigger('generate_client_packet', packetType); }, disabled: !active };
   }
 
-  if (type.includes('akashic')) {
-    pillSection('Generate', [
-      'Session Notes','Integration Guide','Breathwork Notes','Akashic Notes','Client Summary'
-    ].map(d => docPill(d)));
+  // Get available doc types and packets from registry (or use defaults)
+  const registryDocs = state.templates.filter(t => t.category === 'document').map(t => t.label);
+  const registryPackets = state.templates.filter(t => t.category === 'packet').map(t => t.label);
 
-    pillSection('Literature Packets', [
-      'Intro Packet','Packet 2','Packet 3'
-    ].map(p => packetPill(p)));
+  // Default doc lists per client type (used if registry is empty)
+  const akashicDocs = ['Session Notes','Integration Guide','Breathwork Notes','Akashic Notes','Client Summary'];
+  const counselingDocs = ['Counseling Notes','Client Homework','Client Summary'];
+  const defaultPackets = ['Intro Packet','Packet 2','Packet 3'];
+
+  // Use registry docs filtered by relevance, or defaults
+  const allDocs = registryDocs.length > 0 ? registryDocs : [...akashicDocs, ...counselingDocs, 'Soul Emergence Summary'];
+  const packets = registryPackets.length > 0 ? registryPackets : defaultPackets;
+
+  if (type.includes('akashic')) {
+    const docs = registryDocs.length > 0
+      ? allDocs.filter(d => !d.includes('Counseling') && !d.includes('Soul Emergence'))
+      : akashicDocs;
+    pillSection('Generate', docs.map(d => docPill(d)));
+    pillSection('Literature Packets', packets.map(p => packetPill(p)));
 
   } else if (type.includes('counsel')) {
-    pillSection('Generate', [
-      'Counseling Notes','Client Homework','Client Summary'
-    ].map(d => docPill(d)));
+    const docs = registryDocs.length > 0
+      ? allDocs.filter(d => !d.includes('Akashic') && !d.includes('Breathwork') && !d.includes('Integration Guide') && !d.includes('Soul Emergence'))
+      : counselingDocs;
+    pillSection('Generate', docs.map(d => docPill(d)));
 
   } else if (type.includes('soul') || type.includes('emergence')) {
     pillSection('Documents', [
@@ -1250,18 +1296,20 @@ function buildDocumentsSection(content) {
       docPill('Client Summary')
     ]);
 
-    // Workbook grid — template-aware
+    // Workbook grid — dynamic from registry
     const wSection = document.createElement('div');
     wSection.className = 'pill-section';
     wSection.innerHTML = '<div class="pill-section-label">Send Weekly Workbook</div>';
     const grid = document.createElement('div');
     grid.className = 'workbook-grid';
-    for (let w = 1; w <= 12; w++) {
-      const wLabel = 'Week ' + w + ' - ' + SESSION_NAMES[w];
+    const weekCount = getWeekCount();
+    for (let w = 1; w <= weekCount; w++) {
+      const wName = getSessionName(w);
+      const wLabel = 'Week ' + w + ' - ' + wName;
       const active = isTemplateActive('workbook', wLabel);
       const btn = document.createElement('button');
       btn.className = 'workbook-btn' + (active ? '' : ' disabled');
-      btn.innerHTML = `<strong>Wk ${w}</strong>${SESSION_NAMES[w]}`;
+      btn.innerHTML = `<strong>Wk ${w}</strong>${wName}`;
       if (active) {
         btn.onclick = () => { trigger('send_workbook', w); };
       } else {

@@ -88,6 +88,9 @@ function doPost(e) {
       case 'getTemplates':
         result = getTemplateRegistry();
         break;
+      case 'getConfig':
+        result = getEmeraldConfig();
+        break;
       case 'clearMemory':
         result = clearEmeraldMemory();
         break;
@@ -127,6 +130,7 @@ function handleApiCall(payloadStr) {
       case 'getNewsletterPreview': return emerald_getNewsletterPreview();
       case 'executeAction':      return emeraldExecuteTool(data.tool, data.params || {});
       case 'getTemplates':       return getTemplateRegistry();
+      case 'getConfig':          return getEmeraldConfig();
       case 'clearMemory':        return clearEmeraldMemory();
       default:                   return { error: 'Unknown action: ' + action };
     }
@@ -162,7 +166,7 @@ function emeraldGetClientList() {
       sessionsUsed: sesUsed,
       sessionsTotal: sh.getRange('B8').getValue() || 0,
       nextSession:  _formatDate(sh.getRange('B10').getValue()),
-      currentWeek:  (type === 'Soul Emergence') ? Math.min(Math.max(Math.ceil(sesUsed) || 1, 1), 12) : null,
+      currentWeek:  (type === 'Soul Emergence') ? Math.min(Math.max(Math.ceil(sesUsed) || 1, 1), getSessionNamesFromRegistry().count) : null,
       sheetId:      sh.getSheetId()
     });
   });
@@ -199,44 +203,50 @@ function emeraldGetClientInfo(clientName) {
     type:          type
   };
 
+  // Read field labels from registry (dynamic — Carlie can rename fields)
+  var fieldLabels = getFieldLabels(type);
+
   if (type === 'Akashic') {
-    Object.assign(base, {
-      themes:           sh.getRange('B13').getValue(),
-      soulMessages:     sh.getRange('B14').getValue(),
-      blocks:           sh.getRange('B15').getValue(),
-      openings:         sh.getRange('B16').getValue(),
-      pastLifeNotes:    sh.getRange('B17').getValue(),
-      breathInsights:   sh.getRange('B20').getValue(),
-      bodyFeedback:     sh.getRange('B21').getValue(),
-      breathEnergy:     sh.getRange('B22').getValue(),
-      regulation:       sh.getRange('B25').getValue(),
-      triggers:         sh.getRange('B26').getValue(),
-      soothing:         sh.getRange('B27').getValue(),
-      routine:          sh.getRange('B28').getValue(),
-      nervousEnergy:    sh.getRange('B29').getValue(),
-      sessionNotes:     sh.getRange('B31').getValue(),
-      insightDownloads: sh.getRange('B32').getValue(),
-      integrationTasks: sh.getRange('B33').getValue(),
-      completionNotes:  sh.getRange('B36').getValue(),
-      completionDate:   sh.getRange('B37').getValue()
+    // Default labels used as keys if no registry exists
+    var akashicCells = {
+      B13:'themes', B14:'soulMessages', B15:'blocks', B16:'openings', B17:'pastLifeNotes',
+      B20:'breathInsights', B21:'bodyFeedback', B22:'breathEnergy',
+      B25:'regulation', B26:'triggers', B27:'soothing', B28:'routine', B29:'nervousEnergy',
+      B31:'sessionNotes', B32:'insightDownloads', B33:'integrationTasks',
+      B36:'completionNotes', B37:'completionDate'
+    };
+    var akashicData = {};
+    Object.keys(akashicCells).forEach(function(cell) {
+      akashicData[akashicCells[cell]] = sh.getRange(cell).getValue();
+    });
+    Object.assign(base, akashicData);
+    // Include field labels so the AI knows display names
+    base.fieldLabels = {};
+    Object.keys(akashicCells).forEach(function(cell) {
+      base.fieldLabels[cell] = fieldLabels[cell] || akashicCells[cell];
     });
   } else if (type === 'Counseling') {
-    Object.assign(base, {
-      primaryConcern:    sh.getRange('B14').getValue(),
-      clientNarrative:   sh.getRange('B15').getValue(),
-      emotionalLandscape:sh.getRange('B16').getValue(),
-      spiritualLandscape:sh.getRange('B17').getValue(),
-      cognitiveRelational:sh.getRange('B18').getValue(),
-      behaviouralPatterns:sh.getRange('B19').getValue(),
-      interventionsUsed: sh.getRange('B20').getValue(),
-      therapeuticNotes:  sh.getRange('B21').getValue(),
-      planNextSession:   sh.getRange('B22').getValue()
+    var counselingCells = {
+      B14:'primaryConcern', B15:'clientNarrative', B16:'emotionalLandscape',
+      B17:'spiritualLandscape', B18:'cognitiveRelational', B19:'behaviouralPatterns',
+      B20:'interventionsUsed', B21:'therapeuticNotes', B22:'planNextSession'
+    };
+    var counselingData = {};
+    Object.keys(counselingCells).forEach(function(cell) {
+      counselingData[counselingCells[cell]] = sh.getRange(cell).getValue();
+    });
+    Object.assign(base, counselingData);
+    base.fieldLabels = {};
+    Object.keys(counselingCells).forEach(function(cell) {
+      base.fieldLabels[cell] = fieldLabels[cell] || counselingCells[cell];
     });
   } else if (type === 'Soul Emergence') {
+    var sessionInfo = getSessionNamesFromRegistry();
     base.journalId   = sh.getRange('E4').getValue();
-    base.currentWeek = Math.min(Math.max(Math.ceil(base.sessionsUsed || 1), 1), 12);
+    base.currentWeek = Math.min(Math.max(Math.ceil(base.sessionsUsed || 1), 1), sessionInfo.count);
+    base.weekCount   = sessionInfo.count;
     base.finalSummary = sh.getRange('B25').getValue();
-    for (let w = 1; w <= 12; w++) {
+    for (var w = 1; w <= sessionInfo.count; w++) {
       base['week' + w + 'Notes'] = sh.getRange(12 + w, 2).getValue();
     }
   }
@@ -462,6 +472,11 @@ function emeraldExecuteTool(toolName, toolInput) {
         if (tmplAction === 'wire') {
           if (!toolInput.category || !toolInput.label || !toolInput.templateId)
             throw new Error('category, label, and templateId are required for wire action.');
+          return wireTemplate(toolInput.category, toolInput.label, toolInput.templateId);
+        }
+        if (tmplAction === 'rename_field') {
+          if (!toolInput.category || !toolInput.label || !toolInput.templateId)
+            throw new Error('category (field_akashic/field_counseling), label (cell ref), and templateId (new name) are required.');
           return wireTemplate(toolInput.category, toolInput.label, toolInput.templateId);
         }
         throw new Error('Unknown manage_template action: ' + tmplAction);
