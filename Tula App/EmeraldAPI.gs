@@ -710,8 +710,9 @@ function emerald_addNextSession(clientName) {
 
   const startDate = new Date(dateValue);
   startDate.setHours(time.hours, time.minutes, 0, 0);
+  var duration = parseInt(PropertiesService.getScriptProperties().getProperty('SESSION_DURATION_MINUTES') || '60');
   const endDate = new Date(startDate);
-  endDate.setMinutes(endDate.getMinutes() + SESSION_DURATION_MINUTES);
+  endDate.setMinutes(endDate.getMinutes() + duration);
 
   const event = CalendarApp.getDefaultCalendar().createEvent(
     'Awakening Doula Session - ' + clientName, startDate, endDate,
