@@ -169,22 +169,65 @@ Built into `EmeraldAI.gs`:
 - [ ] Add URL to iPhone home screen
 - [ ] Verify all tools work through Web App (end-to-end testing)
 
-### Polish — Remaining
-- [ ] Loading skeleton for client list
-- [ ] Error state: API key missing alert on first load
-- [ ] Page title updates with active client name
+### Polish — Planned for Monday March 3
 - [ ] Restore last client on app load (from EMERALD_MEMORY.lastClient)
 - [ ] Display pinned reminders on app load
+- [ ] Loading skeleton for client list (shimmer animation)
+- [ ] Page title updates with active client name
+- [ ] Error state: API key missing alert on first load
 
-### Testing — Remaining
-- [ ] Test all 31 tools via chat with each client type (Akashic, Counseling, Soul Emergence)
+### Template Wiring — Waiting on Carlie's answers
+- [ ] Wire workbook template IDs weeks 2–12 (Q6)
+- [ ] Wire client literature template IDs: Intro, Packet 2, Packet 3 (Q7)
+- [ ] Wire client homework template ID (Q8)
+- [ ] Akashic field name changes if any (Q10)
+- [ ] Newsletter Offer email template (Q11)
+
+### Website Forms — Both offered (decided 2026-02-28)
+- [ ] Carlie runs Setup > Create Opt-In Form → gets URL
+- [ ] Carlie runs Setup > Create Website Inquiry Form → gets URL
+- [ ] Carlie runs Setup > Install Form Triggers
+- [ ] Website links updated to form URLs
+
+### Testing — Planned for Tuesday March 4
+- [ ] Test all 31+ tools via chat with each client type (Akashic, Counseling, Soul Emergence)
 - [ ] Test Soul Emergence weeks 1–12 workbook buttons
-- [ ] Test email flows (onboarding, newsletter, past client offer)
+- [ ] Test email flows (onboarding, newsletter, past client offer, newsletter offer)
 - [ ] Test scheduling (add + delete session)
 - [ ] Test safe write + clear (confirm protected cells rejected)
 - [ ] Test memory: close and reopen app, verify session context restored
 - [ ] Test on iPhone Safari (primary target)
 - [ ] Test on desktop Chrome
+
+---
+
+## Phase 9: Acuity Scheduling Integration — PLANNED (Tuesday March 4)
+
+> Blocked by Carlie's Acuity API credentials (ACUITY_QUESTIONS.md Q1-Q5)
+
+### New Tools (5)
+- [ ] `get_schedule` — read appointments for date range
+- [ ] `check_availability` — check open slots for a date
+- [ ] `reschedule_appointment` — move existing appointment (confirmation required)
+- [ ] `block_time` — block off time
+- [ ] `cancel_appointment` — cancel appointment (confirmation required)
+
+### New Code
+- [ ] `acuityFetch_()` — internal helper for Acuity REST API (Basic Auth)
+- [ ] 5 `emerald_*` API wrapper functions in EmeraldAPI.gs
+- [ ] 5 tool definitions in EmeraldAI.gs `getToolDefinitions()`
+- [ ] 5 new cases in EmeraldAPI.gs `emeraldExecuteTool()` switch
+- [ ] "Schedule" quick action chip in EmeraldUI.html
+- [ ] Acuity credentials stored in Script Properties
+
+### Confirmation Protocol
+| Acuity Action | Confirmation Required |
+|---------------|----------------------|
+| Read schedule | No |
+| Check availability | No |
+| Reschedule | Yes |
+| Block time | No |
+| Cancel | Yes |
 
 ---
 
@@ -200,6 +243,8 @@ Built into `EmeraldAI.gs`:
 | 2026-02-24 | Sunset color palette | Matches Haven brand — warm, empowering, elegant |
 | 2026-02-26 | google.script.run instead of fetch | Avoids CORS and login-redirect issues with GAS Web App |
 | 2026-02-26 | Actions routed through chat (not direct API) | AI confirms before executing, consistent UX, single communication pattern |
+| 2026-02-28 | Both website forms offered (Opt-In + Get In Touch) | Carlie wants both options available on her website |
+| 2026-02-28 | Acuity integration planned as Phase 9 | Separate from polish/testing — depends on API credentials from Carlie |
 
 ---
 

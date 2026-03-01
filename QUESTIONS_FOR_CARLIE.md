@@ -122,25 +122,33 @@ Emerald needs the Google Doc template IDs to generate client documents. For each
 
 ---
 
-## Website Button → Leads
+## Website Buttons → Leads — ANSWERED ✅ (Both)
 
-Your website has a button that currently links to a placeholder. Here's how to wire it into your leads system — no code changes needed, it's all already built.
+We're offering **both** buttons for Carlie to add to her website. No code changes needed — both forms are already built into the spreadsheet system.
 
-12. **What should the button do?**
-    - [ ] **Opt-In** — just collects name + email, adds them to your Leads sheet automatically
-    - [ ] **Get In Touch** — collects name + email + a message, adds to Leads and you can follow up
+12. **Both forms will be set up:**
+    - [x] **Opt-In** — collects name + email, adds to Leads, sends them the current newsletter
+    - [x] **Get In Touch** — collects name + email + a message, adds to Leads, emails Carlie that someone reached out
 
-**Steps (takes ~2 minutes):**
+**Setup steps for Carlie (2 minutes each):**
 
+**Opt-In Form:**
 1. Open your spreadsheet
-2. Go to the menu: **Setup > Create Opt-In Form** (or **Create Website Inquiry Form** if you picked "Get In Touch")
-3. A popup will show the **published URL** — copy it
-4. Then run: **Setup > Install Form Triggers** (this makes new submissions auto-add to Leads)
-5. On your website, find the button and change its link to that URL
+2. Menu: **Setup > Create Opt-In Form**
+3. Copy the published URL from the popup
+4. Menu: **Setup > Install Form Triggers** (only need to do this once — installs for all forms)
 
-That's it. Anyone who clicks the button fills out the form → lands in your Leads sheet automatically → Emerald can see them and send offers to them.
+**Get In Touch Form:**
+1. Menu: **Setup > Create Website Inquiry Form**
+2. Copy that published URL too
 
-**If you want the form embedded directly on your website** (instead of linking to a Google Form page), let me know — we can generate an embed snippet for you.
+**On your website:**
+- Put the Opt-In link on your main call-to-action button (newsletter signup, "Join the Community", etc.)
+- Put the Get In Touch link on your contact/inquiry button
+
+Both forms auto-add to your Leads sheet → Emerald can see them → you can send newsletters and offers to them.
+
+**If you want either form embedded directly on your website** (instead of linking to a Google Form page), let us know — we can generate an embed snippet.
 
 ---
 

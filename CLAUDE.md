@@ -396,6 +396,10 @@ Testing:    End-to-end testing in progress
 - All action buttons wired in the UI
 - Session memory (24h rolling) and long-term memory (persistent)
 - Safe write/clear with cell validation
+- **Voice input** — microphone with Web Speech API (added 2026-02-27)
+- **Newsletter offer tracking** — Column X date stamps, smart skip (added 2026-02-27)
+- **Counseling field names** — B14–B22 updated to new labels (added 2026-02-27)
+- **Soul Emergence Summary** — template ID wired (added 2026-02-27)
 - **Sidebar toast notifications** — DOM-based feedback on every button press (fixed 2026-02-26)
 - **Calendar scheduling** — normalizeTime() handles Date objects correctly (fixed 2026-02-26)
 - **Intake status** — email-only field matching, no false positives (fixed 2026-02-26)
@@ -404,20 +408,35 @@ Testing:    End-to-end testing in progress
 - **Email templates** — case-insensitive "Yes" matching (fixed 2026-02-26)
 - **Week 1 workbook** — real template ID restored (fixed 2026-02-26)
 
+### Website Forms (Both Available)
+Both forms are built into the spreadsheet and ready for Carlie to set up:
+- **Opt-In Form** — name + email → adds to Leads, auto-sends newsletter
+- **Get In Touch Form** — name + email + message → adds to Leads, notifies Carlie
+- Setup: Spreadsheet menu → Setup > Create Opt-In Form / Create Website Inquiry Form → Install Form Triggers
+- Decision: Both offered (2026-02-28)
+
 ### What Still Needs Testing
 - Each tool end-to-end with real client data (all 3 types)
-- Email sending flows (onboarding, newsletter, past client offer)
+- Email sending flows (onboarding, newsletter, past client offer, newsletter offer)
 - Calendar scheduling (add + delete) — code fixed, needs live verification
 - Document generation (all 8 types + 3 packets)
 - Soul Emergence workbooks (weeks 2–12 need real template IDs)
 - Memory persistence across sessions
+- Website form setup (Opt-In + Get In Touch)
 - iPhone Safari experience
 
 ### Placeholder Template IDs Still Needed
 - `WORKBOOK_TEMPLATES` weeks 2–12 (Week 1 restored)
 - `CLIENT_LIT_TEMPLATES` — Intro Packet, Packet 2, Packet 3
 - `TEMPLATE_CLIENT_HOMEWORK`
-- `TEMPLATE_SOUL_EMERGENCE_SUMMARY`
+
+### Upcoming (March 3–4)
+- UI polish: restore last client on load, pinned reminders, loading skeleton, page title
+- Template ID wiring (when Carlie provides them)
+- Akashic field names (when Carlie confirms)
+- Acuity Scheduling integration (when Carlie provides API creds)
+- End-to-end testing across all client types
+- See `NEXT_SESSION.md` for full build plan
 
 ---
 
