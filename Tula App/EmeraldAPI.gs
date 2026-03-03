@@ -479,6 +479,9 @@ function emeraldExecuteTool(toolName, toolInput) {
             throw new Error('category (field_akashic/field_counseling), label (cell ref), and templateId (new name) are required.');
           return wireTemplate(toolInput.category, toolInput.label, toolInput.templateId);
         }
+        if (tmplAction === 'auto_wire') {
+          return autoWireTemplatesFromFolder(toolInput.folderId);
+        }
         throw new Error('Unknown manage_template action: ' + tmplAction);
       }
 

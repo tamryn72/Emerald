@@ -189,6 +189,211 @@ function addTemplateType(category, label) {
 }
 
 /**
+ * Scans the template folder (and subfolders) in Google Drive, matches files to
+ * registry entries by name, and auto-wires any that match.
+ *
+ * Matching strategy:
+ *   1. Exact match: file name equals the registry label
+ *   2. Contains match: file name contains the registry label or vice versa
+ *   3. Workbook week match: file name contains "Week N" or the session name
+ *   4. Already-wired entries are skipped (won't overwrite existing IDs)
+ *
+ * Returns { wired: [...], skipped: [...], unmatched: [...], alreadyWired: [...] }
+ */
+function autoWireTemplatesFromFolder(folderId) {
+  var rootId = folderId || TEMPLATE_ROOT;
+  var registry = getTemplateRegistry();
+  if (!registry || registry.length === 0) {
+    throw new Error('Template Registry not found. Run Setup > Create Template Registry first.');
+  }
+
+  // Collect only the template entries (not field labels)
+  var templateEntries = registry.filter(function(t) {
+    return t.category === 'document' || t.category === 'workbook' || t.category === 'packet';
+  });
+
+  // Gather all Google Docs from the folder (and subfolders)
+  var files = [];
+  function scanFolder(folder) {
+    var docFiles = folder.getFilesByType(MimeType.GOOGLE_DOCS);
+    while (docFiles.hasNext()) {
+      var f = docFiles.next();
+      files.push({ id: f.getId(), name: f.getName(), folder: folder.getName() });
+    }
+    var subfolders = folder.getFolders();
+    while (subfolders.hasNext()) {
+      scanFolder(subfolders.next());
+    }
+  }
+  scanFolder(DriveApp.getFolderById(rootId));
+
+  var wired = [];
+  var skipped = [];
+  var alreadyWired = [];
+
+  // Try to match each registry entry to a file
+  for (var i = 0; i < templateEntries.length; i++) {
+    var entry = templateEntries[i];
+
+    // Skip entries that are already wired with a real ID
+    if (entry.templateId && !entry.templateId.includes('YOUR_')) {
+      alreadyWired.push(entry.label);
+      continue;
+    }
+
+    var match = findBestMatch(entry, files);
+    if (match) {
+      wireTemplate(entry.category, entry.label, match.id);
+      wired.push({ label: entry.label, fileName: match.name, fileId: match.id });
+    } else {
+      skipped.push(entry.label);
+    }
+  }
+
+  // Files that didn't match any registry entry
+  var wiredIds = wired.map(function(w) { return w.fileId; });
+  var unmatched = files.filter(function(f) {
+    return wiredIds.indexOf(f.id) === -1;
+  }).map(function(f) {
+    return { name: f.name, id: f.id, folder: f.folder };
+  });
+
+  return {
+    wired: wired,
+    skipped: skipped,
+    alreadyWired: alreadyWired,
+    unmatched: unmatched,
+    summary: wired.length + ' templates wired, ' + skipped.length + ' not matched, ' + alreadyWired.length + ' already wired'
+  };
+}
+
+/**
+ * Finds the best matching file for a registry entry.
+ * Returns the file object or null if no confident match.
+ */
+function findBestMatch(entry, files) {
+  var label = entry.label.toLowerCase().trim();
+  var category = entry.category;
+
+  // For workbooks, extract the week number and session name
+  var weekNum = null;
+  var sessionName = null;
+  if (category === 'workbook') {
+    var weekMatch = label.match(/^week\s+(\d+)\s*-\s*(.+)$/i);
+    if (weekMatch) {
+      weekNum = parseInt(weekMatch[1]);
+      sessionName = weekMatch[2].trim().toLowerCase();
+    }
+  }
+
+  var candidates = [];
+
+  for (var i = 0; i < files.length; i++) {
+    var fileName = files[i].name.toLowerCase().trim();
+    var score = 0;
+
+    // 1. Exact match (highest confidence)
+    if (fileName === label) {
+      score = 100;
+    }
+    // 2. File name equals the label without category prefix (e.g. "Session Notes")
+    else if (fileName === label.replace(/^(week \d+ - )/, '')) {
+      score = 90;
+    }
+    // 3. For workbooks — match "week N" pattern in file name
+    else if (weekNum !== null) {
+      var fileWeekMatch = fileName.match(/week\s*(\d+)/i);
+      if (fileWeekMatch && parseInt(fileWeekMatch[1]) === weekNum) {
+        score = 85;
+      }
+      // Also match by session name
+      else if (sessionName && fileName.indexOf(sessionName) !== -1) {
+        score = 80;
+      }
+    }
+    // 4. File name contains the full label
+    else if (fileName.indexOf(label) !== -1) {
+      score = 75;
+    }
+    // 5. Label contains the file name (file name is a substring of the label)
+    else if (label.indexOf(fileName) !== -1 && fileName.length > 3) {
+      score = 70;
+    }
+    // 6. Normalized word matching — check if key words overlap
+    else {
+      var labelWords = label.replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(function(w) { return w.length > 2; });
+      var fileWords = fileName.replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(function(w) { return w.length > 2; });
+      var matchCount = 0;
+      for (var w = 0; w < labelWords.length; w++) {
+        if (fileWords.indexOf(labelWords[w]) !== -1) matchCount++;
+      }
+      if (labelWords.length > 0 && matchCount === labelWords.length) {
+        score = 65;
+      } else if (labelWords.length > 1 && matchCount >= labelWords.length - 1) {
+        score = 50;
+      }
+    }
+
+    if (score > 0) {
+      candidates.push({ file: files[i], score: score });
+    }
+  }
+
+  if (candidates.length === 0) return null;
+
+  // Sort by score descending, return the best match
+  candidates.sort(function(a, b) { return b.score - a.score; });
+  return candidates[0].file;
+}
+
+/**
+ * Menu-callable version: scans template folder, auto-wires, and shows a report.
+ */
+function menuAutoWireTemplates() {
+  var ui = SpreadsheetApp.getUi();
+  var confirm = ui.alert(
+    'Auto-Wire Templates',
+    'This will scan your template folder in Google Drive and automatically match files to the Template Registry.\n\n' +
+    'Already-wired templates will NOT be overwritten.\n\n' +
+    'Continue?',
+    ui.ButtonSet.YES_NO
+  );
+  if (confirm !== ui.Button.YES) return;
+
+  try {
+    var result = autoWireTemplatesFromFolder();
+    var msg = result.summary + '\n\n';
+
+    if (result.wired.length > 0) {
+      msg += 'WIRED:\n';
+      for (var i = 0; i < result.wired.length; i++) {
+        msg += '  ✓ ' + result.wired[i].label + ' ← ' + result.wired[i].fileName + '\n';
+      }
+      msg += '\n';
+    }
+
+    if (result.skipped.length > 0) {
+      msg += 'NOT MATCHED (wire manually):\n';
+      for (var j = 0; j < result.skipped.length; j++) {
+        msg += '  ✗ ' + result.skipped[j] + '\n';
+      }
+      msg += '\n';
+    }
+
+    if (result.unmatched.length > 0) {
+      msg += 'FILES NOT MATCHED TO REGISTRY:\n';
+      for (var k = 0; k < result.unmatched.length; k++) {
+        msg += '  • ' + result.unmatched[k].name + ' (in ' + result.unmatched[k].folder + ')\n';
+      }
+    }
+
+    ui.alert('Auto-Wire Results', msg, ui.ButtonSet.OK);
+  } catch (e) {
+    ui.alert('Auto-Wire Error', e.message, ui.ButtonSet.OK);
+  }
+}
+
+/**
  * Creates the Template Registry sheet and migrates all existing template IDs.
  * One-time setup — safe to run multiple times (won't overwrite existing registry).
  */
@@ -522,6 +727,7 @@ function onOpen() {
     .addItem("Open Sidebar", "openDoulaSidebar")
     .addSeparator()
     .addItem("Manage Templates", "showManageTemplatesDialog")
+    .addItem("Auto-Wire Templates from Drive", "menuAutoWireTemplates")
     .addItem("Mark Client Complete", "markClientCompleteMenu")
     .addSeparator()
     .addItem("Open Budget", "backend_openBudgetSheet")

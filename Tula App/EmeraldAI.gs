@@ -744,15 +744,16 @@ function getToolDefinitions() {
     /* ── Template Management ── */
     {
       name: 'manage_template',
-      description: 'Manage document templates and field labels. Actions: "list_missing" to see unwired templates, "list_all" to see all, "search" to find a Google Doc in Drive, "wire" to connect a template ID or update a field label, "rename_field" to rename a client field label.',
+      description: 'Manage document templates and field labels. Actions: "list_missing" to see unwired templates, "list_all" to see all, "search" to find a Google Doc in Drive, "wire" to connect a template ID or update a field label, "rename_field" to rename a client field label, "auto_wire" to scan the template folder and automatically match and wire all templates by name.',
       input_schema: {
         type: 'object',
         properties: {
-          action: { type: 'string', enum: ['search', 'wire', 'list_missing', 'list_all', 'rename_field'], description: 'search = find docs in Drive, wire = connect a template ID, list_missing = show unwired templates, list_all = show all, rename_field = rename a field label' },
+          action: { type: 'string', enum: ['search', 'wire', 'list_missing', 'list_all', 'rename_field', 'auto_wire'], description: 'search = find docs in Drive, wire = connect a template ID, list_missing = show unwired templates, list_all = show all, rename_field = rename a field label, auto_wire = scan template folder and auto-match files to registry' },
           searchTerm: { type: 'string', description: 'Search term for Drive search (required for search action)' },
           category: { type: 'string', enum: ['document', 'workbook', 'packet', 'field_akashic', 'field_counseling'], description: 'Template or field category (required for wire/rename_field action)' },
           label: { type: 'string', description: 'Template label or cell reference e.g. "Week 3 - Integration & Intention" or "B13" (required for wire/rename_field action)' },
-          templateId: { type: 'string', description: 'Google Doc ID to wire, or new display name for rename_field (required for wire/rename_field action)' }
+          templateId: { type: 'string', description: 'Google Doc ID to wire, or new display name for rename_field (required for wire/rename_field action)' },
+          folderId: { type: 'string', description: 'Optional Google Drive folder ID to scan (defaults to template root folder). Used with auto_wire action.' }
         },
         required: ['action']
       }
