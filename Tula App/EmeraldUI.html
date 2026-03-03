@@ -1183,12 +1183,18 @@ const SECTIONS = {
   },
   utilities: {
     title: 'Utilities',
-    build: () => pillSection('', [
-      { label: 'Open Client Folder', action: () => trigger('get_client_folder_url') },
-      { label: 'Refresh Dashboard',  action: () => trigger('refresh_dashboard') },
-      { label: 'Refresh Leads',      action: () => trigger('refresh_leads') },
-      { label: 'Mark Client Complete', action: () => trigger('mark_client_complete') }
-    ])
+    build: () => {
+      pillSection('', [
+        { label: 'Open Client Folder', action: () => trigger('get_client_folder_url') },
+        { label: 'Refresh Dashboard',  action: () => trigger('refresh_dashboard') },
+        { label: 'Refresh Leads',      action: () => trigger('refresh_leads') },
+        { label: 'Mark Client Complete', action: () => trigger('mark_client_complete') }
+      ]);
+      pillSection('Templates', [
+        { label: 'Load All Templates', action: () => { closeSheet(); autoLoadTemplates(); }, gold: true },
+        { label: 'View Missing Templates', action: () => { closeSheet(); sendMessage('What templates are missing?'); } }
+      ]);
+    }
   },
   /* ── Home (no client) sections ── */
   'home-newsletter': {
@@ -1404,6 +1410,55 @@ function homeAction(toolName) {
     'add_lead':                   `Add a lead`
   };
   sendMessage(msgs[toolName] || `Run: ${toolName}`);
+}
+
+
+/* ═══════════════════════════════════════════════
+   AUTO-LOAD TEMPLATES
+   One-click: scans Drive template folder, matches and wires everything
+═══════════════════════════════════════════════ */
+async function autoLoadTemplates() {
+  appendAIMessage('Scanning your template folder and wiring everything up — one moment...');
+  try {
+    const result = await apiCall({ action: 'autoLoadTemplates' });
+    if (result.error) {
+      appendAIMessage('Template loading failed: ' + result.error);
+      return;
+    }
+
+    let msg = '**Template Auto-Load Complete**\n\n' + result.summary + '\n\n';
+
+    if (result.wired && result.wired.length > 0) {
+      msg += '**Matched & Wired:**\n';
+      result.wired.forEach(w => { msg += '- ' + w.label + ' ← *' + w.fileName + '*\n'; });
+      msg += '\n';
+    }
+
+    if (result.discovered && result.discovered.length > 0) {
+      msg += '**Discovered & Added:**\n';
+      result.discovered.forEach(d => { msg += '- ' + d.label + ' (' + d.category + ') ← *' + d.fileName + '*\n'; });
+      msg += '\n';
+    }
+
+    if (result.skipped && result.skipped.length > 0) {
+      msg += '**Not matched** (wire manually via chat or Manage Templates):\n';
+      result.skipped.forEach(s => { msg += '- ' + s + '\n'; });
+      msg += '\n';
+    }
+
+    if (result.alreadyWired && result.alreadyWired.length > 0) {
+      msg += '**Already wired** (untouched): ' + result.alreadyWired.length + ' templates\n\n';
+    }
+
+    msg += 'Total active templates: **' + result.totalInRegistry + '**';
+
+    appendAIMessage(msg);
+
+    // Refresh the template state so UI buttons update immediately
+    await loadTemplates();
+  } catch (e) {
+    appendAIMessage('Template loading error: ' + e.message);
+  }
 }
 
 

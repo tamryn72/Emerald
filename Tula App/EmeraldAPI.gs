@@ -88,6 +88,9 @@ function doPost(e) {
       case 'getTemplates':
         result = getTemplateRegistry();
         break;
+      case 'autoLoadTemplates':
+        result = autoLoadAllTemplates(data.folderId || null);
+        break;
       case 'getConfig':
         result = getEmeraldConfig();
         break;
@@ -130,6 +133,7 @@ function handleApiCall(payloadStr) {
       case 'getNewsletterPreview': return emerald_getNewsletterPreview();
       case 'executeAction':      return emeraldExecuteTool(data.tool, data.params || {});
       case 'getTemplates':       return getTemplateRegistry();
+      case 'autoLoadTemplates':  return autoLoadAllTemplates(data.folderId || null);
       case 'getConfig':          return getEmeraldConfig();
       case 'clearMemory':        return clearEmeraldMemory();
       default:                   return { error: 'Unknown action: ' + action };
@@ -480,7 +484,7 @@ function emeraldExecuteTool(toolName, toolInput) {
           return wireTemplate(toolInput.category, toolInput.label, toolInput.templateId);
         }
         if (tmplAction === 'auto_wire') {
-          return autoWireTemplatesFromFolder(toolInput.folderId);
+          return autoLoadAllTemplates(toolInput.folderId);
         }
         throw new Error('Unknown manage_template action: ' + tmplAction);
       }

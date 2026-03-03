@@ -744,11 +744,11 @@ function getToolDefinitions() {
     /* ── Template Management ── */
     {
       name: 'manage_template',
-      description: 'Manage document templates and field labels. Actions: "list_missing" to see unwired templates, "list_all" to see all, "search" to find a Google Doc in Drive, "wire" to connect a template ID or update a field label, "rename_field" to rename a client field label, "auto_wire" to scan the template folder and automatically match and wire all templates by name.',
+      description: 'Manage document templates and field labels. Actions: "list_missing" to see unwired templates, "list_all" to see all, "search" to find a Google Doc in Drive, "wire" to connect a template ID or update a field label, "rename_field" to rename a client field label, "auto_wire" to scan the template folder, automatically match and wire all templates, AND discover new templates not yet in the registry. auto_wire is the "load all templates with one click" action.',
       input_schema: {
         type: 'object',
         properties: {
-          action: { type: 'string', enum: ['search', 'wire', 'list_missing', 'list_all', 'rename_field', 'auto_wire'], description: 'search = find docs in Drive, wire = connect a template ID, list_missing = show unwired templates, list_all = show all, rename_field = rename a field label, auto_wire = scan template folder and auto-match files to registry' },
+          action: { type: 'string', enum: ['search', 'wire', 'list_missing', 'list_all', 'rename_field', 'auto_wire'], description: 'search = find docs in Drive, wire = connect a template ID, list_missing = show unwired templates, list_all = show all, rename_field = rename a field label, auto_wire = full auto-load: scans template folder, matches files to registry, discovers new templates, and wires everything in one pass' },
           searchTerm: { type: 'string', description: 'Search term for Drive search (required for search action)' },
           category: { type: 'string', enum: ['document', 'workbook', 'packet', 'field_akashic', 'field_counseling'], description: 'Template or field category (required for wire/rename_field action)' },
           label: { type: 'string', description: 'Template label or cell reference e.g. "Week 3 - Integration & Intention" or "B13" (required for wire/rename_field action)' },
