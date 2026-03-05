@@ -1051,7 +1051,7 @@ function refreshLeads() {
 
   const systemSheets = ["Dashboard", "Akashic_Client_Template", "Counseling_Client_Template",
                          "SoulEmergence_Client_Template", "Email_Templates", "Intake Log", "Budget",
-                         "Document Log", "Leads", "Past Clients"];
+                         "Document Log", "Leads", "Past Clients", "Template Registry"];
 
   ss.getSheets().forEach(sh => {
     const name = sh.getName();
@@ -2398,7 +2398,7 @@ function refreshDoulaDashboard() {
   const rows = [];
   const systemSheets = ["Dashboard", "Akashic_Client_Template", "Counseling_Client_Template",
                          "SoulEmergence_Client_Template", "Email_Templates", "Intake Log", "Budget",
-                         "Document Log", "Leads", "Past Clients"];
+                         "Document Log", "Leads", "Past Clients", "Template Registry"];
 
   ss.getSheets().forEach(sh => {
     const name = sh.getName();
