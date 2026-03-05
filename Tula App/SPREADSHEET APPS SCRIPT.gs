@@ -65,6 +65,29 @@ const SESSION_DURATION_MINUTES = 60;
 const STORAGE_START_ROW = 100;
 const STORAGE_COLUMN = 24;
 
+// ═══ TEST MODE ═══════════════════════════════════════════════════════════════
+// When true, ALL emails are redirected to TEST_EMAIL_RECIPIENTS instead of real clients.
+// Set to false when ready for production.
+const TEST_MODE = true;
+const TEST_EMAIL_RECIPIENTS = ["tammylfabrizio@gmail.com", "carlie@awakening-doula.com"];
+
+/**
+ * Safe email sender — respects TEST_MODE.
+ * Drop-in replacement for GmailApp.sendEmail().
+ * In test mode, redirects to test recipients and prepends [TEST] to subject.
+ */
+function safeSendEmail(recipient, subject, body, options) {
+  if (TEST_MODE) {
+    var testSubject = '[TEST → ' + recipient + '] ' + subject;
+    TEST_EMAIL_RECIPIENTS.forEach(function(testEmail) {
+      GmailApp.sendEmail(testEmail, testSubject, body, options || {});
+    });
+    return;
+  }
+  GmailApp.sendEmail(recipient, subject, body, options || {});
+}
+// ═════════════════════════════════════════════════════════════════════════════
+
 // Client Literature
 const CLIENT_LIT_TEMPLATES = {
   'Intro Packet': 'YOUR_INTRO_PACKET_TEMPLATE_ID_HERE',
@@ -1197,7 +1220,7 @@ function backend_sendPastClientOfferAll() {
       .replace(/\{\{CLIENT_NAME\}\}/g, name)
       .replace(/\{\{OPT_IN_LINK\}\}/g, optInUrl);
 
-    GmailApp.sendEmail(email, "A Special Offer For You", "", { htmlBody: filledHtml });
+    safeSendEmail(email, "A Special Offer For You", "", { htmlBody: filledHtml });
     sent++;
   });
 
@@ -1255,7 +1278,7 @@ function backend_sendPastClientOfferOne() {
     .replace(/\{\{CLIENT_NAME\}\}/g, name)
     .replace(/\{\{OPT_IN_LINK\}\}/g, optInUrl);
 
-  GmailApp.sendEmail(email, "A Special Offer For You", "", { htmlBody: filledHtml });
+  safeSendEmail(email, "A Special Offer For You", "", { htmlBody: filledHtml });
   ui.alert(`Offer sent to ${email}`);
 }
 
@@ -1416,7 +1439,7 @@ function notifyPractitioner(name, email, message) {
       (message ? "Message: " + message + "\n" : "") +
       "\nThey've been added to your Leads sheet and sent a welcome email.";
 
-    GmailApp.sendEmail(practitionerEmail, subject, body);
+    safeSendEmail(practitionerEmail, subject, body);
   } catch (e) {
     Logger.log("notifyPractitioner error: " + e.message);
   }
@@ -1452,7 +1475,7 @@ function sendWelcomeEmail(name, email) {
     .replace(/\{\{NAME\}\}/g, name || "Friend")
     .replace(/\{\{CLIENT_NAME\}\}/g, name || "Friend");
 
-  GmailApp.sendEmail(email, "Thank You For Reaching Out - Awakening Doula", "", { htmlBody: htmlBody });
+  safeSendEmail(email, "Thank You For Reaching Out - Awakening Doula", "", { htmlBody: htmlBody });
 }
 
 
@@ -1581,7 +1604,7 @@ function backend_sendWorkbook(weekNumber) {
 <p>Please review it before our session. You can also access the editable version in your Google Drive folder.</p>
 <p>With love and respect,<br>Carlie Wyton, MA<br>Awakening Doula</p>`;
 
-  GmailApp.sendEmail(clientEmail, `Soul Emergence - Week ${weekNumber}: ${sessionName} Workbook`, "", {
+  safeSendEmail(clientEmail, `Soul Emergence - Week ${weekNumber}: ${sessionName} Workbook`, "", {
     htmlBody: emailBody,
     attachments: [fileBlob],
     name: "Awakening Doula"
@@ -1784,7 +1807,7 @@ function sendOnboardingEmail() {
   const subject = 'Awakening Doula - Intake Form';
   const body = 'Hi,\n\nPlease complete the intake form prior to our first session using the link below.\n\n' + formUrl + '\n\nWith love and respect,\nCarlie Wyton, MA\nAwakening Doula';
 
-  GmailApp.sendEmail(clientEmail, subject, body);
+  safeSendEmail(clientEmail, subject, body);
   statusCell.setValue('Sent');
   SpreadsheetApp.getUi().alert('Onboarding email sent.');
 }
@@ -2168,7 +2191,7 @@ function sendReceipt() {
   const subject = `Payment Receipt - Awakening Doula - ${clientName}`;
   const body = `Hi ${clientName},\n\nThank you for your payment of $${sessionPrice}.\n\nDate: ${new Date().toLocaleDateString()}\nAmount: $${sessionPrice}\n\nWith love and respect,\nCarlie Wyton, MA\nAwakening Doula`;
 
-  GmailApp.sendEmail(clientEmail, subject, body);
+  safeSendEmail(clientEmail, subject, body);
   ui.alert('Receipt sent to ' + clientEmail);
 }
 
@@ -2284,7 +2307,7 @@ function backend_sendNewsletterToAll() {
       .replace(/\{\{NAME\}\}/g, name)
       .replace(/\{\{CLIENT_NAME\}\}/g, name);
 
-    GmailApp.sendEmail(email, subject, "", { htmlBody: filledHtml });
+    safeSendEmail(email, subject, "", { htmlBody: filledHtml });
     sent++;
   });
 
@@ -2358,7 +2381,7 @@ function sendNewsletterToOne(name, email) {
       .replace(/\{\{NAME\}\}/g, name || "Friend")
       .replace(/\{\{CLIENT_NAME\}\}/g, name || "Friend");
 
-    GmailApp.sendEmail(email, "Awakening Doula - Newsletter", "", { htmlBody: htmlBody });
+    safeSendEmail(email, "Awakening Doula - Newsletter", "", { htmlBody: htmlBody });
   } catch (e) {
     // Don't let newsletter failure break the opt-in flow
     Logger.log("sendNewsletterToOne error: " + e.message);

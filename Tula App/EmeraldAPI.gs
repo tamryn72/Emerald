@@ -580,7 +580,7 @@ function emerald_sendOnboardingEmail(clientName) {
   const formUrl = FormApp.openById(INTAKE_FORM_ID).getPublishedUrl();
   const body = 'Hi,\n\nPlease complete the intake form prior to our first session:\n\n' + formUrl +
     '\n\nWith love and respect,\nCarlie Wyton, MA\nAwakening Doula';
-  GmailApp.sendEmail(clientEmail, 'Awakening Doula - Intake Form', body);
+  safeSendEmail(clientEmail, 'Awakening Doula - Intake Form', body);
   statusCell.setValue('Sent');
 
   return { sent: true, message: 'Onboarding email sent to ' + clientEmail + '.', email: clientEmail };
@@ -801,7 +801,7 @@ function emerald_sendReceipt(clientName) {
 
   if (!email) return { error: 'Client email is missing.' };
 
-  GmailApp.sendEmail(email,
+  safeSendEmail(email,
     'Payment Receipt - Awakening Doula - ' + name,
     'Hi ' + name + ',\n\nThank you for your payment of $' + price + '.\n\n' +
     'Date: ' + new Date().toLocaleDateString() + '\nAmount: $' + price + '\n\n' +
@@ -864,7 +864,7 @@ function emerald_sendNewsletterAll() {
   let sent = 0;
   leads.forEach(([name, email]) => {
     const filled = htmlBody.replace(/\{\{NAME\}\}/g, name).replace(/\{\{CLIENT_NAME\}\}/g, name);
-    GmailApp.sendEmail(email, 'Awakening Doula - Newsletter', '', { htmlBody: filled });
+    safeSendEmail(email, 'Awakening Doula - Newsletter', '', { htmlBody: filled });
     sent++;
   });
   return { sent: true, count: sent, message: 'Newsletter sent to ' + sent + ' contacts.' };
@@ -912,7 +912,7 @@ function emerald_sendNewsletterOfferAll() {
   const now = new Date();
   unsent.forEach(([name, email], idx) => {
     const filled = htmlBody.replace(/\{\{NAME\}\}/g, name).replace(/\{\{CLIENT_NAME\}\}/g, name);
-    GmailApp.sendEmail(email, 'Haven, The Awakening Doula - Newsletter Offer', '', { htmlBody: filled });
+    safeSendEmail(email, 'Haven, The Awakening Doula - Newsletter Offer', '', { htmlBody: filled });
     leadsSheet.getRange(rowIndices[idx], 24).setValue(now); /* Stamp Column X */
     sent++;
   });
@@ -1016,7 +1016,7 @@ function emerald_sendPastClientOfferAll() {
     const filled = htmlBody
       .replace(/\{\{NAME\}\}/g, name).replace(/\{\{CLIENT_NAME\}\}/g, name)
       .replace(/\{\{OPT_IN_LINK\}\}/g, optInUrl);
-    GmailApp.sendEmail(email, 'A Special Offer For You', '', { htmlBody: filled });
+    safeSendEmail(email, 'A Special Offer For You', '', { htmlBody: filled });
     sent++;
   });
   return { sent: true, count: sent, message: 'Offer sent to ' + sent + ' past client(s).' };
@@ -1048,7 +1048,7 @@ function emerald_sendPastClientOfferOne(email, name) {
     .replace(/\{\{NAME\}\}/g, recipientName).replace(/\{\{CLIENT_NAME\}\}/g, recipientName)
     .replace(/\{\{OPT_IN_LINK\}\}/g, getOptInFormUrl());
 
-  GmailApp.sendEmail(email, 'A Special Offer For You', '', { htmlBody: filled });
+  safeSendEmail(email, 'A Special Offer For You', '', { htmlBody: filled });
   return { sent: true, message: 'Offer sent to ' + email + '.' };
 }
 
