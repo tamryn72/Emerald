@@ -406,6 +406,7 @@ Testing:    End-to-end testing in progress
 - **Newsletter offer tracking** — Column X date stamps, smart skip (added 2026-02-27)
 - **Counseling field names** — B14–B22 updated to new labels (added 2026-02-27)
 - **Soul Emergence Summary** — template ID wired (added 2026-02-27)
+- **TEST_MODE draft behaviour** — individual emails → Gmail Drafts, bulk → test recipients (added 2026-03-05)
 - **Sidebar toast notifications** — DOM-based feedback on every button press (fixed 2026-02-26)
 - **Calendar scheduling** — normalizeTime() handles Date objects correctly (fixed 2026-02-26)
 - **Intake status** — email-only field matching, no false positives (fixed 2026-02-26)

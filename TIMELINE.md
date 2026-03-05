@@ -270,6 +270,7 @@ Built into `EmeraldAI.gs`:
 | 2026-03-01 | Template Registry sheet for self-service management | Carlie can wire/update template IDs without code changes or redeploy |
 | 2026-03-01 | Dynamic weeks, field labels, doc types, config from registry/properties | Full self-service: Carlie can rename fields, add weeks, change brand name — zero code changes |
 | 2026-03-01 | Keep model as claude-sonnet-4-6 | Per Carlie's preference — Sonnet, not Opus |
+| 2026-03-05 | TEST_MODE: individual emails → drafts, bulk → test recipients | Safer testing — individual sends don't leave sent mail, bulk sends can still verify flow end-to-end |
 
 ---
 

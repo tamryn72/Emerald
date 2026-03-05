@@ -310,6 +310,11 @@ If Acuity creds haven't arrived by Tuesday:
 
 ---
 
+## Previously Completed (2026-03-05)
+
+- [x] TEST_MODE draft behaviour — individual emails → Gmail Drafts; bulk sends → test recipients
+- [x] `safeSendEmail()` updated with `isBulk` parameter (SPREADSHEET APPS SCRIPT.gs + EmeraldAPI.gs)
+
 ## Previously Completed (2026-03-01)
 
 - [x] Template Registry — self-service template management system
