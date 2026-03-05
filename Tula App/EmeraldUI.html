@@ -738,9 +738,9 @@
           <span class="icon">&hearts;</span>
           <span class="label">Add Lead</span>
         </button>
-        <button class="home-grid-btn" onclick="goHome()">
-          <span class="icon">&loz;</span>
-          <span class="label">Home</span>
+        <button class="home-grid-btn" onclick="homeAction('add_session')">
+          <span class="icon">&middot;</span>
+          <span class="label">Schedule</span>
         </button>
         <button class="home-grid-btn" onclick="openSheet('home-marketing')">
           <span class="icon">&raquo;</span>
@@ -1064,8 +1064,8 @@ function goHome() {
       <button class="home-grid-btn" onclick="homeAction('add_lead')">
         <span class="icon">&hearts;</span><span class="label">Add Lead</span>
       </button>
-      <button class="home-grid-btn" onclick="goHome()">
-        <span class="icon">&loz;</span><span class="label">Home</span>
+      <button class="home-grid-btn" onclick="homeAction('add_session')">
+        <span class="icon">&middot;</span><span class="label">Schedule</span>
       </button>
       <button class="home-grid-btn" onclick="openSheet('home-marketing')">
         <span class="icon">&raquo;</span><span class="label">Marketing</span>
@@ -1109,6 +1109,7 @@ function renderQuickActions() {
       <div class="action-chip" onclick="openSheet('home-marketing')">Marketing</div>
       <div class="action-chip" onclick="openSheet('home-leads')">Leads</div>
       <div class="action-chip" onclick="openSheet('home-templates')">Templates</div>
+      <div class="action-chip" onclick="homeAction('refresh_dashboard')">Dashboard</div>
     `;
   }
 }
