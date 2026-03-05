@@ -259,39 +259,44 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 32px 20px 16px;
-      gap: 6px;
+      justify-content: center;
+      padding: 48px 24px 24px;
+      gap: 0;
       text-align: center;
+      flex: 1;
     }
-    .home-mark { color: var(--gold); animation: willowBreathe 6s ease-in-out infinite; }
+    .home-mark { color: var(--gold); animation: willowBreathe 6s ease-in-out infinite; margin-bottom: 16px; }
     @keyframes willowBreathe {
       0%, 100% { opacity: 0.4; transform: scale(1); }
       50% { opacity: 0.58; transform: scale(1.03); }
     }
-    .home-title { font-family: var(--font-serif); font-size: 19px; color: var(--deep); opacity: 0.75; margin-top: 4px; }
-    .home-sub { font-size: 12px; color: var(--muted); line-height: 1.6; max-width: 220px; }
-    .home-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 14px;
+    .home-greeting { font-family: var(--font-serif); font-size: 22px; color: var(--deep); margin-bottom: 6px; }
+    .home-affirmation { font-size: 13px; color: var(--muted); line-height: 1.7; max-width: 260px; margin-bottom: 32px; }
+    .home-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
       max-width: 300px;
     }
-    .home-action-btn {
-      padding: 8px 14px;
+    .home-grid-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 18px 10px;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 12px;
-      color: var(--deep);
+      border-radius: 14px;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
-    .home-action-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
-    .home-action-btn.gold { border-color: var(--gold); }
-    .home-action-btn.gold:hover { background: var(--gold); color: white; }
+    .home-grid-btn:active { transform: scale(0.97); }
+    .home-grid-btn:hover { border-color: var(--gold); box-shadow: 0 2px 12px var(--glow); }
+    .home-grid-btn .icon { font-size: 22px; line-height: 1; }
+    .home-grid-btn .label { font-size: 12px; color: var(--deep); font-weight: 500; }
 
     /* Quick Actions Row */
     .quick-actions {
@@ -722,13 +727,25 @@
     <!-- Home state — shown until first message -->
     <div class="home-state" id="homeState">
       <div class="home-mark"><svg viewBox="0 0 100 70" width="100" height="70"><path d="M50 8C42 14 30 20 24 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/><path d="M50 8C45 16 38 25 36 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/><path d="M50 8C48 18 44 30 43 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/><path d="M50 8C52 18 56 30 57 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/><path d="M50 8C55 16 62 25 64 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/><path d="M50 8C58 14 70 20 76 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/></svg></div>
-      <div class="home-title" id="homeTitle">Welcome</div>
-      <div class="home-sub">Select a client from the sidebar to get started, or ask me anything.</div>
-      <div class="home-actions">
-        <button class="home-action-btn gold" onclick="openNewClientModal()">New Client</button>
-        <button class="home-action-btn" onclick="homeAction('add_lead')">Add a Lead</button>
-        <button class="home-action-btn" onclick="homeAction('refresh_dashboard')">Refresh Dashboard</button>
-        <button class="home-action-btn" onclick="openSheet('home-marketing')">Marketing</button>
+      <div class="home-greeting" id="homeGreeting">Good morning, Carlie</div>
+      <div class="home-affirmation" id="homeAffirmation">Your presence is the medicine. Everything else flows from here.</div>
+      <div class="home-grid">
+        <button class="home-grid-btn" onclick="openNewClientModal()">
+          <span class="icon">+</span>
+          <span class="label">New Client</span>
+        </button>
+        <button class="home-grid-btn" onclick="homeAction('add_lead')">
+          <span class="icon">&hearts;</span>
+          <span class="label">Add Lead</span>
+        </button>
+        <button class="home-grid-btn" onclick="homeAction('refresh_dashboard')">
+          <span class="icon">&bull;&bull;&bull;</span>
+          <span class="label">Dashboard</span>
+        </button>
+        <button class="home-grid-btn" onclick="openSheet('home-marketing')">
+          <span class="icon">&raquo;</span>
+          <span class="label">Marketing</span>
+        </button>
       </div>
     </div>
   </div>
@@ -857,16 +874,39 @@ function getWeekCount() {
 /* ═══════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════ */
+const HOME_AFFIRMATIONS = [
+  "Your presence is the medicine. Everything else flows from here.",
+  "Trust the pace of your practice. You are exactly where you need to be.",
+  "Every client who finds you was meant to. Breathe and begin.",
+  "You hold space beautifully. Let me handle the rest.",
+  "Grounded in purpose, guided by love. Let's get to work.",
+  "The work you do ripples outward in ways you'll never fully see.",
+  "One breath, one client, one moment at a time.",
+  "You are the calm at the center. I'll keep everything organized around you."
+];
+
 document.addEventListener('DOMContentLoaded', () => {
+  // Set home greeting + affirmation immediately (before API calls)
+  setHomeGreeting();
+
   Promise.all([loadTemplates(), loadConfig()]).then(() => {
     const firstName = (state.config.practitionerName || 'Carlie').split(',')[0].split(' ')[0];
+    // Update greeting with config name
+    document.getElementById('homeGreeting').textContent = 'Good ' + getTimeGreeting() + ', ' + firstName;
     loadClients().then(() => {
-      appendAIMessage('Good ' + getTimeGreeting() + ', ' + firstName + '. Select a client from the sidebar to get started, or ask me anything about your practice.');
+      appendAIMessage('Good ' + getTimeGreeting() + ', ' + firstName + '. Select a client from the sidebar, or ask me anything.');
     });
   });
   renderQuickActions();
   initVoiceInput();
 });
+
+function setHomeGreeting() {
+  var el = document.getElementById('homeGreeting');
+  if (el) el.textContent = 'Good ' + getTimeGreeting();
+  var aff = document.getElementById('homeAffirmation');
+  if (aff) aff.textContent = HOME_AFFIRMATIONS[Math.floor(Math.random() * HOME_AFFIRMATIONS.length)];
+}
 
 async function loadTemplates() {
   try {
@@ -1017,10 +1057,9 @@ function renderQuickActions() {
     `;
   } else {
     el.innerHTML = `
-      <div class="action-chip gold-chip" onclick="openNewClientModal()">New Client</div>
-      <div class="action-chip" onclick="homeAction('add_lead')">Add Lead</div>
-      <div class="action-chip" onclick="homeAction('refresh_dashboard')">Dashboard</div>
       <div class="action-chip" onclick="openSheet('home-marketing')">Marketing</div>
+      <div class="action-chip" onclick="openSheet('home-leads')">Leads</div>
+      <div class="action-chip" onclick="openSheet('home-templates')">Templates</div>
     `;
   }
 }
@@ -1212,6 +1251,21 @@ const SECTIONS = {
         { label: 'Refresh Leads',    action: () => homeAction('refresh_leads') }
       ]);
     }
+  },
+  'home-leads': {
+    title: 'Leads',
+    build: () => pillSection('', [
+      { label: 'Add a Lead',        action: () => homeAction('add_lead') },
+      { label: 'Refresh Leads',     action: () => homeAction('refresh_leads') },
+      { label: 'Refresh Dashboard', action: () => homeAction('refresh_dashboard') }
+    ])
+  },
+  'home-templates': {
+    title: 'Templates',
+    build: () => pillSection('', [
+      { label: 'Load All Templates',    action: () => { closeSheet(); autoLoadTemplates(); }, gold: true },
+      { label: 'View Missing Templates', action: () => { closeSheet(); sendMessage('What templates are missing?'); } }
+    ])
   }
 };
 
