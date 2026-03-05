@@ -864,7 +864,7 @@ function emerald_sendNewsletterAll() {
   let sent = 0;
   leads.forEach(([name, email]) => {
     const filled = htmlBody.replace(/\{\{NAME\}\}/g, name).replace(/\{\{CLIENT_NAME\}\}/g, name);
-    safeSendEmail(email, 'Awakening Doula - Newsletter', '', { htmlBody: filled });
+    safeSendEmail(email, 'Awakening Doula - Newsletter', '', { htmlBody: filled }, true);
     sent++;
   });
   return { sent: true, count: sent, message: 'Newsletter sent to ' + sent + ' contacts.' };
@@ -912,7 +912,7 @@ function emerald_sendNewsletterOfferAll() {
   const now = new Date();
   unsent.forEach(([name, email], idx) => {
     const filled = htmlBody.replace(/\{\{NAME\}\}/g, name).replace(/\{\{CLIENT_NAME\}\}/g, name);
-    safeSendEmail(email, 'Haven, The Awakening Doula - Newsletter Offer', '', { htmlBody: filled });
+    safeSendEmail(email, 'Haven, The Awakening Doula - Newsletter Offer', '', { htmlBody: filled }, true);
     leadsSheet.getRange(rowIndices[idx], 24).setValue(now); /* Stamp Column X */
     sent++;
   });
@@ -1016,7 +1016,7 @@ function emerald_sendPastClientOfferAll() {
     const filled = htmlBody
       .replace(/\{\{NAME\}\}/g, name).replace(/\{\{CLIENT_NAME\}\}/g, name)
       .replace(/\{\{OPT_IN_LINK\}\}/g, optInUrl);
-    safeSendEmail(email, 'A Special Offer For You', '', { htmlBody: filled });
+    safeSendEmail(email, 'A Special Offer For You', '', { htmlBody: filled }, true);
     sent++;
   });
   return { sent: true, count: sent, message: 'Offer sent to ' + sent + ' past client(s).' };

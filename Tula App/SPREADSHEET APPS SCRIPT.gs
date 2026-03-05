@@ -67,7 +67,9 @@ const STORAGE_START_ROW = 100;
 const STORAGE_COLUMN = 24;
 
 // ═══ TEST MODE ═══════════════════════════════════════════════════════════════
-// When true, ALL emails are redirected to TEST_EMAIL_RECIPIENTS instead of real clients.
+// When true:
+//   • Individual emails → saved as DRAFTS (no send)
+//   • Bulk emails (isBulk=true) → redirected to TEST_EMAIL_RECIPIENTS
 // Set to false when ready for production.
 const TEST_MODE = true;
 const TEST_EMAIL_RECIPIENTS = ["tammylfabrizio@gmail.com", "carlie@awakening-doula.com"];
@@ -75,14 +77,24 @@ const TEST_EMAIL_RECIPIENTS = ["tammylfabrizio@gmail.com", "carlie@awakening-dou
 /**
  * Safe email sender — respects TEST_MODE.
  * Drop-in replacement for GmailApp.sendEmail().
- * In test mode, redirects to test recipients and prepends [TEST] to subject.
+ * @param {string} recipient - original recipient
+ * @param {string} subject - email subject
+ * @param {string} body - plain text body
+ * @param {object} options - optional {htmlBody, etc.}
+ * @param {boolean} isBulk - if true, sends to test recipients instead of drafting
  */
-function safeSendEmail(recipient, subject, body, options) {
+function safeSendEmail(recipient, subject, body, options, isBulk) {
   if (TEST_MODE) {
     var testSubject = '[TEST → ' + recipient + '] ' + subject;
-    TEST_EMAIL_RECIPIENTS.forEach(function(testEmail) {
-      GmailApp.sendEmail(testEmail, testSubject, body, options || {});
-    });
+    if (isBulk) {
+      // Bulk sends go to test recipients so you can verify the flow
+      TEST_EMAIL_RECIPIENTS.forEach(function(testEmail) {
+        GmailApp.sendEmail(testEmail, testSubject, body, options || {});
+      });
+    } else {
+      // Individual emails become drafts
+      GmailApp.createDraft(recipient, testSubject, body, options || {});
+    }
     return;
   }
   GmailApp.sendEmail(recipient, subject, body, options || {});
@@ -1221,7 +1233,7 @@ function backend_sendPastClientOfferAll() {
       .replace(/\{\{CLIENT_NAME\}\}/g, name)
       .replace(/\{\{OPT_IN_LINK\}\}/g, optInUrl);
 
-    safeSendEmail(email, "A Special Offer For You", "", { htmlBody: filledHtml });
+    safeSendEmail(email, "A Special Offer For You", "", { htmlBody: filledHtml }, true);
     sent++;
   });
 
@@ -2308,7 +2320,7 @@ function backend_sendNewsletterToAll() {
       .replace(/\{\{NAME\}\}/g, name)
       .replace(/\{\{CLIENT_NAME\}\}/g, name);
 
-    safeSendEmail(email, subject, "", { htmlBody: filledHtml });
+    safeSendEmail(email, subject, "", { htmlBody: filledHtml }, true);
     sent++;
   });
 
@@ -2382,7 +2394,7 @@ function sendNewsletterToOne(name, email) {
       .replace(/\{\{NAME\}\}/g, name || "Friend")
       .replace(/\{\{CLIENT_NAME\}\}/g, name || "Friend");
 
-    safeSendEmail(email, "Awakening Doula - Newsletter", "", { htmlBody: htmlBody });
+    safeSendEmail(email, "Awakening Doula - Newsletter", "", { htmlBody: htmlBody }, true);
   } catch (e) {
     // Don't let newsletter failure break the opt-in flow
     Logger.log("sendNewsletterToOne error: " + e.message);
