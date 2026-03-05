@@ -725,11 +725,10 @@
       <div class="home-title" id="homeTitle">Welcome</div>
       <div class="home-sub">Select a client from the sidebar to get started, or ask me anything.</div>
       <div class="home-actions">
-        <button class="home-action-btn gold" onclick="homeAction('preview_newsletter')">Preview Newsletter</button>
-        <button class="home-action-btn" onclick="openSheet('home-newsletter')">Send Newsletter</button>
-        <button class="home-action-btn" onclick="openSheet('home-past-clients')">Offers</button>
-        <button class="home-action-btn" onclick="openSheet('home-leads')">Manage Leads</button>
+        <button class="home-action-btn gold" onclick="openNewClientModal()">New Client</button>
+        <button class="home-action-btn" onclick="homeAction('add_lead')">Add a Lead</button>
         <button class="home-action-btn" onclick="homeAction('refresh_dashboard')">Refresh Dashboard</button>
+        <button class="home-action-btn" onclick="openSheet('home-marketing')">Marketing</button>
       </div>
     </div>
   </div>
@@ -1018,11 +1017,10 @@ function renderQuickActions() {
     `;
   } else {
     el.innerHTML = `
-      <div class="action-chip gold-chip" onclick="homeAction('preview_newsletter')">Newsletter Preview</div>
-      <div class="action-chip" onclick="openSheet('home-newsletter')">Send Newsletter</div>
-      <div class="action-chip" onclick="openSheet('home-past-clients')">Offers</div>
-      <div class="action-chip" onclick="openSheet('home-leads')">Leads</div>
+      <div class="action-chip gold-chip" onclick="openNewClientModal()">New Client</div>
+      <div class="action-chip" onclick="homeAction('add_lead')">Add Lead</div>
       <div class="action-chip" onclick="homeAction('refresh_dashboard')">Dashboard</div>
+      <div class="action-chip" onclick="openSheet('home-marketing')">Marketing</div>
     `;
   }
 }
@@ -1197,28 +1195,23 @@ const SECTIONS = {
     }
   },
   /* ── Home (no client) sections ── */
-  'home-newsletter': {
-    title: 'Newsletter',
-    build: () => pillSection('', [
-      { label: 'Preview Newsletter',           action: () => { closeSheet(); openNewsletterPreview(); }, gold: true },
-      { label: 'Send Newsletter to All Leads', action: () => homeAction('send_newsletter') }
-    ])
-  },
-  'home-past-clients': {
-    title: 'Offers',
-    build: () => pillSection('', [
-      { label: 'Send Newsletter Offer to Leads',   action: () => homeAction('send_newsletter_offer') },
-      { label: 'Send Offer to All Past Clients',    action: () => homeAction('send_past_client_offer_all') },
-      { label: 'Send Offer to One Email',            action: () => homeAction('send_past_client_offer_one') }
-    ])
-  },
-  'home-leads': {
-    title: 'Leads',
-    build: () => pillSection('', [
-      { label: 'Add a Lead',       action: () => homeAction('add_lead') },
-      { label: 'Refresh Leads',    action: () => homeAction('refresh_leads') },
-      { label: 'Refresh Dashboard',action: () => homeAction('refresh_dashboard') }
-    ])
+  'home-marketing': {
+    title: 'Marketing & Outreach',
+    build: () => {
+      pillSection('Newsletter', [
+        { label: 'Preview Newsletter',           action: () => { closeSheet(); openNewsletterPreview(); }, gold: true },
+        { label: 'Send Newsletter to All Leads', action: () => homeAction('send_newsletter') }
+      ]);
+      pillSection('Offers', [
+        { label: 'Send Newsletter Offer to Leads',   action: () => homeAction('send_newsletter_offer') },
+        { label: 'Send Offer to All Past Clients',    action: () => homeAction('send_past_client_offer_all') },
+        { label: 'Send Offer to One Email',            action: () => homeAction('send_past_client_offer_one') }
+      ]);
+      pillSection('Leads', [
+        { label: 'Add a Lead',       action: () => homeAction('add_lead') },
+        { label: 'Refresh Leads',    action: () => homeAction('refresh_leads') }
+      ]);
+    }
   }
 };
 
