@@ -7,7 +7,8 @@
 /***********************************************
  GLOBAL CONFIG
 ***********************************************/
-const TEMPLATE_ROOT = "1L19P0AfMGzOf0QvAq-SnTI9iJ17k9IUo";
+const TEMPLATE_ROOT = "1Ti4_lT-xTxMxTBKXzuSv7vjUDdf3ZwgG";
+const CLIENT_FOLDER_ROOT = "1L19P0AfMGzOf0QvAq-SnTI9iJ17k9IUo";
 
 // Document Templates
 const TEMPLATE_SESSION_NOTES   = "1_kjvbyVz-rPoNU1q9_tO3cOj9YcfK4nN_V3McpPR9SI";
@@ -978,7 +979,7 @@ function newClientSetup() {
     return;
   }
 
-  const parentFolder = DriveApp.getFolderById(TEMPLATE_ROOT);
+  const parentFolder = DriveApp.getFolderById(CLIENT_FOLDER_ROOT);
   const clientFolder = parentFolder.createFolder(clientName + " Files");
 
   const tempCopy = template.copyTo(ss);
