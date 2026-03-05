@@ -713,8 +713,8 @@
 <div class="main">
   <header class="header">
     <button class="header-menu-btn" id="menuBtn" onclick="toggleSidebar()" aria-label="Clients">☰</button>
-    <div class="header-mark"><svg viewBox="0 0 16 22" width="14" height="18"><path d="M8 1Q4 7 5 13Q6 17 8 21Q10 17 11 13Q12 7 8 1Z" fill="currentColor"/></svg></div>
-    <div class="header-titles">
+    <div class="header-mark" onclick="goHome()" style="cursor:pointer"><svg viewBox="0 0 16 22" width="14" height="18"><path d="M8 1Q4 7 5 13Q6 17 8 21Q10 17 11 13Q12 7 8 1Z" fill="currentColor"/></svg></div>
+    <div class="header-titles" onclick="goHome()" style="cursor:pointer">
       <div class="header-name" id="headerName">Willow</div>
       <div class="header-subtitle" id="headerSubtitle">Haven · The Awakening Doula</div>
     </div>
@@ -738,9 +738,9 @@
           <span class="icon">&hearts;</span>
           <span class="label">Add Lead</span>
         </button>
-        <button class="home-grid-btn" onclick="homeAction('refresh_dashboard')">
-          <span class="icon">&bull;&bull;&bull;</span>
-          <span class="label">Dashboard</span>
+        <button class="home-grid-btn" onclick="goHome()">
+          <span class="icon">&loz;</span>
+          <span class="label">Home</span>
         </button>
         <button class="home-grid-btn" onclick="openSheet('home-marketing')">
           <span class="icon">&raquo;</span>
@@ -1031,6 +1031,55 @@ function selectClient(client) {
   const typeLabel = t.includes('soul') ? `Soul Emergence (Week ${client.currentWeek || 1} of ${getWeekCount()})`
                   : (client.clientType || client.serviceType || 'client');
   appendAIMessage(`Switched to ${client.name} — ${typeLabel}.\n\nWhat would you like to do?`);
+}
+
+
+/* ═══════════════════════════════════════════════
+   HOME / DASHBOARD RESET
+═══════════════════════════════════════════════ */
+function goHome() {
+  // Deselect client
+  state.activeClient = null;
+  state.conversationHistory = [];
+
+  // Reset header pill
+  const pill = document.getElementById('activeClientPill');
+  pill.textContent = 'Select a client';
+  pill.classList.add('no-client');
+
+  // Clear chat and restore home state
+  const chatArea = document.getElementById('chatArea');
+  chatArea.innerHTML = '';
+  const home = document.createElement('div');
+  home.className = 'home-state';
+  home.id = 'homeState';
+  home.innerHTML = `
+    <div class="home-mark"><svg viewBox="0 0 100 70" width="100" height="70"><path d="M50 8C42 14 30 20 24 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/><path d="M50 8C45 16 38 25 36 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/><path d="M50 8C48 18 44 30 43 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/><path d="M50 8C52 18 56 30 57 62" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/><path d="M50 8C55 16 62 25 64 58" stroke="currentColor" stroke-width="1" fill="none" opacity="0.65" stroke-linecap="round"/><path d="M50 8C58 14 70 20 76 55" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/></svg></div>
+    <div class="home-greeting" id="homeGreeting">Good ${getTimeGreeting()}</div>
+    <div class="home-affirmation" id="homeAffirmation">${HOME_AFFIRMATIONS[Math.floor(Math.random() * HOME_AFFIRMATIONS.length)]}</div>
+    <div class="home-grid">
+      <button class="home-grid-btn" onclick="openNewClientModal()">
+        <span class="icon">+</span><span class="label">New Client</span>
+      </button>
+      <button class="home-grid-btn" onclick="homeAction('add_lead')">
+        <span class="icon">&hearts;</span><span class="label">Add Lead</span>
+      </button>
+      <button class="home-grid-btn" onclick="goHome()">
+        <span class="icon">&loz;</span><span class="label">Home</span>
+      </button>
+      <button class="home-grid-btn" onclick="openSheet('home-marketing')">
+        <span class="icon">&raquo;</span><span class="label">Marketing</span>
+      </button>
+    </div>`;
+  chatArea.appendChild(home);
+
+  // Update greeting with config name
+  const firstName = (state.config.practitionerName || 'Carlie').split(',')[0].split(' ')[0];
+  document.getElementById('homeGreeting').textContent = 'Good ' + getTimeGreeting() + ', ' + firstName;
+
+  renderClientList(state.clients);
+  renderQuickActions();
+  closeSidebar();
 }
 
 
